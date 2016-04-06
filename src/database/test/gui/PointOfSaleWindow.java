@@ -1,22 +1,16 @@
 package database.test.gui;
 
 import database.test.DatabaseManager;
+import database.test.data.ShoppingList;
 import java.awt.Color;
-import java.awt.Component;
-import java.awt.Font;
 import java.awt.Rectangle;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
-import java.util.List;
-import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JTable;
-import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
 
 public class PointOfSaleWindow
@@ -25,9 +19,8 @@ public class PointOfSaleWindow
     private DatabaseManager database = null;
     private LogoutListener logoutListener = null;
 
-    private final List<ProductLine> productList = new ArrayList<>();
-    private double totalPrice = 0;
-    private int totalQuantity = 0;
+    private final ShoppingList shoppingList = new ShoppingList();
+
     private String validCustomerID = null;
 
     private static final String UNREGISTERED_CUSTOMER_ID = "C0000000";
@@ -58,23 +51,6 @@ public class PointOfSaleWindow
     public void populateComboBoxData() {
         // TODO: query the database for all customer IDs and product IDs
         // TODO: change the customer ID and product ID textboxes to comboboxes
-    }
-
-    /**
-     * Calculate the total price.
-     *
-     * @return The total price of the shopping list.
-     */
-    private double calculateTotalPrice() {
-        double total = 0;
-        for (int i = 0; i < productList.size(); i++) {
-            total += productList.get(i).subtotal();
-        }
-        return total;
-    }
-
-    public double getTotalPrice() {
-        return totalPrice;
     }
 
     //<editor-fold defaultstate="collapsed" desc="GUI + Data Code: Customer ID Checking">
@@ -143,37 +119,18 @@ public class PointOfSaleWindow
     private void listAdd() {
         String id = tbxProductID.getText().trim();
         int quantity = (int) spnQuantity.getValue();
-
-        // search for the existing line with the same ID
-        ProductLine productLine = null;
-        for (ProductLine line : productList) {
-            if (line.id.equals(id)) {
-                productLine = line;
-                break;
-            }
+        // TODO: find a way to deal with negative quantity
+        try {
+            int idx = shoppingList.addItem(id, quantity);
+            // update the GUI
+            this.updateScreen();
+            this.updateTableSelection(idx);
+            lblListAddMessage.setText("Done.");
+            lblListAddMessage.setForeground(Color.BLACK);
+        } catch (IllegalArgumentException ex) {
+            lblListAddMessage.setText("Adding failed. Invalid product ID.");
+            lblListAddMessage.setForeground(Const.COLOR_ERROR_TEXT);
         }
-
-        // if the list already contain this product
-        if (productLine != null) {
-            productLine.quantity += quantity;
-            totalQuantity += quantity;
-            totalPrice += productLine.unitPrice * quantity;
-        } else {
-            // TODO: look up product name and price from the ID
-            String name = id + id;
-            double unitPrice = 5.00;
-            // =========================================
-
-            // add data to the shopping list
-            productLine = new ProductLine(id, name, quantity, unitPrice);
-            productList.add(productLine);
-            totalQuantity += quantity;
-            totalPrice += productLine.subtotal();
-        }
-
-        // update the GUI
-        this.updateScreen();
-        this.updateTableSelection(productLine);
 
         // clear the product input
         tbxProductID.setSelectionStart(0);
@@ -183,15 +140,13 @@ public class PointOfSaleWindow
     }
 
     private void listRemove() {
-        if (table.getSelectedRowCount() == 0 || productList.isEmpty()) {
+        if (table.getSelectedRowCount() == 0 || shoppingList.isEmpty()) {
             return;
         }
 
         int[] selected = table.getSelectedRows();
         for (int i = selected.length - 1; i >= 0; i--) {
-            totalQuantity -= productList.get(selected[i]).quantity;
-            totalPrice -= productList.get(selected[i]).subtotal();
-            productList.remove(selected[i]);
+            shoppingList.removeItem(selected[i]);
         }
 
         this.updateScreen();
@@ -209,7 +164,7 @@ public class PointOfSaleWindow
         spnQuantity.setValue(1);
         tbxCustomerID.requestFocus();
 
-        productList.clear();
+        shoppingList.clear();
         this.updateScreen();
     }
 
@@ -232,12 +187,11 @@ public class PointOfSaleWindow
      */
     private void updateScreen() {
         table.updateUI();
-        lblTotal.setText(String.format("%,d Item%s  /  Total: %,.2f " + Const.CURRENCY, totalQuantity, ((totalQuantity == 1) ? "" : "s"), totalPrice));
+        int totalQuantity = shoppingList.getTotalQuantity();
+        double totalPrice = shoppingList.getTotalPrice();
+        lblTotal.setText(String.format("%,d Item%s  /  Total: %,.2f " + Const.CURRENCY, 
+                totalQuantity, ((totalQuantity == 1) ? "" : "s"), totalPrice));
         this.updateConfirmButtonEnabled();
-    }
-
-    private void updateTableSelection(ProductLine lineToSelect) {
-        this.updateTableSelection(productList.indexOf(lineToSelect));
     }
 
     private void updateTableSelection(int rowIndex) {
@@ -251,7 +205,7 @@ public class PointOfSaleWindow
     }
 
     private void updateConfirmButtonEnabled() {
-        btnConfirm.setEnabled(validCustomerID != null && !productList.isEmpty());
+        btnConfirm.setEnabled(validCustomerID != null && !shoppingList.isEmpty());
     }
 
     private void setColorTheme() {
@@ -335,43 +289,7 @@ public class PointOfSaleWindow
     }
 
     private void initTableModel() {
-        table.setModel(new AbstractTableModel() {
-            @Override
-            public int getRowCount() {
-                return productList.size();
-            }
-
-            @Override
-            public int getColumnCount() {
-                return 5;
-            }
-
-            private String[] columns = {"Product ID", "Product Name",
-                "Quantity", "Unit Price", "Subtotal"};
-
-            @Override
-            public String getColumnName(int column) {
-                return columns[column];
-            }
-
-            @Override
-            public Object getValueAt(int rowIndex, int columnIndex) {
-                ProductLine line = productList.get(rowIndex);
-                switch (columnIndex) {
-                    case 0:
-                        return line.getIDString();
-                    case 1:
-                        return line.getNameString();
-                    case 2:
-                        return line.getQuantityString();
-                    case 3:
-                        return line.getUnitPriceString();
-                    case 4:
-                        return line.getSubtotalString();
-                }
-                return null;
-            }
-        });
+        table.setModel(shoppingList.getTableModel());
 
         // setting column sizes
         table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
@@ -436,6 +354,7 @@ public class PointOfSaleWindow
         tbxProductID = new javax.swing.JTextField();
         javax.swing.JLabel l_AddQuantity = new javax.swing.JLabel();
         spnQuantity = new javax.swing.JSpinner();
+        lblListAddMessage = new javax.swing.JLabel();
         btnListAdd = new javax.swing.JButton();
         btnListRemove = new javax.swing.JButton();
         javax.swing.JSeparator separator_controls_3 = new javax.swing.JSeparator();
@@ -676,13 +595,24 @@ public class PointOfSaleWindow
         gridBagConstraints.insets = new java.awt.Insets(4, 2, 4, 4);
         panel_controls.add(spnQuantity, gridBagConstraints);
 
+        lblListAddMessage.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        lblListAddMessage.setText("Adding failed. Invalid product ID.");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 6;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(4, 4, 2, 4);
+        panel_controls.add(lblListAddMessage, gridBagConstraints);
+
         btnListAdd.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btnListAdd.setText("Add to the List");
         btnListAdd.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnListAdd.setPreferredSize(new java.awt.Dimension(123, 32));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 6;
+        gridBagConstraints.gridy = 7;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
@@ -695,7 +625,7 @@ public class PointOfSaleWindow
         btnListRemove.setPreferredSize(new java.awt.Dimension(135, 32));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 7;
+        gridBagConstraints.gridy = 8;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
@@ -703,7 +633,7 @@ public class PointOfSaleWindow
         panel_controls.add(btnListRemove, gridBagConstraints);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 8;
+        gridBagConstraints.gridy = 9;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(24, 4, 4, 4);
@@ -715,7 +645,7 @@ public class PointOfSaleWindow
         btnConfirm.setPreferredSize(new java.awt.Dimension(81, 48));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 9;
+        gridBagConstraints.gridy = 10;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
@@ -727,7 +657,7 @@ public class PointOfSaleWindow
         btnClear.setPreferredSize(new java.awt.Dimension(63, 32));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 10;
+        gridBagConstraints.gridy = 11;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
@@ -780,6 +710,7 @@ public class PointOfSaleWindow
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JLabel lblCustomerName;
+    private javax.swing.JLabel lblListAddMessage;
     private javax.swing.JLabel lblLoginName;
     private javax.swing.JLabel lblTotal;
     private javax.swing.JLabel logoLabel;
@@ -802,46 +733,6 @@ public class PointOfSaleWindow
     private javax.swing.JTextField tbxProductID;
     // End of variables declaration//GEN-END:variables
     //</editor-fold>
-
-    private static class ProductLine {
-
-        private String id;
-        private String name;
-        private int quantity;
-        private double unitPrice;
-
-        public ProductLine(String id, String name, int quantity, double unitPrice) {
-            this.id = id;
-            this.name = name;
-            this.quantity = quantity;
-            this.unitPrice = unitPrice;
-        }
-
-        public double subtotal() {
-            return unitPrice * quantity;
-        }
-
-        public String getIDString() {
-            return " " + id;
-        }
-
-        public String getNameString() {
-            return " " + name;
-        }
-
-        public String getQuantityString() {
-            return String.format("%,d ", quantity);
-        }
-
-        public String getUnitPriceString() {
-            return String.format("%,.2f " /*+ Const.CURRENCY + " "*/, unitPrice);
-        }
-
-        public String getSubtotalString() {
-            return String.format("%,.2f " /*+ Const.CURRENCY + " "*/, unitPrice * quantity);
-        }
-
-    }
 
     public interface LogoutListener {
 

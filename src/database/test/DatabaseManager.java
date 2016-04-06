@@ -1,12 +1,7 @@
 package database.test;
 
 import database.test.gui.GenericTableWindow;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
@@ -127,7 +122,7 @@ public class DatabaseManager {
      * @return a TableModel for displaying the data in a JTable.
      * @throws java.sql.SQLException
      */
-    public static TableModel buildTableModel(ResultSet resultSet) 
+    public static TableModel buildTableModel(ResultSet resultSet)
             throws SQLException {
         DefaultTableModel model = new DefaultTableModel();
 
