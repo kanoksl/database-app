@@ -48,6 +48,7 @@ public class GenericTableWindow
 
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
+        table.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
         table.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
@@ -59,6 +60,8 @@ public class GenericTableWindow
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        table.setGridColor(new java.awt.Color(204, 204, 204));
+        table.setRowHeight(20);
         table_scrollPane.setViewportView(table);
 
         gridBagConstraints = new java.awt.GridBagConstraints();

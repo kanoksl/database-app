@@ -232,6 +232,10 @@ public class PointOfSaleWindow
                 logoutListener.logout();
             }
         });
+        menuCustomerCurrent.addActionListener((ActionEvent) -> {
+            EditCustomerInfoWindow win = new EditCustomerInfoWindow();
+            win.setVisible(true);
+        });
         //</editor-fold>
         //<editor-fold desc="Customer ID Components">
         chkRegisteredCustomer.addActionListener((ActionEvent) -> {

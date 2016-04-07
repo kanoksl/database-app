@@ -34,22 +34,606 @@ public class EditCustomerInfoWindow
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+        genderButtonGroup = new javax.swing.ButtonGroup();
+        panel_header = new javax.swing.JPanel();
+        headerLabel = new javax.swing.JLabel();
+        tabbedPane = new javax.swing.JTabbedPane();
+        panel_customerInfo = new javax.swing.JPanel();
+        javax.swing.JLabel l_cusID = new javax.swing.JLabel();
+        tbxCustomerID = new javax.swing.JTextField();
+        lblWarnID = new javax.swing.JLabel();
+        lblRegisteredDate = new javax.swing.JLabel();
+        javax.swing.JLabel l_basic = new javax.swing.JLabel();
+        javax.swing.JLabel l_first = new javax.swing.JLabel();
+        tbxFirstName = new javax.swing.JTextField();
+        lblWarnName = new javax.swing.JLabel();
+        javax.swing.JLabel l_last = new javax.swing.JLabel();
+        tbxLastName = new javax.swing.JTextField();
+        javax.swing.JLabel l_additional = new javax.swing.JLabel();
+        javax.swing.JLabel l_gender = new javax.swing.JLabel();
+        panel_gender = new javax.swing.JPanel();
+        rdbMale = new javax.swing.JRadioButton();
+        rdbFemale = new javax.swing.JRadioButton();
+        javax.swing.JLabel l_birthday = new javax.swing.JLabel();
+        panel_birthday = new javax.swing.JPanel();
+        cbxBirthdayDay = new javax.swing.JComboBox<>();
+        cbxBirthdayMonth = new javax.swing.JComboBox<>();
+        cbxBirthdayYear = new javax.swing.JComboBox<>();
+        chkUnknownBirthday = new javax.swing.JCheckBox();
+        javax.swing.JLabel l_contact = new javax.swing.JLabel();
+        javax.swing.JLabel l_phone = new javax.swing.JLabel();
+        tbxPhone = new javax.swing.JFormattedTextField();
+        javax.swing.JLabel l_email = new javax.swing.JLabel();
+        tbxEmail = new javax.swing.JTextField();
+        panel_commandButtons = new javax.swing.JPanel();
+        btnSave = new javax.swing.JButton();
+        btnDelete = new javax.swing.JButton();
+        btnCancel = new javax.swing.JButton();
+        panel_shoppingHistory = new javax.swing.JPanel();
+        tableSale_scrollPane = new javax.swing.JScrollPane();
+        tableSale = new javax.swing.JTable();
+        panel_top = new javax.swing.JPanel();
+        tbxDateFrom = new javax.swing.JFormattedTextField();
+        javax.swing.JLabel l_filterFrom = new javax.swing.JLabel();
+        javax.swing.JLabel l_filterTo = new javax.swing.JLabel();
+        tbxDateTo = new javax.swing.JFormattedTextField();
+        btnFilterRefresh = new javax.swing.JButton();
+        chkHistoryFiltering = new javax.swing.JCheckBox();
+        panel_bottom = new javax.swing.JPanel();
+        lblStats = new javax.swing.JLabel();
+        tableDetails_scrollPane = new javax.swing.JScrollPane();
+        tableDetails = new javax.swing.JTable();
+
+        setMaximumSize(new java.awt.Dimension(800, 540));
+        setMinimumSize(new java.awt.Dimension(800, 540));
+        setPreferredSize(new java.awt.Dimension(800, 540));
+        setResizable(false);
+        setSize(new java.awt.Dimension(800, 540));
+        getContentPane().setLayout(new java.awt.GridBagLayout());
+
+        panel_header.setBackground(new java.awt.Color(255, 255, 255));
+        panel_header.setLayout(new java.awt.GridBagLayout());
+
+        headerLabel.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        headerLabel.setText("Add/View/Edit Customer Information");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(8, 16, 8, 16);
+        panel_header.add(headerLabel, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 4, 0);
+        getContentPane().add(panel_header, gridBagConstraints);
+
+        tabbedPane.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+
+        panel_customerInfo.setLayout(new java.awt.GridBagLayout());
+
+        l_cusID.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        l_cusID.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        l_cusID.setText("Customer ID:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
+        gridBagConstraints.weighty = 0.6;
+        gridBagConstraints.insets = new java.awt.Insets(4, 4, 6, 4);
+        panel_customerInfo.add(l_cusID, gridBagConstraints);
+
+        tbxCustomerID.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        tbxCustomerID.setPreferredSize(new java.awt.Dimension(188, 22));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
+        gridBagConstraints.weighty = 0.6;
+        gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 8);
+        panel_customerInfo.add(tbxCustomerID, gridBagConstraints);
+
+        lblWarnID.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        lblWarnID.setForeground(java.awt.Color.red);
+        lblWarnID.setText("This ID is already used.");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(4, 0, 6, 16);
+        panel_customerInfo.add(lblWarnID, gridBagConstraints);
+
+        lblRegisteredDate.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        lblRegisteredDate.setText("Registered: 31 January 2015");
+        lblRegisteredDate.setPreferredSize(new java.awt.Dimension(188, 15));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(4, 4, 20, 8);
+        panel_customerInfo.add(lblRegisteredDate, gridBagConstraints);
+
+        l_basic.setFont(new java.awt.Font("Segoe UI", 1, 11)); // NOI18N
+        l_basic.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        l_basic.setText("Basic Information:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(4, 16, 4, 4);
+        panel_customerInfo.add(l_basic, gridBagConstraints);
+
+        l_first.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        l_first.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        l_first.setText("First Name:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
+        panel_customerInfo.add(l_first, gridBagConstraints);
+
+        tbxFirstName.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        tbxFirstName.setPreferredSize(new java.awt.Dimension(188, 22));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 8);
+        panel_customerInfo.add(tbxFirstName, gridBagConstraints);
+
+        lblWarnName.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        lblWarnName.setForeground(java.awt.Color.red);
+        lblWarnName.setText("The first name cannot be blank.");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(4, 0, 4, 16);
+        panel_customerInfo.add(lblWarnName, gridBagConstraints);
+
+        l_last.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        l_last.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        l_last.setText("Last Name:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
+        panel_customerInfo.add(l_last, gridBagConstraints);
+
+        tbxLastName.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        tbxLastName.setPreferredSize(new java.awt.Dimension(188, 22));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 8);
+        panel_customerInfo.add(tbxLastName, gridBagConstraints);
+
+        l_additional.setFont(new java.awt.Font("Segoe UI", 1, 11)); // NOI18N
+        l_additional.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        l_additional.setText("Additional Information:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(12, 16, 4, 4);
+        panel_customerInfo.add(l_additional, gridBagConstraints);
+
+        l_gender.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        l_gender.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        l_gender.setText("Gender:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(12, 4, 4, 4);
+        panel_customerInfo.add(l_gender, gridBagConstraints);
+
+        panel_gender.setLayout(new java.awt.GridBagLayout());
+
+        genderButtonGroup.add(rdbMale);
+        rdbMale.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        rdbMale.setText("Male");
+        rdbMale.setPreferredSize(new java.awt.Dimension(70, 23));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        panel_gender.add(rdbMale, gridBagConstraints);
+
+        genderButtonGroup.add(rdbFemale);
+        rdbFemale.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        rdbFemale.setText("Female");
+        rdbFemale.setPreferredSize(new java.awt.Dimension(70, 23));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        panel_gender.add(rdbFemale, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(12, 4, 4, 8);
+        panel_customerInfo.add(panel_gender, gridBagConstraints);
+
+        l_birthday.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        l_birthday.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        l_birthday.setText("Birthday:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
+        panel_customerInfo.add(l_birthday, gridBagConstraints);
+
+        panel_birthday.setLayout(new java.awt.GridBagLayout());
+
+        cbxBirthdayDay.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        cbxBirthdayDay.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "01", "02", "03" }));
+        cbxBirthdayDay.setPreferredSize(new java.awt.Dimension(40, 22));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 4);
+        panel_birthday.add(cbxBirthdayDay, gridBagConstraints);
+
+        cbxBirthdayMonth.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        cbxBirthdayMonth.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" }));
+        cbxBirthdayMonth.setPreferredSize(new java.awt.Dimension(80, 22));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 4);
+        panel_birthday.add(cbxBirthdayMonth, gridBagConstraints);
+
+        cbxBirthdayYear.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        cbxBirthdayYear.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "2016", "2015", "2014" }));
+        cbxBirthdayYear.setPreferredSize(new java.awt.Dimension(60, 22));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        panel_birthday.add(cbxBirthdayYear, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 8);
+        panel_customerInfo.add(panel_birthday, gridBagConstraints);
+
+        chkUnknownBirthday.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        chkUnknownBirthday.setSelected(true);
+        chkUnknownBirthday.setText("Unknown Birthday");
+        chkUnknownBirthday.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        chkUnknownBirthday.setPreferredSize(new java.awt.Dimension(188, 23));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 6;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 4, 4, 8);
+        panel_customerInfo.add(chkUnknownBirthday, gridBagConstraints);
+
+        l_contact.setFont(new java.awt.Font("Segoe UI", 1, 11)); // NOI18N
+        l_contact.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        l_contact.setText("Contact Information:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 7;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(16, 16, 4, 4);
+        panel_customerInfo.add(l_contact, gridBagConstraints);
+
+        l_phone.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        l_phone.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        l_phone.setText("Phone:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 7;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(16, 4, 4, 4);
+        panel_customerInfo.add(l_phone, gridBagConstraints);
+
+        tbxPhone.setText("jFormattedTextField1");
+        tbxPhone.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        tbxPhone.setPreferredSize(new java.awt.Dimension(188, 22));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 7;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(16, 4, 4, 8);
+        panel_customerInfo.add(tbxPhone, gridBagConstraints);
+
+        l_email.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        l_email.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        l_email.setText("Email:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 8;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
+        panel_customerInfo.add(l_email, gridBagConstraints);
+
+        tbxEmail.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        tbxEmail.setPreferredSize(new java.awt.Dimension(188, 22));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 8;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 8);
+        panel_customerInfo.add(tbxEmail, gridBagConstraints);
+
+        btnSave.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        btnSave.setText("Save");
+        btnSave.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnSave.setMaximumSize(new java.awt.Dimension(128, 36));
+        btnSave.setMinimumSize(new java.awt.Dimension(128, 36));
+        btnSave.setName(""); // NOI18N
+        btnSave.setPreferredSize(new java.awt.Dimension(96, 28));
+
+        btnDelete.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        btnDelete.setText("Delete");
+        btnDelete.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnDelete.setMaximumSize(new java.awt.Dimension(128, 36));
+        btnDelete.setMinimumSize(new java.awt.Dimension(128, 36));
+        btnDelete.setName(""); // NOI18N
+        btnDelete.setPreferredSize(new java.awt.Dimension(96, 28));
+
+        btnCancel.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        btnCancel.setText("Cancel");
+        btnCancel.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnCancel.setMaximumSize(new java.awt.Dimension(128, 36));
+        btnCancel.setMinimumSize(new java.awt.Dimension(128, 36));
+        btnCancel.setName(""); // NOI18N
+        btnCancel.setPreferredSize(new java.awt.Dimension(96, 28));
+
+        javax.swing.GroupLayout panel_commandButtonsLayout = new javax.swing.GroupLayout(panel_commandButtons);
+        panel_commandButtons.setLayout(panel_commandButtonsLayout);
+        panel_commandButtonsLayout.setHorizontalGroup(
+            panel_commandButtonsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panel_commandButtonsLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 502, Short.MAX_VALUE)
+                .addComponent(btnSave, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnCancel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+        panel_commandButtonsLayout.setVerticalGroup(
+            panel_commandButtonsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panel_commandButtonsLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(panel_commandButtonsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnSave, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnCancel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnDelete, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 9;
+        gridBagConstraints.gridwidth = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHEAST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        panel_customerInfo.add(panel_commandButtons, gridBagConstraints);
+
+        tabbedPane.addTab("Customer Information", panel_customerInfo);
+
+        panel_shoppingHistory.setLayout(new java.awt.GridBagLayout());
+
+        tableSale.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        tableSale.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null}
+            },
+            new String [] {
+                "Date/Time", "Items", "Total"
+            }
+        ));
+        tableSale.setGridColor(new java.awt.Color(204, 204, 204));
+        tableSale.setRowHeight(20);
+        tableSale_scrollPane.setViewportView(tableSale);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 0.4;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 4, 0, 4);
+        panel_shoppingHistory.add(tableSale_scrollPane, gridBagConstraints);
+
+        panel_top.setLayout(new java.awt.GridBagLayout());
+
+        tbxDateFrom.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(new java.text.SimpleDateFormat("yyyy/MM/dd"))));
+        tbxDateFrom.setText("2016/01/01");
+        tbxDateFrom.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        tbxDateFrom.setPreferredSize(new java.awt.Dimension(80, 22));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.insets = new java.awt.Insets(4, 0, 0, 0);
+        panel_top.add(tbxDateFrom, gridBagConstraints);
+
+        l_filterFrom.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        l_filterFrom.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        l_filterFrom.setText("From:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.insets = new java.awt.Insets(4, 8, 0, 4);
+        panel_top.add(l_filterFrom, gridBagConstraints);
+
+        l_filterTo.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        l_filterTo.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        l_filterTo.setText("To:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.insets = new java.awt.Insets(4, 16, 0, 4);
+        panel_top.add(l_filterTo, gridBagConstraints);
+
+        tbxDateTo.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(new java.text.SimpleDateFormat("yyyy/MM/dd"))));
+        tbxDateTo.setText("2016/01/01");
+        tbxDateTo.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        tbxDateTo.setPreferredSize(new java.awt.Dimension(80, 22));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.insets = new java.awt.Insets(4, 0, 0, 0);
+        panel_top.add(tbxDateTo, gridBagConstraints);
+
+        btnFilterRefresh.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        btnFilterRefresh.setText("Refresh");
+        btnFilterRefresh.setMaximumSize(new java.awt.Dimension(128, 36));
+        btnFilterRefresh.setMinimumSize(new java.awt.Dimension(128, 36));
+        btnFilterRefresh.setName(""); // NOI18N
+        btnFilterRefresh.setPreferredSize(new java.awt.Dimension(96, 28));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 5;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(4, 12, 0, 8);
+        panel_top.add(btnFilterRefresh, gridBagConstraints);
+
+        chkHistoryFiltering.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        chkHistoryFiltering.setSelected(true);
+        chkHistoryFiltering.setText("Enable Filtering:");
+        chkHistoryFiltering.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(4, 0, 0, 8);
+        panel_top.add(chkHistoryFiltering, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 4, 0);
+        panel_shoppingHistory.add(panel_top, gridBagConstraints);
+
+        panel_bottom.setLayout(new java.awt.GridBagLayout());
+
+        lblStats.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        lblStats.setText("0 Records Found, Total amount 0 ฿, \nSelect a sale record on the left side to see more detail on the right.");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(8, 8, 8, 8);
+        panel_bottom.add(lblStats, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(4, 0, 0, 0);
+        panel_shoppingHistory.add(panel_bottom, gridBagConstraints);
+
+        tableDetails.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        tableDetails.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
+            },
+            new String [] {
+                "Product ID", "Product Name", "Quantity", "Unit Price", "Subtotal"
+            }
+        ));
+        tableDetails.setGridColor(new java.awt.Color(204, 204, 204));
+        tableDetails.setRowHeight(20);
+        tableDetails_scrollPane.setViewportView(tableDetails);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 0.6;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 4);
+        panel_shoppingHistory.add(tableDetails_scrollPane, gridBagConstraints);
+
+        tabbedPane.addTab("Shopping History", panel_shoppingHistory);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 4, 4);
+        getContentPane().add(tabbedPane, gridBagConstraints);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnCancel;
+    private javax.swing.JButton btnDelete;
+    private javax.swing.JButton btnFilterRefresh;
+    private javax.swing.JButton btnSave;
+    private javax.swing.JComboBox<String> cbxBirthdayDay;
+    private javax.swing.JComboBox<String> cbxBirthdayMonth;
+    private javax.swing.JComboBox<String> cbxBirthdayYear;
+    private javax.swing.JCheckBox chkHistoryFiltering;
+    private javax.swing.JCheckBox chkUnknownBirthday;
+    private javax.swing.ButtonGroup genderButtonGroup;
+    private javax.swing.JLabel headerLabel;
+    private javax.swing.JLabel lblRegisteredDate;
+    private javax.swing.JLabel lblStats;
+    private javax.swing.JLabel lblWarnID;
+    private javax.swing.JLabel lblWarnName;
+    private javax.swing.JPanel panel_birthday;
+    private javax.swing.JPanel panel_bottom;
+    private javax.swing.JPanel panel_commandButtons;
+    private javax.swing.JPanel panel_customerInfo;
+    private javax.swing.JPanel panel_gender;
+    private javax.swing.JPanel panel_header;
+    private javax.swing.JPanel panel_shoppingHistory;
+    private javax.swing.JPanel panel_top;
+    private javax.swing.JRadioButton rdbFemale;
+    private javax.swing.JRadioButton rdbMale;
+    private javax.swing.JTabbedPane tabbedPane;
+    private javax.swing.JTable tableDetails;
+    private javax.swing.JScrollPane tableDetails_scrollPane;
+    private javax.swing.JTable tableSale;
+    private javax.swing.JScrollPane tableSale_scrollPane;
+    private javax.swing.JTextField tbxCustomerID;
+    private javax.swing.JFormattedTextField tbxDateFrom;
+    private javax.swing.JFormattedTextField tbxDateTo;
+    private javax.swing.JTextField tbxEmail;
+    private javax.swing.JTextField tbxFirstName;
+    private javax.swing.JTextField tbxLastName;
+    private javax.swing.JFormattedTextField tbxPhone;
     // End of variables declaration//GEN-END:variables
     //</editor-fold>
 }
