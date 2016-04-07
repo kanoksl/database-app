@@ -505,6 +505,7 @@ public class EditCustomerInfoWindow
 
         btnFilterRefresh.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
         btnFilterRefresh.setText("Refresh");
+        btnFilterRefresh.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnFilterRefresh.setMaximumSize(new java.awt.Dimension(128, 36));
         btnFilterRefresh.setMinimumSize(new java.awt.Dimension(128, 36));
         btnFilterRefresh.setName(""); // NOI18N

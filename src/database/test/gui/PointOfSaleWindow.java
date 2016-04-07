@@ -372,6 +372,7 @@ public class PointOfSaleWindow
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         jMenuItem1 = new javax.swing.JMenuItem();
         menuProduct = new javax.swing.JMenu();
+        jMenuItem2 = new javax.swing.JMenuItem();
         menuSupplier = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -694,6 +695,10 @@ public class PointOfSaleWindow
         menuBar.add(menuCustomer);
 
         menuProduct.setText("Product");
+
+        jMenuItem2.setText("Product List...");
+        menuProduct.add(jMenuItem2);
+
         menuBar.add(menuProduct);
 
         menuSupplier.setText("Supplier");
@@ -712,6 +717,7 @@ public class PointOfSaleWindow
     private javax.swing.JButton btnListRemove;
     private javax.swing.JCheckBox chkRegisteredCustomer;
     private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JLabel lblCustomerName;
     private javax.swing.JLabel lblListAddMessage;
