@@ -7,7 +7,7 @@ import database.test.gui.PointOfSaleWindow;
 public class ApplicationMain
         implements LoginWindow.LoginListener, PointOfSaleWindow.LogoutListener {
 
-    private DatabaseManager database;
+    private final DatabaseManager database;
 
     private DebugWindow window_debug;
     private LoginWindow window_login;
@@ -26,14 +26,17 @@ public class ApplicationMain
         // displays the login window first
         window_debug.setVisible(true);
         window_login.setVisible(true);
+        
+        // automate login
+        window_login.submit();
     }
 
     @Override
     public void login() {
         // when the user logged in successfully
         window_login.setVisible(false);
+        window_pos.prepare();
         window_pos.setVisible(true);
-        window_pos.setLoginNameDisplay();
     }
 
     @Override

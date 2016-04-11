@@ -66,6 +66,10 @@ public class ShoppingList {
         itemList.remove(idx);
     }
 
+    public LineItem getItemAt(int idx) {
+        return itemList.get(idx);
+    }
+    
     public double getTotalPrice() {
         return totalPrice;
     }
@@ -114,9 +118,9 @@ public class ShoppingList {
                 LineItem line = itemList.get(rowIndex);
                 switch (columnIndex) {
                     case 0:
-                        return line.getProductIDString();
+                        return " " + line.getProductID();
                     case 1:
-                        return line.getProductNameString();
+                        return " " + line.getProductName();
                     case 2:
                         return line.getQuantityString();
                     case 3:
@@ -149,12 +153,12 @@ public class ShoppingList {
             return unitPrice * quantity;
         }
 
-        public String getProductIDString() {
-            return " " + product_id;
+        public String getProductID() {
+            return product_id;
         }
 
-        public String getProductNameString() {
-            return " " + product_name;
+        public String getProductName() {
+            return product_name;
         }
 
         public String getQuantityString() {

@@ -41,10 +41,10 @@ public class LoginWindow
      * Try logging in to the database. Notify the listener if success,
      * otherwise, warn the user.
      */
-    private void submit() {
+    public void submit() {
         if (database == null || loginListener == null) {
             warningText.setText("Something went wrong. Please restart the application.");
-            return;
+            System.exit(-1);
         }
         database.setUsername(tbxUsername.getText().trim());
         database.setPassword(new String(tbxPassword.getPassword()));
@@ -246,8 +246,8 @@ public class LoginWindow
     private javax.swing.JTextField tbxUsername;
     private javax.swing.JLabel warningText;
     // End of variables declaration//GEN-END:variables
-
     //</editor-fold>
+
     public interface LoginListener {
 
         /**

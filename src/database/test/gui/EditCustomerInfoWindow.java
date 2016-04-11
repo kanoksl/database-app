@@ -1,7 +1,20 @@
 package database.test.gui;
 
+import database.test.DatabaseManager;
+import database.test.data.Customer;
+import database.test.gui.Const.InfoWindowModes;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import javax.swing.DefaultComboBoxModel;
+
 public class EditCustomerInfoWindow
         extends javax.swing.JFrame {
+
+    private Customer customer = null;
+    private InfoWindowModes mode;
+
+    private DatabaseManager database = null;
 
     /**
      * Creates new form EditCustomerInfoWindow.
@@ -12,8 +25,206 @@ public class EditCustomerInfoWindow
         this.setLocationRelativeTo(null);
         this.setColorTheme();
 
-        this.setTitle("" + " - " + Const.APP_TITLE);
+        this.initDateComboBoxes();
+
+        this.setTitle("Customer Information" + " - " + Const.APP_TITLE);
+
+        lblWarnID.setText("");
+        lblWarnName.setText("");
     }
+
+    public void setMode(InfoWindowModes mode) {
+        this.mode = mode;
+        switch (mode) {
+            case AddNew:
+                headerLabel.setText(Const.ECIW_HEADER_ADD);
+
+                btnDelete.setVisible(false);
+                btnSave.setVisible(true);
+                btnCancel.setVisible(true);
+                btnCancel.setText("Cancel");
+
+                tbxCustomerID.setEnabled(false); // don't allow manually setting an ID
+                tbxFirstName.setEnabled(true);
+                tbxLastName.setEnabled(true);
+                rdbMale.setEnabled(true);
+                rdbFemale.setEnabled(true);
+                rdbNull.setEnabled(true);
+                cbxBirthdayDay.setEnabled(true);
+                cbxBirthdayMonth.setEnabled(true);
+                cbxBirthdayYear.setEnabled(true);
+                chkUnknownBirthday.setEnabled(true);
+                tbxPhone.setEnabled(true);
+                tbxEmail.setEnabled(true);
+                break;
+            case Editable:
+                headerLabel.setText(Const.ECIW_HEADER_EDIT);
+
+                btnDelete.setVisible(true);
+                btnSave.setVisible(true);
+                btnCancel.setVisible(true);
+                btnCancel.setText("Cancel");
+
+                tbxCustomerID.setEnabled(false);
+                tbxFirstName.setEnabled(true);
+                tbxLastName.setEnabled(true);
+                rdbMale.setEnabled(true);
+                rdbFemale.setEnabled(true);
+                rdbNull.setEnabled(true);
+                cbxBirthdayDay.setEnabled(true);
+                cbxBirthdayMonth.setEnabled(true);
+                cbxBirthdayYear.setEnabled(true);
+                chkUnknownBirthday.setEnabled(true);
+                tbxPhone.setEnabled(true);
+                tbxEmail.setEnabled(true);
+                break;
+            case ViewOnly:
+                headerLabel.setText(Const.ECIW_HEADER_VIEW);
+
+                btnDelete.setVisible(false);
+                btnSave.setVisible(false);
+                btnCancel.setVisible(true);
+                btnCancel.setText("Close");
+
+                tbxCustomerID.setEnabled(false);
+                tbxFirstName.setEnabled(false);
+                tbxLastName.setEnabled(false);
+                rdbMale.setEnabled(false);
+                rdbFemale.setEnabled(false);
+                rdbNull.setEnabled(false);
+                cbxBirthdayDay.setEnabled(false);
+                cbxBirthdayMonth.setEnabled(false);
+                cbxBirthdayYear.setEnabled(false);
+                chkUnknownBirthday.setEnabled(false);
+                tbxPhone.setEnabled(false);
+                tbxEmail.setEnabled(false);
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void setDatabase(DatabaseManager database) {
+        this.database = database;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
+    public void showCustomerInfo() {
+        tbxCustomerID.setText(customer.getId());
+        lblRegisteredDate.setText(customer.getRegisterationInfo());
+
+        tbxFirstName.setText(customer.getFirstName());
+        tbxLastName.setText(customer.getLastName());
+        if (customer.getGender() == 'M') {
+            rdbMale.setSelected(true);
+        } else if (customer.getGender() == 'F') {
+            rdbFemale.setSelected(true);
+        } else {
+            rdbNull.setSelected(true);
+        }
+
+        // TODO: test birthday info
+        this.setBirthDayToGUI(customer.getBirthDay());
+        tbxPhone.setText(customer.getPhoneNumber());
+        tbxEmail.setText(customer.getEmailAddress());
+    }
+
+    public void collectFormData() {
+        customer.setId(tbxCustomerID.getText());
+        customer.setFirstName(tbxFirstName.getText());
+        customer.setLastName(tbxLastName.getText());
+        customer.setGender(rdbMale.isSelected() ? 'M' : rdbFemale.isSelected() ? 'F' : '\0');
+        customer.setBirthDay(this.getBirthDayFromGUI()); // TODO: test birthday
+        customer.setPhoneNumber(tbxPhone.getText());
+        customer.setEmailAddress(tbxEmail.getText());
+    }
+
+    public void save() {
+        this.collectFormData();
+        switch (mode) {
+            case AddNew:
+                database.insertCustomer(customer);
+                break;
+            case Editable:
+                database.updateCustomer(customer);
+                break;
+            default:
+                break;
+        }
+    }
+
+    //<editor-fold defaultstate="collapsed" desc="GUI Code: Date ComboBoxes">
+    private void initDateComboBoxes() {
+        Calendar cal = new GregorianCalendar();
+
+        String[] years = new String[100];
+        for (int i = 0, y = cal.get(Calendar.YEAR); i < years.length; i++) {
+            years[i] = String.valueOf(y - i);
+        }
+
+        cbxBirthdayYear.setModel(new DefaultComboBoxModel<>(years));
+        this.updateDayComboBox();
+
+        cbxBirthdayMonth.addActionListener((ActionEvent) -> {
+            this.updateDayComboBox();
+        });
+        cbxBirthdayYear.addActionListener((ActionEvent) -> {
+            this.updateDayComboBox();
+        });
+
+        chkUnknownBirthday.addActionListener((ActionEvent) -> {
+            boolean notUnknown = !chkUnknownBirthday.isSelected();
+            cbxBirthdayDay.setEnabled(notUnknown);
+            cbxBirthdayMonth.setEnabled(notUnknown);
+            cbxBirthdayYear.setEnabled(notUnknown);
+        });
+    }
+
+    private void updateDayComboBox() {
+        int year = Integer.parseInt(cbxBirthdayYear.getSelectedItem().toString());
+        int month = cbxBirthdayMonth.getSelectedIndex();
+        Calendar cal = new GregorianCalendar(year, month, 1);
+        int dayCount = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
+
+        String[] days = new String[dayCount];
+        for (int i = 1; i <= dayCount; i++) {
+            days[i - 1] = String.format("%02d", i);
+        }
+
+        int currentSelect = cbxBirthdayDay.getSelectedIndex();
+        cbxBirthdayDay.setModel(new DefaultComboBoxModel<>(days));
+        cbxBirthdayDay.setSelectedIndex(Math.min(currentSelect, dayCount - 1));
+    }
+
+    private Date getBirthDayFromGUI() {
+        if (chkUnknownBirthday.isSelected()) {
+            return null;
+        }
+        int year = Integer.parseInt(cbxBirthdayYear.getSelectedItem().toString());
+        int month = cbxBirthdayMonth.getSelectedIndex();
+        int day = cbxBirthdayDay.getSelectedIndex() + 1;
+        Calendar cal = new GregorianCalendar(year, month, day);
+        return cal.getTime();
+    }
+
+    private void setBirthDayToGUI(Date date) {
+        if (date == null) {
+            chkUnknownBirthday.setSelected(true);
+            return;
+        }
+        chkUnknownBirthday.setSelected(false);
+        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+        int year = date.getYear() + 1900;
+        int month = date.getMonth();
+        int day = date.getDate();
+        cbxBirthdayDay.setSelectedIndex(day - 1);
+        cbxBirthdayMonth.setSelectedIndex(month);
+        cbxBirthdayYear.setSelectedIndex(currentYear - year);
+    }
+    //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="GUI Code: Custom Initialization and Methods">
     private void setColorTheme() {
@@ -21,7 +232,9 @@ public class EditCustomerInfoWindow
     }
 
     private void initListeners() {
-
+        btnSave.addActionListener((ActionEvent) -> {
+            this.save();
+        });
     }
 
     //</editor-fold>
@@ -56,6 +269,7 @@ public class EditCustomerInfoWindow
         panel_gender = new javax.swing.JPanel();
         rdbMale = new javax.swing.JRadioButton();
         rdbFemale = new javax.swing.JRadioButton();
+        rdbNull = new javax.swing.JRadioButton();
         javax.swing.JLabel l_birthday = new javax.swing.JLabel();
         panel_birthday = new javax.swing.JPanel();
         cbxBirthdayDay = new javax.swing.JComboBox<>();
@@ -86,11 +300,11 @@ public class EditCustomerInfoWindow
         tableDetails_scrollPane = new javax.swing.JScrollPane();
         tableDetails = new javax.swing.JTable();
 
-        setMaximumSize(new java.awt.Dimension(800, 540));
-        setMinimumSize(new java.awt.Dimension(800, 540));
-        setPreferredSize(new java.awt.Dimension(800, 540));
+        setMaximumSize(new java.awt.Dimension(830, 540));
+        setMinimumSize(new java.awt.Dimension(830, 540));
+        setPreferredSize(new java.awt.Dimension(830, 540));
         setResizable(false);
-        setSize(new java.awt.Dimension(800, 540));
+        setSize(new java.awt.Dimension(830, 540));
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         panel_header.setBackground(new java.awt.Color(255, 255, 255));
@@ -131,6 +345,7 @@ public class EditCustomerInfoWindow
         panel_customerInfo.add(l_cusID, gridBagConstraints);
 
         tbxCustomerID.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        tbxCustomerID.setMinimumSize(new java.awt.Dimension(188, 22));
         tbxCustomerID.setPreferredSize(new java.awt.Dimension(188, 22));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
@@ -146,8 +361,7 @@ public class EditCustomerInfoWindow
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(4, 0, 6, 16);
         panel_customerInfo.add(lblWarnID, gridBagConstraints);
@@ -158,7 +372,10 @@ public class EditCustomerInfoWindow
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(4, 4, 20, 8);
         panel_customerInfo.add(lblRegisteredDate, gridBagConstraints);
 
@@ -169,7 +386,7 @@ public class EditCustomerInfoWindow
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weightx = 0.5;
         gridBagConstraints.insets = new java.awt.Insets(4, 16, 4, 4);
         panel_customerInfo.add(l_basic, gridBagConstraints);
 
@@ -184,6 +401,7 @@ public class EditCustomerInfoWindow
         panel_customerInfo.add(l_first, gridBagConstraints);
 
         tbxFirstName.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        tbxFirstName.setMinimumSize(new java.awt.Dimension(188, 22));
         tbxFirstName.setPreferredSize(new java.awt.Dimension(188, 22));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
@@ -198,7 +416,7 @@ public class EditCustomerInfoWindow
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(4, 0, 4, 16);
         panel_customerInfo.add(lblWarnName, gridBagConstraints);
 
@@ -213,6 +431,7 @@ public class EditCustomerInfoWindow
         panel_customerInfo.add(l_last, gridBagConstraints);
 
         tbxLastName.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        tbxLastName.setMinimumSize(new java.awt.Dimension(188, 22));
         tbxLastName.setPreferredSize(new java.awt.Dimension(188, 22));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
@@ -246,26 +465,39 @@ public class EditCustomerInfoWindow
         genderButtonGroup.add(rdbMale);
         rdbMale.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
         rdbMale.setText("Male");
-        rdbMale.setPreferredSize(new java.awt.Dimension(70, 23));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 4);
         panel_gender.add(rdbMale, gridBagConstraints);
 
         genderButtonGroup.add(rdbFemale);
         rdbFemale.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
         rdbFemale.setText("Female");
-        rdbFemale.setPreferredSize(new java.awt.Dimension(70, 23));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 4);
         panel_gender.add(rdbFemale, gridBagConstraints);
+
+        genderButtonGroup.add(rdbNull);
+        rdbNull.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        rdbNull.setText("Unknown");
+        rdbNull.setPreferredSize(new java.awt.Dimension(80, 23));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.weightx = 1.0;
+        panel_gender.add(rdbNull, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(12, 4, 4, 8);
         panel_customerInfo.add(panel_gender, gridBagConstraints);
@@ -349,6 +581,7 @@ public class EditCustomerInfoWindow
 
         tbxPhone.setText("jFormattedTextField1");
         tbxPhone.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        tbxPhone.setMinimumSize(new java.awt.Dimension(188, 22));
         tbxPhone.setPreferredSize(new java.awt.Dimension(188, 22));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
@@ -368,6 +601,7 @@ public class EditCustomerInfoWindow
         panel_customerInfo.add(l_email, gridBagConstraints);
 
         tbxEmail.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        tbxEmail.setMinimumSize(new java.awt.Dimension(188, 22));
         tbxEmail.setPreferredSize(new java.awt.Dimension(188, 22));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
@@ -623,6 +857,7 @@ public class EditCustomerInfoWindow
     private javax.swing.JPanel panel_top;
     private javax.swing.JRadioButton rdbFemale;
     private javax.swing.JRadioButton rdbMale;
+    private javax.swing.JRadioButton rdbNull;
     private javax.swing.JTabbedPane tabbedPane;
     private javax.swing.JTable tableDetails;
     private javax.swing.JScrollPane tableDetails_scrollPane;

@@ -1,6 +1,7 @@
 package database.test.gui;
 
 import database.test.DatabaseManager;
+import database.test.data.Customer;
 import database.test.gui.component.TextLineNumber;
 import java.sql.*;
 import javax.swing.JTextArea;
@@ -8,6 +9,8 @@ import javax.swing.JTextArea;
 public class DebugWindow 
         extends javax.swing.JFrame {
 
+    private DatabaseManager dbmanager = null;
+    
     private Connection connection = null;
     private Statement statement = null;
 
@@ -25,6 +28,13 @@ public class DebugWindow
         txtArea_log_scrollPane.setRowHeaderView(lineNumber3);
 
         splitPane.setDividerLocation(0.5);
+        
+        other_btnTestInsertCustomer.addActionListener((ActionEvent) -> {
+            Customer c = Customer.createNewCustomer(dbmanager.getNextCustomerID());
+            System.out.println("c.id = " + c.getId());
+            c.setFirstName("FIRSTNAME");
+            dbmanager.insertCustomer(c);
+        });
     }
 
     //<editor-fold desc="Database Code">
@@ -54,6 +64,11 @@ public class DebugWindow
         } catch (ClassNotFoundException | SQLException ex) {
             this.log(txtArea_connection, "Error connecting to the database:\n\t" + ex.toString());
         }
+        
+        dbmanager = new DatabaseManager(hostport.substring(0, hostport.indexOf(":")), hostport.substring(hostport.indexOf(":") + 1), database);
+        dbmanager.setUsername(username);
+        dbmanager.setPassword(password);
+        dbmanager.connect();
     }
 
     private void disconnectDatabase() {
@@ -179,7 +194,8 @@ public class DebugWindow
         txtArea_log = new javax.swing.JTextArea();
         btnExecute = new javax.swing.JButton();
         btnQueryToTable = new javax.swing.JButton();
-        tab3_logs = new javax.swing.JPanel();
+        tab3_others = new javax.swing.JPanel();
+        other_btnTestInsertCustomer = new javax.swing.JButton();
         menuBar = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenu2 = new javax.swing.JMenu();
@@ -227,7 +243,7 @@ public class DebugWindow
         tab1_connection.add(l_database, gridBagConstraints);
 
         tbxDatabase.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
-        tbxDatabase.setText("sakila");
+        tbxDatabase.setText("retaildb_v1");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 2;
@@ -383,8 +399,12 @@ public class DebugWindow
 
         tabbedPane.addTab("Execute Commands", tab2_execute);
 
-        tab3_logs.setLayout(new java.awt.GridBagLayout());
-        tabbedPane.addTab("Logs", tab3_logs);
+        tab3_others.setLayout(new java.awt.GridBagLayout());
+
+        other_btnTestInsertCustomer.setText("Test DatabaseManager.insertCustomer()");
+        tab3_others.add(other_btnTestInsertCustomer, new java.awt.GridBagConstraints());
+
+        tabbedPane.addTab("Other Specific Functions", tab3_others);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -413,10 +433,11 @@ public class DebugWindow
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar menuBar;
+    private javax.swing.JButton other_btnTestInsertCustomer;
     private javax.swing.JSplitPane splitPane;
     private javax.swing.JPanel tab1_connection;
     private javax.swing.JPanel tab2_execute;
-    private javax.swing.JPanel tab3_logs;
+    private javax.swing.JPanel tab3_others;
     private javax.swing.JTabbedPane tabbedPane;
     private javax.swing.JTextField tbxDatabase;
     private javax.swing.JTextField tbxHostPort;

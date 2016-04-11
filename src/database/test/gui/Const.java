@@ -21,12 +21,33 @@ public class Const {
     // Strings - Window Titles
     public static final String APP_TITLE = "Retail Store Database System";
     public static final String WIN_TITLE_LOGIN = "Login";
-    public static final String WIN_TITLE_POINTOFSALE = "Point Of Sale";
+    public static final String WIN_TITLE_POINTOFSALE = "Point of Sale";
     
-    // Strings - 
+    // Strings - Others
     public static final String CURRENCY = "฿";
     
     // File Paths / Resource Paths
     public static final String PATH_TO_LOGO_IMAGE = "/database/resource/logo_new.png";
+    
+    public static enum InfoWindowModes { AddNew, Editable, ViewOnly };
+    
+    // EditCustomerInfoWindow (ECIW)
+    public static final String ECIW_WARNING_ID = "This ID is already used.";
+    public static final String ECIW_WARNING_NAME = "The first name cannot be blank.";
+    public static final String ECIW_HEADER_ADD = "Add New Customer Information";
+    public static final String ECIW_HEADER_EDIT = "Edit Customer Information";
+    public static final String ECIW_HEADER_VIEW = "View Customer Information";
+    
+    // JOptionPane Messages
+    public static final String MESSAGE_POS_CONFIRM_LOGOUT 
+            = "The current shopping list is not checked out yet.\nAre you sure you want to logout?";
+    public static final String MESSAGE_POS_CONFIRM_EXIT 
+            = "The current shopping list is not checked out yet.\nAre you sure you want to exit?";
+    public static final String MESSAGE_POS_CONFIRM_CLEAR 
+            = "Clear the current shopping list?";
+    
+    // Database-Related
+    public static final String UNREGISTERED_CUSTOMER_ID = "C0000000";
+    public static final String UNREGISTERED_CUSTOMER_NAME = "Unregistered Customer";
     
 }
