@@ -1,5 +1,6 @@
 package database.test.gui;
 
+import database.test.ApplicationMain;
 import database.test.DatabaseManager;
 import database.test.data.Customer;
 import database.test.data.ShoppingList;
@@ -29,7 +30,7 @@ public class PointOfSaleWindow
         extends javax.swing.JFrame
         implements ConfirmCheckoutPanel.CheckoutListener {
 
-    private DatabaseManager database = null;
+    private final DatabaseManager database = ApplicationMain.getDatabaseInstance();
     private LogoutListener logoutListener = null;
 
     private final ShoppingList shoppingList = new ShoppingList();
@@ -44,7 +45,7 @@ public class PointOfSaleWindow
      * @param logoutListener The object to be notified if the user log out.
      * @param database The retail store database.
      */
-    public PointOfSaleWindow(LogoutListener logoutListener, DatabaseManager database) {
+    public PointOfSaleWindow(LogoutListener logoutListener) {
         // initializes the components
         this.initComponents();
         cbxCustomerIDTextField = (JTextField) cbxCustomerID.getEditor().getEditorComponent();
@@ -54,7 +55,6 @@ public class PointOfSaleWindow
         this.setLocationRelativeTo(null);
         this.setColorTheme();
 
-        this.database = database;
         this.logoutListener = logoutListener;
     }
 
@@ -223,7 +223,6 @@ public class PointOfSaleWindow
     public void showCurrentCustomerInfoWindow(InfoWindowModes mode) {
         EditCustomerInfoWindow win = new EditCustomerInfoWindow();
         win.setMode(mode);
-        win.setDatabase(database);
         win.setCustomer(currentCustomer);
         win.showCustomerInfo();
         win.setVisible(true);

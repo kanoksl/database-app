@@ -1,5 +1,6 @@
 package database.test.gui;
 
+import database.test.ApplicationMain;
 import database.test.DatabaseManager;
 import database.test.data.Customer;
 import database.test.gui.Const.InfoWindowModes;
@@ -19,7 +20,7 @@ public class EditCustomerInfoWindow
     private Customer customer = null;
     private InfoWindowModes mode;
 
-    private DatabaseManager database = null;
+    private final DatabaseManager database = ApplicationMain.getDatabaseInstance();
 
     /**
      * Creates new form EditCustomerInfoWindow.
@@ -111,10 +112,6 @@ public class EditCustomerInfoWindow
             default:
                 break;
         }
-    }
-
-    public void setDatabase(DatabaseManager database) {
-        this.database = database;
     }
 
     public void setCustomer(Customer customer) {
@@ -958,7 +955,7 @@ public class EditCustomerInfoWindow
     }
 
     private static JDialog createDialog(Frame owner, Component content, Dimension size) {
-        JDialog dia = new JDialog(owner, "", true);
+        JDialog dia = new JDialog(owner, "Customer Information - " + Const.APP_TITLE, true);
         dia.getContentPane().add(content);
         dia.setSize(size);
         dia.setMaximumSize(size);

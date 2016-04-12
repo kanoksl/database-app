@@ -7,21 +7,21 @@ import database.test.gui.PointOfSaleWindow;
 public class ApplicationMain
         implements LoginWindow.LoginListener, PointOfSaleWindow.LogoutListener {
 
-    private final DatabaseManager database;
+    private static DatabaseManager database; // singleton
 
     private DebugWindow window_debug;
     private LoginWindow window_login;
     private PointOfSaleWindow window_pos;
 
     public ApplicationMain() {
-        this.database = new DatabaseManager("localhost", "3306", "retaildb_v1");
+        database = new DatabaseManager("localhost", "3306", "retaildb_v1");
     }
 
     public void start() {
         // initializes the windows
         window_debug = new DebugWindow();
         window_login = new LoginWindow(this, database);
-        window_pos = new PointOfSaleWindow(this, database);
+        window_pos = new PointOfSaleWindow(this);
 
         // displays the login window first
         window_debug.setVisible(true);
@@ -46,6 +46,17 @@ public class ApplicationMain
         window_pos.setVisible(false);
         // TODO: hide other windows too if exists
         window_login.setVisible(true);
+    }
+
+    /**
+     * Get the singleton instance of DatabaseManager that is initialized when
+     * the application starts and is logged in by the user through the login
+     * window GUI.
+     *
+     * @return The instance of DatabaseManager used by the application
+     */
+    public static DatabaseManager getDatabaseInstance() {
+        return database;
     }
 
     //<editor-fold defaultstate="collapsed" desc="Actual Application Starting Point: The main() Method">

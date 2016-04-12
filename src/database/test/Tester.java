@@ -24,7 +24,6 @@ public class Tester {
         database.connect();
 
         EditCustomerInfoWindow cw = new EditCustomerInfoWindow();
-        cw.setDatabase(database);
 
         cw.setMode(Const.InfoWindowModes.AddNew);
         cw.setCustomer(Customer.createNewCustomer(database.suggestNextCustomerID()));
