@@ -31,8 +31,8 @@ public class Const {
     // File Paths / Resource Paths
     public static final String PATH_TO_LOGO_IMAGE = "/database/resource/logo_new.png";
 
-    public static enum InfoWindowModes {
-        AddNew, Editable, ViewOnly
+    public static enum InfoWindowMode {
+        ADD, EDIT, VIEW
     };
 
     // EditCustomerInfoWindow (ECIW)

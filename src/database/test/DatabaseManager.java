@@ -237,6 +237,10 @@ public class DatabaseManager {
         }
     }
 
+    public boolean deleteCustomer(Customer c) {
+        return false;
+    }
+    
     public String suggestNextCustomerID() {
         return DatabaseUtilities.suggestNextID(statement,
                 SQLStrings.SQL_CUSTOMER_ID_LATEST, "C", 8);

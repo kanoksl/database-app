@@ -4,7 +4,7 @@ import database.test.ApplicationMain;
 import database.test.DatabaseManager;
 import database.test.data.Customer;
 import database.test.data.ShoppingList;
-import database.test.gui.Const.InfoWindowModes;
+import database.test.gui.Const.InfoWindowMode;
 
 import java.awt.Color;
 import java.awt.Rectangle;
@@ -220,19 +220,26 @@ public class PointOfSaleWindow
     }
 
     //<editor-fold defaultstate="collapsed" desc="GUI Code: Menu Handlers - Displaying Other Windows">
-    public void showCurrentCustomerInfoWindow(InfoWindowModes mode) {
-        EditCustomerInfoWindow win = new EditCustomerInfoWindow();
-        win.setMode(mode);
-        win.setCustomer(currentCustomer);
-        win.showCustomerInfo();
-        win.setVisible(true);
+    public void showCurrentCustomerInfoWindow(InfoWindowMode mode) {
+        if (mode == InfoWindowMode.EDIT) {
+            currentCustomer = EditCustomerInfoWindow.showEditCustomerDialog(this, currentCustomer);
+            if (currentCustomer == null) {
+                chkRegisteredCustomer.setSelected(false);
+                this.toggleRegisteredCustomer();
+            } else {
+                this.checkCustomerID();
+            }
+        } else if (mode == InfoWindowMode.VIEW) {
+            EditCustomerInfoWindow.showViewCustomerDialog(this, currentCustomer);
+        }
     }
 
     public void showNewCustomerWindow() {
-        // TODO: after registering, select the ID in POS
-
         Customer c = EditCustomerInfoWindow.showNewCustomerDialog(this);
-        System.out.println(c);
+        this.populateComboBoxData();
+        chkRegisteredCustomer.setSelected(true);
+        this.toggleRegisteredCustomer();
+        cbxCustomerID.setSelectedItem(c.getID());
     }
 
     public void showManageCustomersWindow() {
@@ -377,10 +384,10 @@ public class PointOfSaleWindow
             }
         });
         menuViewCurrentCustomer.addActionListener((ActionEvent) -> {
-            this.showCurrentCustomerInfoWindow(InfoWindowModes.ViewOnly);
+            this.showCurrentCustomerInfoWindow(InfoWindowMode.VIEW);
         });
         menuEditCurrentCustomer.addActionListener((ActionEvent) -> {
-            this.showCurrentCustomerInfoWindow(InfoWindowModes.Editable);
+            this.showCurrentCustomerInfoWindow(InfoWindowMode.EDIT);
         });
         menuNewCustomer.addActionListener((ActionEvent) -> {
             this.showNewCustomerWindow();

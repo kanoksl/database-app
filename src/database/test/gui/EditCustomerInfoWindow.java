@@ -3,177 +3,158 @@ package database.test.gui;
 import database.test.ApplicationMain;
 import database.test.DatabaseManager;
 import database.test.data.Customer;
-import database.test.gui.Const.InfoWindowModes;
+import database.test.gui.Const.InfoWindowMode;
+
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.time.LocalDate;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
+
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JDialog;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 public class EditCustomerInfoWindow
         extends javax.swing.JFrame {
 
+    private static DatabaseManager database = ApplicationMain.getDatabaseInstance();
     private Customer customer = null;
-    private InfoWindowModes mode;
-
-    private final DatabaseManager database = ApplicationMain.getDatabaseInstance();
 
     /**
-     * Creates new form EditCustomerInfoWindow.
+     * Creates new EditCustomerInfoWindow. Note: to use this window, use the
+     * static showDialog methods instead.
      */
-    public EditCustomerInfoWindow() {
+    private EditCustomerInfoWindow(InfoWindowMode mode) {
         this.initComponents();
-        this.initListeners();
-        this.setLocationRelativeTo(null);
+        this.initDateComboBoxes();
         this.setColorTheme();
 
-        this.initDateComboBoxes();
+        lblWarnID.setText(" ");
+        lblWarnName.setText(" ");
 
-        this.setTitle("Customer Information" + " - " + Const.APP_TITLE);
-
-        lblWarnID.setText("");
-        lblWarnName.setText("");
-    }
-
-    public void setMode(InfoWindowModes mode) {
-        this.mode = mode;
         switch (mode) {
-            case AddNew:
-                headerLabel.setText(Const.ECIW_HEADER_ADD);
-
-                btnDelete.setVisible(false);
-                btnSave.setVisible(true);
-                btnCancel.setVisible(true);
-                btnCancel.setText("Cancel");
-
-                tbxCustomerID.setEnabled(false); // don't allow manually setting an ID
-                tbxFirstName.setEnabled(true);
-                tbxLastName.setEnabled(true);
-                rdbMale.setEnabled(true);
-                rdbFemale.setEnabled(true);
-                rdbNull.setEnabled(true);
-                cbxBirthdayDay.setEnabled(true);
-                cbxBirthdayMonth.setEnabled(true);
-                cbxBirthdayYear.setEnabled(true);
-                chkUnknownBirthday.setEnabled(true);
-                tbxPhone.setEnabled(true);
-                tbxEmail.setEnabled(true);
-
-                tabbedPane.remove(1); // hide the shopping history
+            case ADD:
+                this.initializeAddMode();
                 break;
-            case Editable:
-                headerLabel.setText(Const.ECIW_HEADER_EDIT);
-
-                btnDelete.setVisible(true);
-                btnSave.setVisible(true);
-                btnCancel.setVisible(true);
-                btnCancel.setText("Cancel");
-
-                tbxCustomerID.setEnabled(false);
-                tbxFirstName.setEnabled(true);
-                tbxLastName.setEnabled(true);
-                rdbMale.setEnabled(true);
-                rdbFemale.setEnabled(true);
-                rdbNull.setEnabled(true);
-                cbxBirthdayDay.setEnabled(true);
-                cbxBirthdayMonth.setEnabled(true);
-                cbxBirthdayYear.setEnabled(true);
-                chkUnknownBirthday.setEnabled(true);
-                tbxPhone.setEnabled(true);
-                tbxEmail.setEnabled(true);
-
-                tabbedPane.remove(1); // hide the shopping history
+            case EDIT:
+                this.initializeEditMode();
                 break;
-            case ViewOnly:
-                headerLabel.setText(Const.ECIW_HEADER_VIEW);
-
-                btnDelete.setVisible(false);
-                btnSave.setVisible(false);
-                btnCancel.setVisible(true);
-                btnCancel.setText("Close");
-
-                tbxCustomerID.setEnabled(false);
-                tbxFirstName.setEnabled(false);
-                tbxLastName.setEnabled(false);
-                rdbMale.setEnabled(false);
-                rdbFemale.setEnabled(false);
-                rdbNull.setEnabled(false);
-                cbxBirthdayDay.setEnabled(false);
-                cbxBirthdayMonth.setEnabled(false);
-                cbxBirthdayYear.setEnabled(false);
-                chkUnknownBirthday.setEnabled(false);
-                tbxPhone.setEnabled(false);
-                tbxEmail.setEnabled(false);
+            case VIEW:
+                this.initializeViewMode();
                 break;
             default:
                 break;
         }
     }
 
-    public void setCustomer(Customer customer) {
+    private void setCustomer(Customer customer) {
         this.customer = customer;
+        this.showCustomerInfo();
     }
 
-    public void showCustomerInfo() {
+    /**
+     * Customer instance variable --> GUI
+     */
+    private void showCustomerInfo() {
         tbxCustomerID.setText(customer.getID());
         lblRegisteredDate.setText(customer.getRegistrationInfo());
-
         tbxFirstName.setText(customer.getFirstName());
         tbxLastName.setText(customer.getLastName());
-        if (customer.getGender() == 'M') {
-            rdbMale.setSelected(true);
-        } else if (customer.getGender() == 'F') {
-            rdbFemale.setSelected(true);
-        } else {
-            rdbNull.setSelected(true);
+        switch (customer.getGender()) {
+            case 'M':
+                rdbMale.setSelected(true);
+                break;
+            case 'F':
+                rdbFemale.setSelected(true);
+                break;
+            default:
+                rdbNull.setSelected(true);
+                break;
         }
-
-        // TODO: test birthday info
         this.setBirthDayToGUI(customer.getBirthDay());
         tbxPhone.setText(customer.getPhoneNumber());
         tbxEmail.setText(customer.getEmailAddress());
     }
 
-    public void collectFormData() {
+    /**
+     * GUI --> Customer instance variable
+     */
+    private void collectFormData() {
         customer.setID(tbxCustomerID.getText());
         customer.setFirstName(tbxFirstName.getText());
         customer.setLastName(tbxLastName.getText());
-        customer.setGender(rdbMale.isSelected() ? 'M' : rdbFemale.isSelected() ? 'F' : '\0');
-        customer.setBirthDay(this.getBirthDayFromGUI()); // TODO: test birthday
-        customer.setPhoneNumber(tbxPhone.getText());
+        customer.setGender(rdbMale.isSelected()
+                ? 'M' : rdbFemale.isSelected() ? 'F' : '\0');
+        customer.setBirthDay(this.getBirthDayFromGUI());
+        customer.setPhoneNumber(tbxPhone.getText().replace("-", ""));
         customer.setEmailAddress(tbxEmail.getText());
     }
 
-    public void save() {
-        this.collectFormData();
-        switch (mode) {
-            case AddNew:
-                database.insertCustomer(customer);
-                break;
-            case Editable:
-                database.updateCustomer(customer);
-                break;
-            default:
-                break;
+    //<editor-fold desc="Database: Update Operations (Insert, Update, Delete)">
+    private boolean databaseInsertCustomer() {
+        boolean result = database.insertCustomer(customer); // actual insert operation
+        if (result) {
+            JOptionPane.showMessageDialog(this,
+                    "The new customer was successfully added to the database.",
+                    "Register Customer", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this,
+                    "Error adding the customer to the database.",
+                    "Register Customer", JOptionPane.ERROR_MESSAGE);
         }
+        return result;
     }
 
-    public void updateShoppingHistory() {
-        if (chkHistoryFiltering.isSelected()) {
+    private boolean databaseUpdateCustomer() {
+        boolean result = database.updateCustomer(customer); // actual update operation
+        if (result) {
+            JOptionPane.showMessageDialog(this,
+                    "The customer's information was successfully updated.",
+                    "Edit Customer Info", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this,
+                    "Error updating the customer's information.",
+                    "Edit Customer Info", JOptionPane.ERROR_MESSAGE);
+        }
+        return result;
+    }
 
+    private boolean databaseDeleteCustomer() {
+        boolean result = false;
+        int proceed = JOptionPane.showConfirmDialog(this,
+                "Delete the following customer's information from the database?\n  "
+                + customer.getID() + " - " + customer.getDisplayName(),
+                "Edit Customer Info", JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.QUESTION_MESSAGE, null);
+        if (proceed == JOptionPane.OK_OPTION) {
+            result = database.deleteCustomer(customer); // actual delete operation
+            if (result) {
+                JOptionPane.showMessageDialog(this,
+                        "The customer's information was successfully deleted.",
+                        "Edit Customer Info", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this,
+                        "Error deleting the customer's information.",
+                        "Edit Customer Info", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        return result;
+    }
+    //</editor-fold>
+
+    private void updateShoppingHistory() {
+        if (chkHistoryFiltering.isSelected()) {
+            // TODO: query shopping history
         }
     }
 
     //<editor-fold defaultstate="collapsed" desc="GUI Code: Date ComboBoxes">
     private void initDateComboBoxes() {
-        Calendar cal = new GregorianCalendar();
+        int currentYear = java.time.Year.now().getValue();
 
         String[] years = new String[100];
-        for (int i = 0, y = cal.get(Calendar.YEAR); i < years.length; i++) {
+        for (int i = 0, y = currentYear; i < years.length; i++) {
             years[i] = String.valueOf(y - i);
         }
 
@@ -197,9 +178,8 @@ public class EditCustomerInfoWindow
 
     private void updateDayComboBox() {
         int year = Integer.parseInt(cbxBirthdayYear.getSelectedItem().toString());
-        int month = cbxBirthdayMonth.getSelectedIndex();
-        Calendar cal = new GregorianCalendar(year, month, 1);
-        int dayCount = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
+        int month = cbxBirthdayMonth.getSelectedIndex() + 1;
+        int dayCount = LocalDate.of(year, month, 1).lengthOfMonth();
 
         String[] days = new String[dayCount];
         for (int i = 1; i <= dayCount; i++) {
@@ -235,24 +215,113 @@ public class EditCustomerInfoWindow
         cbxBirthdayMonth.setSelectedIndex(month - 1);
         cbxBirthdayYear.setSelectedIndex(currentYear - year);
     }
-    //</editor-fold>
 
+    //</editor-fold>
     //<editor-fold defaultstate="collapsed" desc="GUI Code: Custom Initialization and Methods">
-    private void setColorTheme() {
-        tableSale.setSelectionBackground(Const.COLOR_HIGHLIGHT_BG);
-        tableSale.setSelectionForeground(Const.COLOR_HIGHLIGHT_FG);
-        tableSale.setGridColor(Const.COLOR_TABLE_GRID);
-        tableDetails.setSelectionBackground(Const.COLOR_HIGHLIGHT_BG);
-        tableDetails.setSelectionForeground(Const.COLOR_HIGHLIGHT_FG);
-        tableDetails.setGridColor(Const.COLOR_TABLE_GRID);
+    private void initializeAddMode() {
+        headerLabel.setText(Const.ECIW_HEADER_ADD);
+        //<editor-fold defaultstate="collapsed" desc="Enable/Disable Components">
+        btnDelete.setVisible(false);
+        btnSave.setVisible(true);
+        btnCancel.setVisible(true);
+        btnCancel.setText("Cancel");
+
+        tbxCustomerID.setEnabled(false); // don't allow manually setting an ID
+        tbxFirstName.setEnabled(true);
+        tbxLastName.setEnabled(true);
+        rdbMale.setEnabled(true);
+        rdbFemale.setEnabled(true);
+        rdbNull.setEnabled(true);
+        cbxBirthdayDay.setEnabled(true);
+        cbxBirthdayMonth.setEnabled(true);
+        cbxBirthdayYear.setEnabled(true);
+        chkUnknownBirthday.setEnabled(false);
+        tbxPhone.setEnabled(true);
+        tbxEmail.setEnabled(true);
+
+        tabbedPane.remove(1); // hide the shopping history
+        //</editor-fold>
+        // listeners
+        btnSave.addActionListener((ActionEvent) -> {
+            this.collectFormData();
+            if (this.databaseInsertCustomer()) {
+                SwingUtilities.getWindowAncestor(btnSave).dispose();
+            }
+        });
+        btnCancel.addActionListener((ActionEvent) -> {
+            customer = null;
+            SwingUtilities.getWindowAncestor(btnCancel).dispose();
+        });
     }
 
-    private void initListeners() {
-        btnSave.addActionListener((ActionEvent) -> {
-//            this.save();
-        });
+    private void initializeEditMode() {
+        headerLabel.setText(Const.ECIW_HEADER_EDIT);
+        //<editor-fold defaultstate="collapsed" desc="Enable/Disable Components">
+        btnDelete.setVisible(true);
+        btnSave.setVisible(true);
+        btnCancel.setVisible(true);
+        btnCancel.setText("Cancel");
 
-        //<editor-fold desc="Shopping History Components">
+        tbxCustomerID.setEnabled(false);
+        tbxFirstName.setEnabled(true);
+        tbxLastName.setEnabled(true);
+        rdbMale.setEnabled(true);
+        rdbFemale.setEnabled(true);
+        rdbNull.setEnabled(true);
+        cbxBirthdayDay.setEnabled(true);
+        cbxBirthdayMonth.setEnabled(true);
+        cbxBirthdayYear.setEnabled(true);
+        chkUnknownBirthday.setEnabled(false);
+        tbxPhone.setEnabled(true);
+        tbxEmail.setEnabled(true);
+
+        tabbedPane.remove(1); // hide the shopping history
+        //</editor-fold>
+        // listeners
+        btnSave.addActionListener((ActionEvent) -> {
+            this.collectFormData();
+            if (this.databaseUpdateCustomer()) {
+                SwingUtilities.getWindowAncestor(btnSave).dispose();
+            }
+        });
+        btnCancel.addActionListener((ActionEvent) -> {
+            customer = database.queryCustomer(customer.getID());
+            SwingUtilities.getWindowAncestor(btnCancel).dispose();
+        });
+        btnDelete.addActionListener((ActionEvent) -> {
+            if (this.databaseDeleteCustomer()) {
+                customer = null;
+                SwingUtilities.getWindowAncestor(btnSave).dispose();
+            }
+        });
+    }
+
+    private void initializeViewMode() {
+        headerLabel.setText(Const.ECIW_HEADER_VIEW);
+        //<editor-fold defaultstate="collapsed" desc="Enable/Disable Components">
+        btnDelete.setVisible(false);
+        btnSave.setVisible(false);
+        btnCancel.setVisible(true);
+        btnCancel.setText("Close");
+
+        tbxCustomerID.setEnabled(false);
+        tbxFirstName.setEnabled(false);
+        tbxLastName.setEnabled(false);
+        rdbMale.setEnabled(false);
+        rdbFemale.setEnabled(false);
+        rdbNull.setEnabled(false);
+        cbxBirthdayDay.setEnabled(false);
+        cbxBirthdayMonth.setEnabled(false);
+        cbxBirthdayYear.setEnabled(false);
+        chkUnknownBirthday.setEnabled(false);
+        tbxPhone.setEnabled(false);
+        tbxEmail.setEnabled(false);
+        //</editor-fold>
+        // listeners: main
+        btnCancel.addActionListener((ActionEvent) -> {
+            SwingUtilities.getWindowAncestor(btnCancel).dispose();
+        });
+        // listeners: shopping history
         chkHistoryFiltering.addActionListener((ActionEvent) -> {
             tbxDateFrom.setEnabled(chkHistoryFiltering.isSelected());
             tbxDateTo.setEnabled(chkHistoryFiltering.isSelected());
@@ -260,7 +329,15 @@ public class EditCustomerInfoWindow
         btnFilterRefresh.addActionListener((ActionEvent) -> {
             this.updateShoppingHistory();
         });
-        //</editor-fold>
+    }
+
+    private void setColorTheme() {
+        tableSale.setSelectionBackground(Const.COLOR_HIGHLIGHT_BG);
+        tableSale.setSelectionForeground(Const.COLOR_HIGHLIGHT_FG);
+        tableSale.setGridColor(Const.COLOR_TABLE_GRID);
+        tableDetails.setSelectionBackground(Const.COLOR_HIGHLIGHT_BG);
+        tableDetails.setSelectionForeground(Const.COLOR_HIGHLIGHT_FG);
+        tableDetails.setGridColor(Const.COLOR_TABLE_GRID);
     }
 
     //</editor-fold>
@@ -510,6 +587,7 @@ public class EditCustomerInfoWindow
 
         genderButtonGroup.add(rdbNull);
         rdbNull.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        rdbNull.setSelected(true);
         rdbNull.setText("Unknown");
         rdbNull.setPreferredSize(new java.awt.Dimension(80, 23));
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -541,6 +619,7 @@ public class EditCustomerInfoWindow
         panel_birthday.setLayout(new java.awt.GridBagLayout());
 
         cbxBirthdayDay.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        cbxBirthdayDay.setMaximumRowCount(12);
         cbxBirthdayDay.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "01", "02", "03" }));
         cbxBirthdayDay.setPreferredSize(new java.awt.Dimension(40, 22));
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -550,6 +629,7 @@ public class EditCustomerInfoWindow
         panel_birthday.add(cbxBirthdayDay, gridBagConstraints);
 
         cbxBirthdayMonth.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        cbxBirthdayMonth.setMaximumRowCount(12);
         cbxBirthdayMonth.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" }));
         cbxBirthdayMonth.setPreferredSize(new java.awt.Dimension(80, 22));
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -559,6 +639,7 @@ public class EditCustomerInfoWindow
         panel_birthday.add(cbxBirthdayMonth, gridBagConstraints);
 
         cbxBirthdayYear.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        cbxBirthdayYear.setMaximumRowCount(12);
         cbxBirthdayYear.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "2016", "2015", "2014" }));
         cbxBirthdayYear.setPreferredSize(new java.awt.Dimension(60, 22));
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -574,7 +655,6 @@ public class EditCustomerInfoWindow
         panel_customerInfo.add(panel_birthday, gridBagConstraints);
 
         chkUnknownBirthday.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
-        chkUnknownBirthday.setSelected(true);
         chkUnknownBirthday.setText("Unknown Birthday");
         chkUnknownBirthday.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         chkUnknownBirthday.setPreferredSize(new java.awt.Dimension(188, 23));
@@ -605,7 +685,11 @@ public class EditCustomerInfoWindow
         gridBagConstraints.insets = new java.awt.Insets(16, 4, 4, 4);
         panel_customerInfo.add(l_phone, gridBagConstraints);
 
-        tbxPhone.setText("jFormattedTextField1");
+        try {
+            tbxPhone.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("###-###-####")));
+        } catch (java.text.ParseException ex) {
+            ex.printStackTrace();
+        }
         tbxPhone.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
         tbxPhone.setMinimumSize(new java.awt.Dimension(188, 22));
         tbxPhone.setPreferredSize(new java.awt.Dimension(188, 22));
@@ -899,6 +983,7 @@ public class EditCustomerInfoWindow
     // End of variables declaration//GEN-END:variables
     //</editor-fold>
 
+    //<editor-fold desc="Static showDialog() Methods">
     /**
      * Show a dialog for registering a new customer.
      *
@@ -906,28 +991,11 @@ public class EditCustomerInfoWindow
      * @return A newly created Customer. Null if the user canceled.
      */
     public static Customer showNewCustomerDialog(Frame owner) {
-        EditCustomerInfoWindow win = new EditCustomerInfoWindow();
-        win.setMode(InfoWindowModes.AddNew);
+        EditCustomerInfoWindow win = new EditCustomerInfoWindow(InfoWindowMode.ADD);
+        win.setCustomer(Customer.createNewCustomer(database.suggestNextCustomerID()));
 
-        win.customer = Customer.createNewCustomer("Hello");
-        win.showCustomerInfo();
-
-        win.btnSave.addActionListener((ActionEvent) -> {
-            win.collectFormData();
-            SwingUtilities.getWindowAncestor(win.btnSave).dispose();
-        });
-        win.btnCancel.addActionListener((ActionEvent) -> {
-            win.customer = null;
-            SwingUtilities.getWindowAncestor(win.btnSave).dispose();
-        });
-
-        JDialog dia = createDialog(owner,
-                win.getContentPane(), win.getPreferredSize());
-
-        dia.pack();
-        dia.setVisible(true);
-        dia.dispose();
-
+        createDialog(owner, win.getContentPane(), win.getPreferredSize());
+        System.out.println("showNewCustomerDialog() returning: " + win.customer);
         return win.customer;
     }
 
@@ -940,7 +1008,12 @@ public class EditCustomerInfoWindow
      * not. Null if the user deleted the Customer data.
      */
     public static Customer showEditCustomerDialog(Frame owner, Customer customer) {
-        return null;
+        EditCustomerInfoWindow win = new EditCustomerInfoWindow(InfoWindowMode.EDIT);
+        win.setCustomer(customer);
+
+        createDialog(owner, win.getContentPane(), win.getPreferredSize());
+        System.out.println("showEditCustomerDialog() returning: " + win.customer);
+        return win.customer;
     }
 
     /**
@@ -951,7 +1024,10 @@ public class EditCustomerInfoWindow
      * @param customer The Customer to be viewed.
      */
     public static void showViewCustomerDialog(Frame owner, Customer customer) {
+        EditCustomerInfoWindow win = new EditCustomerInfoWindow(InfoWindowMode.VIEW);
+        win.setCustomer(customer);
 
+        createDialog(owner, win.getContentPane(), win.getPreferredSize());
     }
 
     private static JDialog createDialog(Frame owner, Component content, Dimension size) {
@@ -963,6 +1039,11 @@ public class EditCustomerInfoWindow
         dia.setPreferredSize(size);
         dia.setResizable(false);
         dia.setLocationRelativeTo(null);
+        dia.pack();
+        dia.setVisible(true);
+        dia.dispose();
         return dia;
     }
+    //</editor-fold>
+
 }
