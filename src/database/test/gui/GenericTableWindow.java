@@ -3,7 +3,7 @@ package database.test.gui;
 import java.awt.Font;
 import javax.swing.table.TableModel;
 
-public class GenericTableWindow 
+public class GenericTableWindow
         extends javax.swing.JFrame {
 
     public GenericTableWindow() {
@@ -75,7 +75,6 @@ public class GenericTableWindow
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable table;

@@ -4,6 +4,7 @@ import database.test.DatabaseManager;
 import database.test.data.Customer;
 import database.test.data.ShoppingList;
 import database.test.gui.Const.InfoWindowModes;
+
 import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.event.ItemEvent;
@@ -12,8 +13,10 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
+
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
+import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -23,7 +26,8 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumnModel;
 
 public class PointOfSaleWindow
-        extends javax.swing.JFrame {
+        extends javax.swing.JFrame
+        implements ConfirmCheckoutPanel.CheckoutListener {
 
     private DatabaseManager database = null;
     private LogoutListener logoutListener = null;
@@ -31,6 +35,8 @@ public class PointOfSaleWindow
     private final ShoppingList shoppingList = new ShoppingList();
 
     private Customer currentCustomer = null;
+
+    private JDialog checkoutDialog;
 
     /**
      * Create a new PointOfSaleWindow that is connected to the given database.
@@ -69,16 +75,6 @@ public class PointOfSaleWindow
         this.toggleRegisteredCustomer();
     }
 
-    /**
-     * Check out the shopping list.
-     */
-    public void confirm() {
-        System.out.println("[Checkout]");
-        System.out.println(" - Customer: " + currentCustomer.getId());
-        System.out.println(" - Total: " + shoppingList.getTotalPrice());
-        System.out.println();
-    }
-
     //<editor-fold defaultstate="collapsed" desc="GUI + Data Code: Customer ID Checking">
     /**
      * Switch between unregistered customer or registered customer mode.
@@ -112,6 +108,9 @@ public class PointOfSaleWindow
      */
     private void checkCustomerID() {
         String id = cbxCustomerIDTextField.getText().trim();
+        if (id.equals(Const.DELETED_CUSTOMER_ID)) {
+            id = "";
+        }
         currentCustomer = database.queryCustomer(id);
 
         // display the customer name
@@ -119,17 +118,22 @@ public class PointOfSaleWindow
             String displayName = currentCustomer.getDisplayName();
             lblCustomerName.setText(displayName);
             lblCustomerName.setForeground(Color.BLACK);
-//            menuCustomerCurrent.setText("View Current Customer's Information... (" + displayName + ")");
-            menuViewCurrentCustomer.setEnabled(true);
+            if (currentCustomer.getID().equals(Const.UNREGISTERED_CUSTOMER_ID)) {
+                menuViewCurrentCustomer.setEnabled(false);
+                menuEditCurrentCustomer.setEnabled(false);
+            } else {
+                menuViewCurrentCustomer.setEnabled(true);
+                menuEditCurrentCustomer.setEnabled(true);
+            }
 
-            System.out.println("Customer ID: " + id);
-            System.out.println("Customer Name: " + displayName);
-            System.out.println("Registered: " + currentCustomer.getDaysSinceRegistered() + " days ago");
+//            System.out.println("Customer ID: " + id);
+//            System.out.println("Customer Name: " + displayName);
+//            System.out.println("Registered: " + currentCustomer.getDaysSinceRegistered() + " days ago");
         } else {
             lblCustomerName.setText("Error: invalid customer ID");
             lblCustomerName.setForeground(Const.COLOR_ERROR_TEXT);
-//            menuCustomerCurrent.setText("View Current Customer's Information... (?)");
             menuViewCurrentCustomer.setEnabled(false);
+            menuEditCurrentCustomer.setEnabled(false);
         }
         this.updateConfirmButtonEnabled();
     }
@@ -170,18 +174,56 @@ public class PointOfSaleWindow
 
         int[] selected = table.getSelectedRows();
         for (int i = selected.length - 1; i >= 0; i--) {
-            shoppingList.removeItem(selected[i]);
+            shoppingList.removeItemAt(selected[i]);
         }
 
         this.updateShoppingListGUI();
         this.updateTableSelection(Integer.MAX_VALUE);
     }
-
     //</editor-fold>
+
+    /**
+     * Check out the shopping list.
+     */
+    public void confirm() {
+        System.out.println("\n[Checkout]");
+        System.out.println(" - Customer: " + currentCustomer.getID());
+        System.out.println(" - Total: " + shoppingList.getTotalPrice());
+        System.out.println();
+
+        shoppingList.setCustomer(currentCustomer);
+
+        checkoutDialog = new JDialog(this, "Checkout", true);
+        checkoutDialog.getContentPane().add(new ConfirmCheckoutPanel(this, shoppingList));
+        checkoutDialog.pack();
+        checkoutDialog.setResizable(false);
+        checkoutDialog.setLocationRelativeTo(btnConfirm);
+        checkoutDialog.setVisible(true);
+    }
+
+    @Override
+    public void checkoutConfirmed() {
+        // TODO: show receipt and insert record to the database
+        checkoutDialog.setVisible(false);
+        checkoutDialog = null;
+
+        System.out.println("checkoutConfirmed(): " + shoppingList);
+
+        // TODO: update the stock quantity
+        this.clear();
+    }
+
+    @Override
+    public void checkoutCanceled() {
+        checkoutDialog.setVisible(false);
+        checkoutDialog = null;
+    }
+
     //<editor-fold defaultstate="collapsed" desc="GUI Code: Menu Handlers - Displaying Other Windows">
     public void showCurrentCustomerInfoWindow(InfoWindowModes mode) {
         EditCustomerInfoWindow win = new EditCustomerInfoWindow();
-        win.setMode(Const.InfoWindowModes.ViewOnly);
+        win.setMode(mode);
+        win.setDatabase(database);
         win.setCustomer(currentCustomer);
         win.showCustomerInfo();
         win.setVisible(true);
@@ -189,6 +231,9 @@ public class PointOfSaleWindow
 
     public void showNewCustomerWindow() {
         // TODO: after registering, select the ID in POS
+
+        Customer c = EditCustomerInfoWindow.showNewCustomerDialog(this);
+        System.out.println(c);
     }
 
     public void showManageCustomersWindow() {
@@ -704,7 +749,7 @@ public class PointOfSaleWindow
         gridBagConstraints.gridy = 1;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
+        gridBagConstraints.insets = new java.awt.Insets(4, 0, 4, 0);
         panel_controls.add(separator_controls_1, gridBagConstraints);
 
         lblLoginName.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -724,7 +769,7 @@ public class PointOfSaleWindow
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
         gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
+        gridBagConstraints.insets = new java.awt.Insets(4, 0, 4, 0);
         panel_controls.add(separator_controls_2, gridBagConstraints);
 
         l_AddProductID.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
@@ -810,7 +855,7 @@ public class PointOfSaleWindow
         gridBagConstraints.gridy = 9;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(24, 4, 4, 4);
+        gridBagConstraints.insets = new java.awt.Insets(24, 0, 4, 0);
         panel_controls.add(separator_controls_3, gridBagConstraints);
 
         btnConfirm.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N

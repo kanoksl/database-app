@@ -1,12 +1,22 @@
 package database.test;
 
+import static database.test.DatabaseUtilities.toLocalDate;
+
 import database.test.data.Customer;
-import database.test.gui.GenericTableWindow;
-import java.sql.*;
-import java.util.ArrayList;
+import database.test.data.Product;
+import database.test.data.ShoppingList;
+import database.test.data.Supplier;
+
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Types;
+import java.time.LocalDate;
 import java.util.List;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 
 public class DatabaseManager {
 
@@ -59,7 +69,7 @@ public class DatabaseManager {
             connection.close();
             connected = false;
         } catch (SQLException ex) {
-            System.err.println("Error disconnecting the database :\n\t" + ex);
+            System.err.println("Error disconnecting from the database :\n\t" + ex);
             System.err.flush();
         }
         return !connected;
@@ -68,7 +78,6 @@ public class DatabaseManager {
     public boolean isConnected() {
         return connected;
     }
-    //</editor-fold>
 
     /**
      * Get the current user name from the database system.
@@ -85,11 +94,13 @@ public class DatabaseManager {
             return null;
         }
     }
+    //</editor-fold>
 
     //<editor-fold desc="Database Management: Customers">
     public List<String> queryListOfCustomerIDs() {
         try {
-            return querySingleColumnToList(statement, SQLStrings.SQL_CUSTOMER_ID_ALL);
+            return DatabaseUtilities.querySingleColumnToList(statement,
+                    SQLStrings.SQL_CUSTOMER_ID_ALL);
         } catch (SQLException ex) {
             System.err.println(ex);
             return null;
@@ -102,9 +113,14 @@ public class DatabaseManager {
             System.err.flush();
             return null;
         }
-        
+
         try {
-            ResultSet result = statement.executeQuery("SELECT * FROM CUSTOMER WHERE customer_id='" + searchID + "'");
+            PreparedStatement p = connection.prepareStatement(
+                    SQLStrings.SQL_SELECT_A_CUSTOMER);
+
+            p.setString(1, searchID);
+            ResultSet result = p.executeQuery();
+
             if (result.next()) {
                 String id = result.getString("customer_id");
                 String firstName = result.getString("first_name");
@@ -112,12 +128,13 @@ public class DatabaseManager {
                 String genderStr = result.getString("gender");
                 char gender = (genderStr == null) ? '\0' : genderStr.charAt(0);
 
-                Date birthday = result.getDate("date_of_birth");
-                Date regdate = result.getDate("date_of_registration");
+                LocalDate birthday = toLocalDate(result.getDate("date_of_birth"));
+                LocalDate regdate = toLocalDate(result.getDate("date_of_registration"));
                 String phone = result.getString("customer_phone");
                 String email = result.getString("customer_email");
 
-                return new Customer(id, firstName, lastName, gender, birthday, regdate, phone, email);
+                return new Customer(id, firstName, lastName, gender,
+                        birthday, regdate, phone, email);
             }
             return null;
         } catch (SQLException ex) {
@@ -141,24 +158,25 @@ public class DatabaseManager {
         }
 
         try {
-            PreparedStatement p = connection.prepareStatement(SQLStrings.SQL_INSERT_CUSTOMER);
+            PreparedStatement p = connection.prepareStatement(
+                    SQLStrings.SQL_INSERT_CUSTOMER);
             // TODO: test insert customer
 
-            p.setString(1, c.getId());
+            p.setString(1, c.getID());
             p.setString(2, c.getFirstName());
             p.setString(3, c.getLastName());
             if (c.getGender() == '\0') {
-                p.setNull(4, java.sql.Types.CHAR);
+                p.setNull(4, Types.CHAR);
             } else {
                 p.setString(4, String.valueOf(c.getGender()));
             }
-            java.util.Date birthDay = c.getBirthDay();
+            LocalDate birthDay = c.getBirthDay();
             if (birthDay == null) {
-                p.setNull(5, java.sql.Types.DATE);
+                p.setNull(5, Types.DATE);
             } else {
-                p.setDate(5, new java.sql.Date(c.getBirthDay().getTime()));
+                p.setDate(5, Date.valueOf(birthDay));
             }
-            p.setDate(6, new java.sql.Date(c.getRegisteredDate().getTime()));
+            p.setDate(6, Date.valueOf(c.getRegisteredDate()));
             p.setString(7, c.getPhoneNumber());
             p.setString(8, c.getEmailAddress());
 
@@ -186,31 +204,31 @@ public class DatabaseManager {
         }
 
         try {
-            PreparedStatement p = connection.prepareStatement(SQLStrings.SQL_UPDATE_CUSTOMER);
+            PreparedStatement p = connection.prepareStatement(
+                    SQLStrings.SQL_UPDATE_CUSTOMER);
             // TODO: test update customer
 
             p.setString(1, c.getFirstName());
             p.setString(2, c.getLastName());
             if (c.getGender() == '\0') {
-                p.setNull(3, java.sql.Types.CHAR);
+                p.setNull(3, Types.CHAR);
             } else {
                 p.setString(3, String.valueOf(c.getGender()));
             }
-            java.util.Date birthDay = c.getBirthDay();
+            LocalDate birthDay = c.getBirthDay();
             if (birthDay == null) {
-                p.setNull(4, java.sql.Types.DATE);
+                p.setNull(4, Types.DATE);
             } else {
-                p.setDate(4, new java.sql.Date(c.getBirthDay().getTime()));
+                p.setDate(4, Date.valueOf(birthDay));
             }
-            p.setDate(5, new java.sql.Date(c.getRegisteredDate().getTime()));
+            p.setDate(5, Date.valueOf(c.getRegisteredDate()));
             p.setString(6, c.getPhoneNumber());
             p.setString(7, c.getEmailAddress());
 
-            p.setString(8, c.getId());
-            
+            p.setString(8, c.getID());
 
             int rowCount = p.executeUpdate();
-            System.out.println("Update customer (id = " + c.getId() + ") successful. Returned " + rowCount);
+            System.out.println("Update customer (id = " + c.getID() + ") successful. Returned " + rowCount);
             return true;
         } catch (SQLException ex) {
             System.err.println(ex);
@@ -219,140 +237,54 @@ public class DatabaseManager {
         }
     }
 
-    public String getNextCustomerID() {
-        try {
-            ResultSet result = statement.executeQuery(SQLStrings.SQL_CUSTOMER_ID_LATEST);
-            if (result.next()) {
-                String latestID = result.getString("customer_id");
-                // try getting the number part of the ID, add one, and create a new ID
-                // assuming the ID is in 'C0000000' format
-                int numNextID = Integer.parseInt(latestID.substring(1)) + 1;
-                return String.format("C%07d", numNextID);
-            } else {
-                return null;
-            }
-        } catch (SQLException | NumberFormatException ex) {
-            System.err.println(ex);
-            System.err.flush();
-            return null;
-        }
+    public String suggestNextCustomerID() {
+        return DatabaseUtilities.suggestNextID(statement,
+                SQLStrings.SQL_CUSTOMER_ID_LATEST, "C", 8);
     }
     //</editor-fold>
 
     //<editor-fold desc="Database Management: Products / Categories / Pricing">
-    public boolean insertProduct() {
+    public Product queryProduct(String searchID) {
+        return null;
+    }
+
+    public boolean insertProduct(Product p) {
         return false;
+    }
+
+    public boolean updateProduct(Product p) {
+        return false;
+    }
+
+    public String suggestNextProductID() {
+        return DatabaseUtilities.suggestNextID(statement,
+                SQLStrings.SQL_PRODUCT_ID_LATEST, "P", 8);
     }
     //</editor-fold>
 
     //<editor-fold desc="Database Management: Suppliers">
-    public boolean insertSupplier() {
+    public Supplier querySupplier(String searchID) {
+        return null;
+    }
+
+    public boolean insertSupplier(Supplier s) {
         return false;
+    }
+
+    public boolean updateSupplier(Supplier s) {
+        return false;
+    }
+
+    public String suggestNextSupplierID() {
+        return DatabaseUtilities.suggestNextID(statement,
+                SQLStrings.SQL_SUPPLIER_ID_LATEST, "S", 8);
     }
     //</editor-fold>
 
     //<editor-fold desc="Database Management: Sale Records">
-    public boolean insertSaleRecord() {
+    public boolean insertSaleRecord(ShoppingList shoppingList) {
         return false;
     }
     //</editor-fold>
 
-    //<editor-fold desc="Static Methods / Utilities">
-    /**
-     * Query the given database and return the first column of the result as a
-     * list of strings.
-     *
-     * @param database The database to be queried.
-     * @param sql The SQL query (SELECT) command.
-     * @return First column of the query result.
-     * @throws SQLException
-     */
-    public static List<String> querySingleColumnToList(DatabaseManager database, String sql)
-            throws SQLException {
-        return querySingleColumnToList(database.statement, sql);
-    }
-
-    /**
-     * Query using the given Statement and return the first column of the result
-     * as a list of strings.
-     *
-     * @param statement The Statement object connected to the database.
-     * @param sql The SQL query (SELECT) command.
-     * @return First column of the query result.
-     * @throws SQLException
-     */
-    public static List<String> querySingleColumnToList(Statement statement, String sql)
-            throws SQLException {
-        List<String> list = new ArrayList<>();
-        ResultSet result = statement.executeQuery(sql);
-        while (result.next()) {
-            list.add(result.getString(1));
-        }
-        return list;
-    }
-
-    /**
-     * Query the given database and display the result in a GUI table window.
-     *
-     * @param database The database to be queried.
-     * @param sql The SQL query (SELECT) command.
-     * @throws SQLException
-     */
-    public static void queryToTable(DatabaseManager database, String sql)
-            throws SQLException {
-        queryToTable(database.statement, sql);
-    }
-
-    /**
-     * Query using the given Statement and display the result in a GUI table
-     * window.
-     *
-     * @param statement The Statement object connected to the database.
-     * @param sql The SQL query (SELECT) command.
-     * @throws SQLException
-     */
-    public static void queryToTable(Statement statement, String sql)
-            throws SQLException {
-//        System.out.println("Begin query: " + sql);
-        ResultSet result = statement.executeQuery(sql);
-        GenericTableWindow gui
-                = new GenericTableWindow(buildTableModel(result));
-        gui.setTitle(sql);
-        gui.setVisible(true);
-    }
-
-    /**
-     * Create a TableModel from a database query result.
-     *
-     * @param resultSet Query result from a database.
-     * @return a TableModel for displaying the data in a JTable.
-     * @throws SQLException
-     */
-    public static TableModel buildTableModel(ResultSet resultSet)
-            throws SQLException {
-        DefaultTableModel model = new DefaultTableModel();
-
-        ResultSetMetaData meta = resultSet.getMetaData();
-        int columnCount = meta.getColumnCount();
-
-        for (int i = 0; i < columnCount; i++) {
-            model.addColumn(meta.getColumnLabel(i + 1));
-        }
-
-        while (resultSet.next()) {
-            Object[] rowData = new Object[columnCount];
-            for (int i = 0; i < columnCount; i++) {
-                rowData[i] = resultSet.getObject(i + 1);
-            }
-            model.addRow(rowData);
-        }
-
-        return model;
-    }
-
-    //</editor-fold>
-    
-    public interface DatabaseChangesListener {
-        
-    }
 }

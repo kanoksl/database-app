@@ -3,10 +3,15 @@ package database.test.gui;
 import database.test.DatabaseManager;
 import database.test.data.Customer;
 import database.test.gui.Const.InfoWindowModes;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.time.LocalDate;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JDialog;
+import javax.swing.SwingUtilities;
 
 public class EditCustomerInfoWindow
         extends javax.swing.JFrame {
@@ -56,6 +61,8 @@ public class EditCustomerInfoWindow
                 chkUnknownBirthday.setEnabled(true);
                 tbxPhone.setEnabled(true);
                 tbxEmail.setEnabled(true);
+
+                tabbedPane.remove(1); // hide the shopping history
                 break;
             case Editable:
                 headerLabel.setText(Const.ECIW_HEADER_EDIT);
@@ -77,6 +84,8 @@ public class EditCustomerInfoWindow
                 chkUnknownBirthday.setEnabled(true);
                 tbxPhone.setEnabled(true);
                 tbxEmail.setEnabled(true);
+
+                tabbedPane.remove(1); // hide the shopping history
                 break;
             case ViewOnly:
                 headerLabel.setText(Const.ECIW_HEADER_VIEW);
@@ -113,8 +122,8 @@ public class EditCustomerInfoWindow
     }
 
     public void showCustomerInfo() {
-        tbxCustomerID.setText(customer.getId());
-        lblRegisteredDate.setText(customer.getRegisterationInfo());
+        tbxCustomerID.setText(customer.getID());
+        lblRegisteredDate.setText(customer.getRegistrationInfo());
 
         tbxFirstName.setText(customer.getFirstName());
         tbxLastName.setText(customer.getLastName());
@@ -133,7 +142,7 @@ public class EditCustomerInfoWindow
     }
 
     public void collectFormData() {
-        customer.setId(tbxCustomerID.getText());
+        customer.setID(tbxCustomerID.getText());
         customer.setFirstName(tbxFirstName.getText());
         customer.setLastName(tbxLastName.getText());
         customer.setGender(rdbMale.isSelected() ? 'M' : rdbFemale.isSelected() ? 'F' : '\0');
@@ -153,6 +162,12 @@ public class EditCustomerInfoWindow
                 break;
             default:
                 break;
+        }
+    }
+
+    public void updateShoppingHistory() {
+        if (chkHistoryFiltering.isSelected()) {
+
         }
     }
 
@@ -199,42 +214,56 @@ public class EditCustomerInfoWindow
         cbxBirthdayDay.setSelectedIndex(Math.min(currentSelect, dayCount - 1));
     }
 
-    private Date getBirthDayFromGUI() {
+    private LocalDate getBirthDayFromGUI() {
         if (chkUnknownBirthday.isSelected()) {
             return null;
         }
         int year = Integer.parseInt(cbxBirthdayYear.getSelectedItem().toString());
-        int month = cbxBirthdayMonth.getSelectedIndex();
+        int month = cbxBirthdayMonth.getSelectedIndex() + 1;
         int day = cbxBirthdayDay.getSelectedIndex() + 1;
-        Calendar cal = new GregorianCalendar(year, month, day);
-        return cal.getTime();
+        return LocalDate.of(year, month, day);
     }
 
-    private void setBirthDayToGUI(Date date) {
+    private void setBirthDayToGUI(LocalDate date) {
         if (date == null) {
             chkUnknownBirthday.setSelected(true);
             return;
         }
         chkUnknownBirthday.setSelected(false);
-        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
-        int year = date.getYear() + 1900;
-        int month = date.getMonth();
-        int day = date.getDate();
+        int currentYear = LocalDate.now().getYear();
+        int year = date.getYear();
+        int month = date.getMonthValue();
+        int day = date.getDayOfMonth();
         cbxBirthdayDay.setSelectedIndex(day - 1);
-        cbxBirthdayMonth.setSelectedIndex(month);
+        cbxBirthdayMonth.setSelectedIndex(month - 1);
         cbxBirthdayYear.setSelectedIndex(currentYear - year);
     }
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="GUI Code: Custom Initialization and Methods">
     private void setColorTheme() {
-
+        tableSale.setSelectionBackground(Const.COLOR_HIGHLIGHT_BG);
+        tableSale.setSelectionForeground(Const.COLOR_HIGHLIGHT_FG);
+        tableSale.setGridColor(Const.COLOR_TABLE_GRID);
+        tableDetails.setSelectionBackground(Const.COLOR_HIGHLIGHT_BG);
+        tableDetails.setSelectionForeground(Const.COLOR_HIGHLIGHT_FG);
+        tableDetails.setGridColor(Const.COLOR_TABLE_GRID);
     }
 
     private void initListeners() {
         btnSave.addActionListener((ActionEvent) -> {
-            this.save();
+//            this.save();
         });
+
+        //<editor-fold desc="Shopping History Components">
+        chkHistoryFiltering.addActionListener((ActionEvent) -> {
+            tbxDateFrom.setEnabled(chkHistoryFiltering.isSelected());
+            tbxDateTo.setEnabled(chkHistoryFiltering.isSelected());
+        });
+        btnFilterRefresh.addActionListener((ActionEvent) -> {
+            this.updateShoppingHistory();
+        });
+        //</editor-fold>
     }
 
     //</editor-fold>
@@ -699,8 +728,8 @@ public class EditCustomerInfoWindow
 
         panel_top.setLayout(new java.awt.GridBagLayout());
 
-        tbxDateFrom.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(new java.text.SimpleDateFormat("yyyy/MM/dd"))));
-        tbxDateFrom.setText("2016/01/01");
+        tbxDateFrom.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(new java.text.SimpleDateFormat("yyyy-MM-dd"))));
+        tbxDateFrom.setText("2016-01-01");
         tbxDateFrom.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
         tbxDateFrom.setPreferredSize(new java.awt.Dimension(80, 22));
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -727,8 +756,8 @@ public class EditCustomerInfoWindow
         gridBagConstraints.insets = new java.awt.Insets(4, 16, 0, 4);
         panel_top.add(l_filterTo, gridBagConstraints);
 
-        tbxDateTo.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(new java.text.SimpleDateFormat("yyyy/MM/dd"))));
-        tbxDateTo.setText("2016/01/01");
+        tbxDateTo.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(new java.text.SimpleDateFormat("yyyy-MM-dd"))));
+        tbxDateTo.setText("2016-02-01");
         tbxDateTo.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
         tbxDateTo.setPreferredSize(new java.awt.Dimension(80, 22));
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -872,4 +901,71 @@ public class EditCustomerInfoWindow
     private javax.swing.JFormattedTextField tbxPhone;
     // End of variables declaration//GEN-END:variables
     //</editor-fold>
+
+    /**
+     * Show a dialog for registering a new customer.
+     *
+     * @param owner The window that calls the dialog.
+     * @return A newly created Customer. Null if the user canceled.
+     */
+    public static Customer showNewCustomerDialog(Frame owner) {
+        EditCustomerInfoWindow win = new EditCustomerInfoWindow();
+        win.setMode(InfoWindowModes.AddNew);
+
+        win.customer = Customer.createNewCustomer("Hello");
+        win.showCustomerInfo();
+
+        win.btnSave.addActionListener((ActionEvent) -> {
+            win.collectFormData();
+            SwingUtilities.getWindowAncestor(win.btnSave).dispose();
+        });
+        win.btnCancel.addActionListener((ActionEvent) -> {
+            win.customer = null;
+            SwingUtilities.getWindowAncestor(win.btnSave).dispose();
+        });
+
+        JDialog dia = createDialog(owner,
+                win.getContentPane(), win.getPreferredSize());
+
+        dia.pack();
+        dia.setVisible(true);
+        dia.dispose();
+
+        return win.customer;
+    }
+
+    /**
+     * Show a dialog for editing info of an existing customer.
+     *
+     * @param owner The window that calls the dialog.
+     * @param customer The Customer to be edited.
+     * @return The same Customer instance whether the user save their edits or
+     * not. Null if the user deleted the Customer data.
+     */
+    public static Customer showEditCustomerDialog(Frame owner, Customer customer) {
+        return null;
+    }
+
+    /**
+     * Show a dialog that allows the user to view info of an existing customer,
+     * including their shopping history.
+     *
+     * @param owner The window that calls the dialog.
+     * @param customer The Customer to be viewed.
+     */
+    public static void showViewCustomerDialog(Frame owner, Customer customer) {
+
+    }
+
+    private static JDialog createDialog(Frame owner, Component content, Dimension size) {
+        JDialog dia = new JDialog(owner, "", true);
+        dia.getContentPane().add(content);
+        dia.setSize(size);
+        dia.setMaximumSize(size);
+        dia.setMinimumSize(size);
+        dia.setPreferredSize(size);
+        dia.setResizable(false);
+        dia.setLocationRelativeTo(null);
+        return dia;
+    }
 }

@@ -26,7 +26,7 @@ public class ApplicationMain
         // displays the login window first
         window_debug.setVisible(true);
         window_login.setVisible(true);
-        
+
         // automate login
         window_login.submit();
     }

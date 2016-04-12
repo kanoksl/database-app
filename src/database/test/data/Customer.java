@@ -1,29 +1,35 @@
 package database.test.data;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 
-/**
- *
- * @author Kanoksilp
- */
 public class Customer {
-
-    public static final SimpleDateFormat SQL_DATE_FORMAT = new SimpleDateFormat("YYYY-MM-dd");
 
     private String id;
     private String firstName;
     private String lastName;
     private char gender;
-    private Date birthDay;
-    private Date registeredDate;
+    private LocalDate birthDay;
+    private LocalDate registeredDate;
     private String phoneNumber;
     private String emailAddress;
 
-    // new Customer from existing data
+    /**
+     * Create a new Customer object from existing data.
+     *
+     * @param id CHAR(8), NOT NULL
+     * @param firstName VARCHAR(32), NOT NULL
+     * @param lastName VARCHAR(32)
+     * @param gender CHAR(1): 'M', 'F', NULL
+     * @param birthDay DATE
+     * @param registeredDate DATE, NOT NULL
+     * @param phoneNumber VARCHAR(10)
+     * @param emailAddress VARCHAR(255)
+     */
     public Customer(String id, String firstName, String lastName, char gender,
-            Date birthDay, Date registeredDate, String phoneNumber, String emailAddress) {
+            LocalDate birthDay, LocalDate registeredDate,
+            String phoneNumber, String emailAddress) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -34,12 +40,12 @@ public class Customer {
         this.emailAddress = emailAddress;
     }
 
-    //<editor-fold defaultstate="collapsed" desc="Standard Getters/Setters">
-    public String getId() {
+    //<editor-fold defaultstate="collapsed" desc="Getters/Setters: Standard (With Some Input Validation)">
+    public String getID() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setID(String id) {
         this.id = id;
     }
 
@@ -79,19 +85,19 @@ public class Customer {
         }
     }
 
-    public Date getBirthDay() {
+    public LocalDate getBirthDay() {
         return birthDay;
     }
 
-    public void setBirthDay(Date birthDay) {
+    public void setBirthDay(LocalDate birthDay) {
         this.birthDay = birthDay;
     }
 
-    public Date getRegisteredDate() {
+    public LocalDate getRegisteredDate() {
         return registeredDate;
     }
 
-    public void setRegisteredDate(Date registeredDate) {
+    public void setRegisteredDate(LocalDate registeredDate) {
         this.registeredDate = registeredDate;
     }
 
@@ -112,7 +118,12 @@ public class Customer {
     }
 
     //</editor-fold>
-    //<editor-fold defaultstate="collapsed" desc="Additional Getters (With Calculation/Formatting)">
+    //<editor-fold defaultstate="collapsed" desc="Getters/Setters: Additional (With Calculation/Formatting)">
+    /**
+     * Get the full name of the customer.
+     *
+     * @return The first name and last name, with gender prefix.
+     */
     public String getDisplayName() {
         String prefix = (gender == 'M') ? "Mr. " : (gender == 'F') ? "Ms. " : "";
         if (lastName == null) {
@@ -123,35 +134,48 @@ public class Customer {
     }
 
     public long getDaysSinceRegistered() {
-        long today = Calendar.getInstance().getTime().getTime();
-        long regDate = registeredDate.getTime();
-        long diffTime = today - regDate;
-        long diffDays = diffTime / (1000 * 60 * 60 * 24);
-
-        return diffDays;
+        return ChronoUnit.DAYS.between(registeredDate, LocalDate.now());
     }
 
-    public String getRegisterationInfo() {
-        SimpleDateFormat sdf = new SimpleDateFormat("MMMM d, YYYY");
+    /**
+     * Get the formatted registration date and the days since registered.
+     *
+     * @return Example: "Registered: January 1, 2016 (100 days ago)"
+     */
+    public String getRegistrationInfo() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM d, YYYY");
         long days = getDaysSinceRegistered();
-        return String.format("Registered: %s (%s)", sdf.format(registeredDate),
+        return String.format("Registered: %s (%s)", registeredDate.format(formatter),
                 (days == 0) ? "today" : days + " days ago");
     }
     //</editor-fold>
-
-    public String getSQLFormattedBirthDay() {
-        return SQL_DATE_FORMAT.format(birthDay);
-    }
-
-    public String getSQLFormattedRegisteredDate() {
-        return SQL_DATE_FORMAT.format(registeredDate);
-    }
 
     public boolean isValid() {
         return (id != null) && (firstName != null);
     }
 
+    @Override
+    public String toString() {
+        return "Customer {"
+                + "\n  customer_id = " + id
+                + ", \n  firstName = " + firstName
+                + ", \n  lastName = " + lastName
+                + ", \n  gender = " + gender
+                + ", \n  birthDay = " + birthDay
+                + ", \n  registeredDate = " + registeredDate
+                + ", \n  phoneNumber = " + phoneNumber
+                + ", \n  emailAddress = " + emailAddress
+                + "\n}";
+    }
+
+    /**
+     * Create a new Customer object without any data except the given ID and
+     * registration date (automatically set to now).
+     *
+     * @param id CHAR(8) NOT NULL
+     * @return A Customer with all other fields as null.
+     */
     public static Customer createNewCustomer(String id) {
-        return new Customer(id, null, null, '\0', null, Calendar.getInstance().getTime(), null, null);
+        return new Customer(id, null, null, '\0', null, LocalDate.now(), null, null);
     }
 }

@@ -1,5 +1,7 @@
 package database.test.data;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
@@ -7,13 +9,19 @@ import javax.swing.table.TableModel;
 
 public class ShoppingList {
 
+    private Customer customer;
     private final List<LineItem> itemList = new ArrayList<>();
 
     private double totalPrice = 0;
     private int totalQuantity = 0;
+    private double discountPercent = 0;
+    private LocalDate checkoutDate = null;
+    private LocalTime checkoutTime = null;
 
+    //<editor-fold desc="List Methods (Add, Remove, Get, Clear)">
     /**
-     * Query for the given product ID and add to the shopping list if found.
+     * Query the database for the given product ID and add to the shopping list
+     * if found.
      *
      * @param productID Product to be added.
      * @param quantity Amount to be added.
@@ -59,7 +67,7 @@ public class ShoppingList {
         return itemList.indexOf(newLine);
     }
 
-    public void removeItem(int idx) {
+    public void removeItemAt(int idx) {
         LineItem line = itemList.get(idx);
         totalQuantity -= line.quantity;
         totalPrice -= line.subtotal();
@@ -69,15 +77,7 @@ public class ShoppingList {
     public LineItem getItemAt(int idx) {
         return itemList.get(idx);
     }
-    
-    public double getTotalPrice() {
-        return totalPrice;
-    }
 
-    public int getTotalQuantity() {
-        return totalQuantity;
-    }
-    
     public boolean isEmpty() {
         return itemList.isEmpty();
     }
@@ -87,7 +87,62 @@ public class ShoppingList {
         totalPrice = 0;
         totalQuantity = 0;
     }
+    //</editor-fold>
 
+    //<editor-fold defaultstate="collapsed" desc="Getters/Setters: Customer, Checkout DateTime">
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
+    public LocalDate getCheckoutDate() {
+        return checkoutDate;
+    }
+
+    public void setCheckoutDate(LocalDate checkoutDate) {
+        this.checkoutDate = checkoutDate;
+    }
+
+    public LocalTime getCheckoutTime() {
+        return checkoutTime;
+    }
+
+    public void setCheckoutTime(LocalTime checkoutTime) {
+        this.checkoutTime = checkoutTime;
+    }
+
+    //</editor-fold>
+    //<editor-fold defaultstate="collapsed" desc="Getters/Setters: Price-Related Fields">
+    public double getTotalPrice() {
+        return totalPrice;
+    }
+
+    public int getTotalQuantity() {
+        return totalQuantity;
+    }
+
+    public double getDiscountPercent() {
+        return discountPercent;
+    }
+
+    public void setDiscountPercent(double discountPercent) {
+        this.discountPercent = discountPercent;
+    }
+
+    public double getDiscountAmount() {
+        double amount = discountPercent * 0.01 * totalPrice;
+        return ((double) Math.round(amount * 4)) / 4;
+    }
+
+    public double getTotalAfterDiscount() {
+        return totalPrice - getDiscountAmount();
+    }
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="GUI Code: Table Model">
     /**
      * Get a model that represent the data in the shopping list.
      *
@@ -133,6 +188,18 @@ public class ShoppingList {
         };
         return model;
     }
+    //</editor-fold>
+
+    @Override
+    public String toString() {
+        return "ShoppingList {"
+                + "\n  customer_id = " + customer.getID()
+                + ", \n  itemList = " + itemList
+                + ", \n  totalPrice = " + totalPrice
+                + ", \n  totalQuantity = " + totalQuantity
+                + ", \n  discountPercent = " + discountPercent
+                + "\n}";
+    }
 
     public static class LineItem {
 
@@ -171,6 +238,11 @@ public class ShoppingList {
 
         public String getSubtotalString() {
             return String.format("%,.2f ", unitPrice * quantity);
+        }
+
+        @Override
+        public String toString() {
+            return "LineItem(" + product_id + ", " + quantity + ")";
         }
 
     }

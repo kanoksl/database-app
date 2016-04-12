@@ -1,16 +1,23 @@
 package database.test.gui;
 
 import database.test.DatabaseManager;
+import database.test.DatabaseUtilities;
 import database.test.data.Customer;
 import database.test.gui.component.TextLineNumber;
-import java.sql.*;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 import javax.swing.JTextArea;
 
-public class DebugWindow 
+public class DebugWindow
         extends javax.swing.JFrame {
 
     private DatabaseManager dbmanager = null;
-    
+
     private Connection connection = null;
     private Statement statement = null;
 
@@ -28,10 +35,10 @@ public class DebugWindow
         txtArea_log_scrollPane.setRowHeaderView(lineNumber3);
 
         splitPane.setDividerLocation(0.5);
-        
+
         other_btnTestInsertCustomer.addActionListener((ActionEvent) -> {
-            Customer c = Customer.createNewCustomer(dbmanager.getNextCustomerID());
-            System.out.println("c.id = " + c.getId());
+            Customer c = Customer.createNewCustomer(dbmanager.suggestNextCustomerID());
+            System.out.println("c.id = " + c.getID());
             c.setFirstName("FIRSTNAME");
             dbmanager.insertCustomer(c);
         });
@@ -64,11 +71,13 @@ public class DebugWindow
         } catch (ClassNotFoundException | SQLException ex) {
             this.log(txtArea_connection, "Error connecting to the database:\n\t" + ex.toString());
         }
-        
+
+        this.log(txtArea_connection, "Also connecting using DatabaseManager...");
         dbmanager = new DatabaseManager(hostport.substring(0, hostport.indexOf(":")), hostport.substring(hostport.indexOf(":") + 1), database);
         dbmanager.setUsername(username);
         dbmanager.setPassword(password);
-        dbmanager.connect();
+        boolean success = dbmanager.connect();
+        this.log(txtArea_connection, "  Connection successful ? " + success);
     }
 
     private void disconnectDatabase() {
@@ -123,7 +132,7 @@ public class DebugWindow
         String sql = txtArea_sql.getText();
 
         try {
-            DatabaseManager.queryToTable(statement, sql);
+            DatabaseUtilities.queryToTable(statement, sql);
             this.log(txtArea_log, "Query to table successful for the command:"
                     + "\n--------------------\n"
                     + sql
