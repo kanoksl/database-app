@@ -41,6 +41,10 @@ public class Const {
     public static final String ECIW_HEADER_ADD = "Register New Customer";
     public static final String ECIW_HEADER_EDIT = "Edit Customer Information";
     public static final String ECIW_HEADER_VIEW = "View Customer Information";
+    
+    // EditCategoryInfoWindow (ECATIW)
+    public static final String ECATIW_HEADER_ADD = "New Category";
+    public static final String ECATIW_HEADER_EDIT = "Edit Category";
 
     // JOptionPane Messages
     public static final String MESSAGE_POS_CONFIRM_LOGOUT

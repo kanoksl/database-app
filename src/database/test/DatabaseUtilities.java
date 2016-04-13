@@ -70,7 +70,7 @@ public class DatabaseUtilities {
      * @param sql The SQL query (SELECT) command.
      * @throws SQLException
      */
-    public static void queryToTable(Statement statement, String sql)
+    public static void queryToTableWindow(Statement statement, String sql)
             throws SQLException {
 //        System.out.println("Begin query: " + sql);
         ResultSet result = statement.executeQuery(sql);
@@ -89,7 +89,16 @@ public class DatabaseUtilities {
      */
     public static TableModel buildTableModel(ResultSet resultSet)
             throws SQLException {
-        DefaultTableModel model = new DefaultTableModel();
+        if (resultSet == null) {
+            return null;
+        }
+
+        DefaultTableModel model = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; //all cells are uneditable
+            }
+        };
 
         ResultSetMetaData meta = resultSet.getMetaData();
         int columnCount = meta.getColumnCount();

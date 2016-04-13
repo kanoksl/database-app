@@ -236,10 +236,12 @@ public class PointOfSaleWindow
 
     public void showNewCustomerWindow() {
         Customer c = EditCustomerInfoWindow.showNewCustomerDialog(this);
-        this.populateComboBoxData();
-        chkRegisteredCustomer.setSelected(true);
-        this.toggleRegisteredCustomer();
-        cbxCustomerID.setSelectedItem(c.getID());
+        if (c != null) {
+            this.populateComboBoxData();
+            chkRegisteredCustomer.setSelected(true);
+            this.toggleRegisteredCustomer();
+            cbxCustomerID.setSelectedItem(c.getID());
+        }
     }
 
     public void showManageCustomersWindow() {
@@ -251,7 +253,9 @@ public class PointOfSaleWindow
     }
 
     public void showManageCategoriesWindow() {
-
+        ManageCategoriesWindow win = new ManageCategoriesWindow();
+        win.refresh();
+        win.setVisible(true);
     }
 
     public void showManageSuppliersWindow() {

@@ -1,27 +1,169 @@
 package database.test.gui;
 
+import database.test.ApplicationMain;
+import database.test.DatabaseManager;
+import java.sql.SQLException;
+
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableColumnModel;
+import javax.swing.table.TableModel;
+
 public class ManageCategoriesWindow
         extends javax.swing.JFrame {
 
-    /**
-     * Creates new form EditCustomerInfoWindow.
-     */
+    private static DatabaseManager database = ApplicationMain.getDatabaseInstance();
+
     public ManageCategoriesWindow() {
         this.initComponents();
         this.initListeners();
-        this.setLocationRelativeTo(null);
         this.setColorTheme();
 
-        this.setTitle("" + " - " + Const.APP_TITLE);
+        this.setTitle("Manage Product Categories - " + Const.APP_TITLE);
+        this.setLocationRelativeTo(null);
+    }
+
+    private void categoryAdd() {
+        String[] cat = EditCategoryInfoWindow.showNewCategoryDialog(this);
+        if (cat[0] != null) {
+            this.refresh();
+            // select the added category
+            for (int i = 0; i < tableCategories.getRowCount(); i++) {
+                if (cat[0].equals(tableCategories.getValueAt(i, 0))) {
+                    tableCategories.setRowSelectionInterval(i, i);
+                    return;
+                }
+            }
+        }
+    }
+
+    private void categoryRename() {
+        int row = tableCategories.getSelectedRow();
+        String id = tableCategories.getValueAt(row, 0).toString();
+        String name = tableCategories.getValueAt(row, 1).toString();
+        String[] cat = EditCategoryInfoWindow.showEditCategoryDialog(this, id, name);
+        if (cat[0] != null) {
+            this.refresh();
+            // select the added category
+            if (cat[0].equals(id)) {
+                tableCategories.setRowSelectionInterval(row, row);
+                return;
+            }
+            for (int i = 0; i < tableCategories.getRowCount(); i++) {
+                if (cat[0].equals(tableCategories.getValueAt(i, 0))) {
+                    tableCategories.setRowSelectionInterval(i, i);
+                    return;
+                }
+            }
+        }
+    }
+
+    private void categoryDelete() {
+        boolean deleted = this.databaseDeleteCategory();
+        if (deleted) {
+            this.refresh();
+        }
+    }
+
+    private boolean databaseDeleteCategory() {
+        int row = tableCategories.getSelectedRow();
+        String id = tableCategories.getValueAt(row, 0).toString();
+        String name = tableCategories.getValueAt(row, 1).toString();
+
+        boolean result = false;
+        int proceed = JOptionPane.showConfirmDialog(this,
+                "Delete the following category from the database?\n>> "
+                + id + " - " + name + "\n\n(The products in the category will not be deleted.)",
+                "Manage Categories", JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.QUESTION_MESSAGE, null);
+        if (proceed == JOptionPane.OK_OPTION) {
+            try {
+                database.deleteCategory(id); // actual delete operation
+                JOptionPane.showMessageDialog(this,
+                        "The category was successfully deleted.",
+                        "Manage Categories", JOptionPane.INFORMATION_MESSAGE);
+                result = true;
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(this,
+                        "Error deleting the category:\n" + ex.getMessage(),
+                        "Manage Categories", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        return result;
     }
 
     //<editor-fold defaultstate="collapsed" desc="GUI Code: Custom Initialization and Methods">
-    private void setColorTheme() {
+    /**
+     * Query the category list from the database, and update the table model and
+     * also its UI.
+     */
+    public void refresh() {
+        TableModel model = database.queryCategoryOverview();
+        tableCategories.setModel(model);
 
+        // setting column headers and sizes
+        tableCategories.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        final int width_id = 90, width_numbers = 90;
+        TableColumnModel colm = tableCategories.getColumnModel();
+
+        colm.getColumn(0).setHeaderValue("Category ID");
+        colm.getColumn(0).setMinWidth(width_id);
+        colm.getColumn(0).setMaxWidth(width_id);
+        colm.getColumn(0).setResizable(false);
+
+        colm.getColumn(1).setHeaderValue("Category Name");
+
+        colm.getColumn(2).setHeaderValue("Product Count");
+        colm.getColumn(2).setMinWidth(width_numbers);
+        colm.getColumn(2).setMaxWidth(width_numbers);
+        colm.getColumn(2).setResizable(false);
+
+        colm.getColumn(3).setHeaderValue("Stock Quantity");
+        colm.getColumn(3).setMinWidth(width_numbers);
+        colm.getColumn(3).setMaxWidth(width_numbers);
+        colm.getColumn(3).setResizable(false);
+
+        // set alignments
+        DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
+        rightRenderer.setHorizontalAlignment(JLabel.RIGHT);
+        colm.getColumn(2).setCellRenderer(rightRenderer);
+        colm.getColumn(3).setCellRenderer(rightRenderer);
+
+        tableCategories.updateUI();
+
+        // select the last row
+        int rowIndex = Math.max(0, tableCategories.getRowCount() - 1);
+        tableCategories.setRowSelectionInterval(rowIndex, rowIndex);
+    }
+
+    private void setColorTheme() {
+        tableCategories.setSelectionBackground(Const.COLOR_HIGHLIGHT_BG);
+        tableCategories.setSelectionForeground(Const.COLOR_HIGHLIGHT_FG);
+        tableCategories.setGridColor(Const.COLOR_TABLE_GRID);
+        tableCategories.setFont(Const.FONT_DEFAULT_12);
+        tableCategories.getTableHeader().setFont(Const.FONT_DEFAULT_12);
+        tableCategories.setRowHeight(24);
     }
 
     private void initListeners() {
+        btnNewCategory.addActionListener((ActionEvent) -> {
+            this.categoryAdd();
+        });
+        btnRenameCategory.addActionListener((ActionEvent) -> {
+            this.categoryRename();
+        });
+        btnDeleteCategory.addActionListener((ActionEvent) -> {
+            this.categoryDelete();
+        });
 
+        tableCategories.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
+            boolean selectionNotEmpty = tableCategories.getSelectedRowCount() > 0;
+            btnRenameCategory.setEnabled(selectionNotEmpty);
+            btnDeleteCategory.setEnabled(selectionNotEmpty);
+        });
     }
 
     //</editor-fold>
@@ -82,11 +224,12 @@ public class ManageCategoriesWindow
                 {null, null, null, null}
             },
             new String [] {
-                "Category ID", "Category Name", "Number of Products", "Total Quantity"
+                "Category ID", "Category Name", "Product Count", "Stock Quantity"
             }
         ));
         tableCategories.setGridColor(new java.awt.Color(204, 204, 204));
         tableCategories.setRowHeight(20);
+        tableCategories.setRowSorter(null);
         tableCategories.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         tableCategories_scrollPane.setViewportView(tableCategories);
 

@@ -40,7 +40,7 @@ public class DebugWindow
             Customer c = Customer.createNewCustomer(dbmanager.suggestNextCustomerID());
             System.out.println("c.id = " + c.getID());
             c.setFirstName("FIRSTNAME");
-            dbmanager.insertCustomer(c);
+//            dbmanager.insertCustomer(c);
         });
     }
 
@@ -132,7 +132,7 @@ public class DebugWindow
         String sql = txtArea_sql.getText();
 
         try {
-            DatabaseUtilities.queryToTable(statement, sql);
+            DatabaseUtilities.queryToTableWindow(statement, sql);
             this.log(txtArea_log, "Query to table successful for the command:"
                     + "\n--------------------\n"
                     + sql

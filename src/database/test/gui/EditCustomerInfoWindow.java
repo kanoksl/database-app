@@ -5,13 +5,11 @@ import database.test.DatabaseManager;
 import database.test.data.Customer;
 import database.test.gui.Const.InfoWindowMode;
 
-import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Frame;
+import java.sql.SQLException;
 import java.time.LocalDate;
 
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
@@ -87,55 +85,58 @@ public class EditCustomerInfoWindow
         customer.setGender(rdbMale.isSelected()
                 ? 'M' : rdbFemale.isSelected() ? 'F' : '\0');
         customer.setBirthDay(this.getBirthDayFromGUI());
-        customer.setPhoneNumber(tbxPhone.getText().replace("-", ""));
+        customer.setPhoneNumber(tbxPhone.getText().replace("-", "").replace(" ", ""));
         customer.setEmailAddress(tbxEmail.getText());
     }
 
     //<editor-fold desc="Database: Update Operations (Insert, Update, Delete)">
     private boolean databaseInsertCustomer() {
-        boolean result = database.insertCustomer(customer); // actual insert operation
-        if (result) {
+        try {
+            database.insertCustomer(customer); // actual insert operation
             JOptionPane.showMessageDialog(this,
                     "The new customer was successfully added to the database.",
                     "Register Customer", JOptionPane.INFORMATION_MESSAGE);
-        } else {
+            return true;
+        } catch (SQLException ex) {
             JOptionPane.showMessageDialog(this,
-                    "Error adding the customer to the database.",
+                    "Error adding the customer to the database:\n" + ex.getMessage(),
                     "Register Customer", JOptionPane.ERROR_MESSAGE);
+            return false;
         }
-        return result;
     }
 
     private boolean databaseUpdateCustomer() {
-        boolean result = database.updateCustomer(customer); // actual update operation
-        if (result) {
+        try {
+            database.updateCustomer(customer); // actual update operation
             JOptionPane.showMessageDialog(this,
                     "The customer's information was successfully updated.",
                     "Edit Customer Info", JOptionPane.INFORMATION_MESSAGE);
-        } else {
+            return true;
+        } catch (SQLException ex) {
             JOptionPane.showMessageDialog(this,
-                    "Error updating the customer's information.",
+                    "Error updating the customer's information:\n" + ex.getMessage(),
                     "Edit Customer Info", JOptionPane.ERROR_MESSAGE);
+            return false;
         }
-        return result;
     }
 
     private boolean databaseDeleteCustomer() {
         boolean result = false;
         int proceed = JOptionPane.showConfirmDialog(this,
-                "Delete the following customer's information from the database?\n  "
+                "Delete the following customer's information from the database?\n>> "
                 + customer.getID() + " - " + customer.getDisplayName(),
                 "Edit Customer Info", JOptionPane.OK_CANCEL_OPTION,
                 JOptionPane.QUESTION_MESSAGE, null);
         if (proceed == JOptionPane.OK_OPTION) {
-            result = database.deleteCustomer(customer); // actual delete operation
-            if (result) {
+            try {
+                database.deleteCustomer(customer); // actual delete operation
                 JOptionPane.showMessageDialog(this,
                         "The customer's information was successfully deleted.",
                         "Edit Customer Info", JOptionPane.INFORMATION_MESSAGE);
-            } else {
+                result = true;
+            } catch (SQLException ex) {
                 JOptionPane.showMessageDialog(this,
-                        "Error deleting the customer's information.",
+                        "Error deleting the customer's information:\n" + ex.getMessage(),
                         "Edit Customer Info", JOptionPane.ERROR_MESSAGE);
             }
         }
@@ -235,7 +236,8 @@ public class EditCustomerInfoWindow
         cbxBirthdayDay.setEnabled(true);
         cbxBirthdayMonth.setEnabled(true);
         cbxBirthdayYear.setEnabled(true);
-        chkUnknownBirthday.setEnabled(false);
+        chkUnknownBirthday.setEnabled(true);
+        chkUnknownBirthday.setSelected(false);
         tbxPhone.setEnabled(true);
         tbxEmail.setEnabled(true);
 
@@ -271,7 +273,8 @@ public class EditCustomerInfoWindow
         cbxBirthdayDay.setEnabled(true);
         cbxBirthdayMonth.setEnabled(true);
         cbxBirthdayYear.setEnabled(true);
-        chkUnknownBirthday.setEnabled(false);
+        chkUnknownBirthday.setEnabled(true);
+        chkUnknownBirthday.setSelected(false);
         tbxPhone.setEnabled(true);
         tbxEmail.setEnabled(true);
 
@@ -335,9 +338,15 @@ public class EditCustomerInfoWindow
         tableSale.setSelectionBackground(Const.COLOR_HIGHLIGHT_BG);
         tableSale.setSelectionForeground(Const.COLOR_HIGHLIGHT_FG);
         tableSale.setGridColor(Const.COLOR_TABLE_GRID);
+        tableSale.setFont(Const.FONT_DEFAULT_12);
+        tableSale.getTableHeader().setFont(Const.FONT_DEFAULT_12);
+        tableSale.setRowHeight(20);
         tableDetails.setSelectionBackground(Const.COLOR_HIGHLIGHT_BG);
         tableDetails.setSelectionForeground(Const.COLOR_HIGHLIGHT_FG);
         tableDetails.setGridColor(Const.COLOR_TABLE_GRID);
+        tableDetails.setFont(Const.FONT_DEFAULT_12);
+        tableDetails.getTableHeader().setFont(Const.FONT_DEFAULT_12);
+        tableDetails.setRowHeight(20);
     }
 
     //</editor-fold>
@@ -690,7 +699,9 @@ public class EditCustomerInfoWindow
         } catch (java.text.ParseException ex) {
             ex.printStackTrace();
         }
+        tbxPhone.setFocusLostBehavior(javax.swing.JFormattedTextField.PERSIST);
         tbxPhone.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        tbxPhone.setMaximumSize(new java.awt.Dimension(188, 22));
         tbxPhone.setMinimumSize(new java.awt.Dimension(188, 22));
         tbxPhone.setPreferredSize(new java.awt.Dimension(188, 22));
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -993,8 +1004,10 @@ public class EditCustomerInfoWindow
     public static Customer showNewCustomerDialog(Frame owner) {
         EditCustomerInfoWindow win = new EditCustomerInfoWindow(InfoWindowMode.ADD);
         win.setCustomer(Customer.createNewCustomer(database.suggestNextCustomerID()));
+        win.chkUnknownBirthday.setSelected(false);
 
-        createDialog(owner, win.getContentPane(), win.getPreferredSize());
+        Util.createAndShowDialog(owner, "Customer Information - " + Const.APP_TITLE,
+                win.getContentPane(), win.getPreferredSize());
         System.out.println("showNewCustomerDialog() returning: " + win.customer);
         return win.customer;
     }
@@ -1011,7 +1024,8 @@ public class EditCustomerInfoWindow
         EditCustomerInfoWindow win = new EditCustomerInfoWindow(InfoWindowMode.EDIT);
         win.setCustomer(customer);
 
-        createDialog(owner, win.getContentPane(), win.getPreferredSize());
+        Util.createAndShowDialog(owner, "Customer Information - " + Const.APP_TITLE,
+                win.getContentPane(), win.getPreferredSize());
         System.out.println("showEditCustomerDialog() returning: " + win.customer);
         return win.customer;
     }
@@ -1027,23 +1041,10 @@ public class EditCustomerInfoWindow
         EditCustomerInfoWindow win = new EditCustomerInfoWindow(InfoWindowMode.VIEW);
         win.setCustomer(customer);
 
-        createDialog(owner, win.getContentPane(), win.getPreferredSize());
+        Util.createAndShowDialog(owner, "Customer Information - " + Const.APP_TITLE,
+                win.getContentPane(), win.getPreferredSize());
     }
 
-    private static JDialog createDialog(Frame owner, Component content, Dimension size) {
-        JDialog dia = new JDialog(owner, "Customer Information - " + Const.APP_TITLE, true);
-        dia.getContentPane().add(content);
-        dia.setSize(size);
-        dia.setMaximumSize(size);
-        dia.setMinimumSize(size);
-        dia.setPreferredSize(size);
-        dia.setResizable(false);
-        dia.setLocationRelativeTo(null);
-        dia.pack();
-        dia.setVisible(true);
-        dia.dispose();
-        return dia;
-    }
     //</editor-fold>
 
 }

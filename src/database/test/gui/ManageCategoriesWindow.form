@@ -85,8 +85,8 @@
               <Table columnCount="4" rowCount="4">
                 <Column editable="true" title="Category ID" type="java.lang.Object"/>
                 <Column editable="true" title="Category Name" type="java.lang.Object"/>
-                <Column editable="true" title="Number of Products" type="java.lang.Object"/>
-                <Column editable="true" title="Total Quantity" type="java.lang.Object"/>
+                <Column editable="true" title="Product Count" type="java.lang.Object"/>
+                <Column editable="true" title="Stock Quantity" type="java.lang.Object"/>
               </Table>
             </Property>
             <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
@@ -117,6 +117,9 @@
               <Color blue="cc" green="cc" red="cc" type="rgb"/>
             </Property>
             <Property name="rowHeight" type="int" value="20"/>
+            <Property name="rowSorter" type="javax.swing.RowSorter" editor="org.netbeans.modules.form.ComponentChooserEditor">
+              <ComponentRef name="null"/>
+            </Property>
             <Property name="selectionModel" type="javax.swing.ListSelectionModel" editor="org.netbeans.modules.form.editors2.JTableSelectionModelEditor">
               <JTableSelectionModel selectionMode="0"/>
             </Property>

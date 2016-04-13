@@ -16,7 +16,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.table.TableModel;
 
 public class DatabaseManager {
 
@@ -103,17 +106,11 @@ public class DatabaseManager {
                     SQLStrings.SQL_CUSTOMER_ID_ALL);
         } catch (SQLException ex) {
             System.err.println(ex);
-            return null;
+            return new ArrayList<>(); // return an empty list
         }
     }
 
     public Customer queryCustomer(String searchID) {
-        if (!connected) {
-            System.err.println("Cannot query when the database is not connected.");
-            System.err.flush();
-            return null;
-        }
-
         try {
             PreparedStatement p = connection.prepareStatement(
                     SQLStrings.SQL_SELECT_A_CUSTOMER);
@@ -144,103 +141,72 @@ public class DatabaseManager {
         }
     }
 
-    public boolean insertCustomer(Customer c) {
-        if (!connected) {
-            System.err.println("Cannot insert when the database is not connected.");
-            System.err.flush();
-            return false;
+    public int insertCustomer(Customer c)
+            throws SQLException {
+        PreparedStatement p = connection.prepareStatement(
+                SQLStrings.SQL_INSERT_CUSTOMER);
+        // TODO: test insert customer
+
+        p.setString(1, c.getID());
+        p.setString(2, c.getFirstName());
+        p.setString(3, c.getLastName());
+        if (c.getGender() == '\0') {
+            p.setNull(4, Types.CHAR);
+        } else {
+            p.setString(4, String.valueOf(c.getGender()));
         }
-
-        if (!c.isValid()) {
-            System.err.println("Cannot insert customer without required fields.");
-            System.err.flush();
-            return false;
+        LocalDate birthDay = c.getBirthDay();
+        if (birthDay == null) {
+            p.setNull(5, Types.DATE);
+        } else {
+            p.setDate(5, Date.valueOf(birthDay));
         }
+        p.setDate(6, Date.valueOf(c.getRegisteredDate()));
+        p.setString(7, c.getPhoneNumber());
+        p.setString(8, c.getEmailAddress());
 
-        try {
-            PreparedStatement p = connection.prepareStatement(
-                    SQLStrings.SQL_INSERT_CUSTOMER);
-            // TODO: test insert customer
-
-            p.setString(1, c.getID());
-            p.setString(2, c.getFirstName());
-            p.setString(3, c.getLastName());
-            if (c.getGender() == '\0') {
-                p.setNull(4, Types.CHAR);
-            } else {
-                p.setString(4, String.valueOf(c.getGender()));
-            }
-            LocalDate birthDay = c.getBirthDay();
-            if (birthDay == null) {
-                p.setNull(5, Types.DATE);
-            } else {
-                p.setDate(5, Date.valueOf(birthDay));
-            }
-            p.setDate(6, Date.valueOf(c.getRegisteredDate()));
-            p.setString(7, c.getPhoneNumber());
-            p.setString(8, c.getEmailAddress());
-
-            int rowCount = p.executeUpdate();
-            System.out.println("Insert new customer successful. Returned " + rowCount);
-            return true;
-        } catch (SQLException ex) {
-            System.err.println(ex);
-            System.err.flush();
-            return false;
-        }
+        int rowCount = p.executeUpdate();
+        System.out.println("Insert new customer successful. Returned " + rowCount);
+        return rowCount;
     }
 
-    public boolean updateCustomer(Customer c) {
-        if (!connected) {
-            System.err.println("Cannot update when the database is not connected.");
-            System.err.flush();
-            return false;
+    public int updateCustomer(Customer c)
+            throws SQLException {
+        PreparedStatement p = connection.prepareStatement(
+                SQLStrings.SQL_UPDATE_CUSTOMER);
+        // TODO: test update customer
+
+        p.setString(1, c.getFirstName());
+        p.setString(2, c.getLastName());
+        if (c.getGender() == '\0') {
+            p.setNull(3, Types.CHAR);
+        } else {
+            p.setString(3, String.valueOf(c.getGender()));
         }
-
-        if (!c.isValid()) {
-            System.err.println("Cannot update customer without required fields.");
-            System.err.flush();
-            return false;
+        LocalDate birthDay = c.getBirthDay();
+        if (birthDay == null) {
+            p.setNull(4, Types.DATE);
+        } else {
+            p.setDate(4, Date.valueOf(birthDay));
         }
+        p.setDate(5, Date.valueOf(c.getRegisteredDate()));
+        p.setString(6, c.getPhoneNumber());
+        p.setString(7, c.getEmailAddress());
 
-        try {
-            PreparedStatement p = connection.prepareStatement(
-                    SQLStrings.SQL_UPDATE_CUSTOMER);
-            // TODO: test update customer
+        p.setString(8, c.getID());
 
-            p.setString(1, c.getFirstName());
-            p.setString(2, c.getLastName());
-            if (c.getGender() == '\0') {
-                p.setNull(3, Types.CHAR);
-            } else {
-                p.setString(3, String.valueOf(c.getGender()));
-            }
-            LocalDate birthDay = c.getBirthDay();
-            if (birthDay == null) {
-                p.setNull(4, Types.DATE);
-            } else {
-                p.setDate(4, Date.valueOf(birthDay));
-            }
-            p.setDate(5, Date.valueOf(c.getRegisteredDate()));
-            p.setString(6, c.getPhoneNumber());
-            p.setString(7, c.getEmailAddress());
-
-            p.setString(8, c.getID());
-
-            int rowCount = p.executeUpdate();
-            System.out.println("Update customer (id = " + c.getID() + ") successful. Returned " + rowCount);
-            return true;
-        } catch (SQLException ex) {
-            System.err.println(ex);
-            System.err.flush();
-            return false;
-        }
+        int rowCount = p.executeUpdate();
+        System.out.println("Update customer (id = " + c.getID() + ") successful. Returned " + rowCount);
+        return rowCount;
     }
 
-    public boolean deleteCustomer(Customer c) {
-        return false;
+    public void deleteCustomer(Customer c)
+            throws SQLException {
+        // TODO: 1. find all sale with customer_id = c.id, update them to CDELETED
+        // TODO: 2. delete the customer
+        throw new SQLException("not supported yet");
     }
-    
+
     public String suggestNextCustomerID() {
         return DatabaseUtilities.suggestNextID(statement,
                 SQLStrings.SQL_CUSTOMER_ID_LATEST, "C", 8);
@@ -263,6 +229,53 @@ public class DatabaseManager {
     public String suggestNextProductID() {
         return DatabaseUtilities.suggestNextID(statement,
                 SQLStrings.SQL_PRODUCT_ID_LATEST, "P", 8);
+    }
+
+    public TableModel queryCategoryOverview() {
+        try {
+            ResultSet result = statement.executeQuery(
+                    SQLStrings.SQL_CATEGORY_OVERVIEW);
+            return DatabaseUtilities.buildTableModel(result);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
+
+    public int insertCategory(String categoryID, String categoryName)
+            throws SQLException {
+        PreparedStatement p = connection.prepareStatement(
+                SQLStrings.SQL_INSERT_CATEGORY);
+        p.setString(1, categoryID);
+        p.setString(2, categoryName);
+
+        int rowCount = p.executeUpdate();
+        System.out.println("Insert category (id = " + categoryID + ") successful. Returned " + rowCount);
+        return rowCount;
+    }
+
+    public int updateCategory(String oldCategoryID, String newCategoryID, String categoryName)
+            throws SQLException {
+        PreparedStatement p = connection.prepareStatement(
+                SQLStrings.SQL_UPDATE_CATEGORY);
+        p.setString(1, newCategoryID);
+        p.setString(2, categoryName);
+        p.setString(3, oldCategoryID);
+
+        int rowCount = p.executeUpdate();
+        System.out.println("Update category (id = " + oldCategoryID + " --> " + newCategoryID + ") successful. Returned " + rowCount);
+        return rowCount;
+    }
+    
+    public int deleteCategory(String categoryID)
+            throws SQLException {
+        PreparedStatement p = connection.prepareStatement(
+                SQLStrings.SQL_DELETE_CATEGORY);
+        p.setString(1, categoryID);
+
+        int rowCount = p.executeUpdate();
+        System.out.println("Delete category (id = " + categoryID + ") successful. Returned " + rowCount);
+        return rowCount;
     }
     //</editor-fold>
 
