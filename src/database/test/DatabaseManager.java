@@ -1,5 +1,7 @@
 package database.test;
 
+import static database.test.DatabaseUtilities.nullable;
+import static database.test.DatabaseUtilities.toChar;
 import static database.test.DatabaseUtilities.toLocalDate;
 
 import database.test.data.Customer;
@@ -8,15 +10,14 @@ import database.test.data.ShoppingList;
 import database.test.data.Supplier;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Types;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.table.TableModel;
@@ -102,36 +103,41 @@ public class DatabaseManager {
     //<editor-fold desc="Database Management: Customers">
     public List<String> queryListOfCustomerIDs() {
         try {
-            return DatabaseUtilities.querySingleColumnToList(statement,
-                    SQLStrings.SQL_CUSTOMER_ID_ALL);
+            return DatabaseUtilities.querySingleColumnToList(statement, SQLStrings.SQL_CUSTOMER_ID_ALL);
         } catch (SQLException ex) {
             System.err.println(ex);
+            System.err.flush();
             return new ArrayList<>(); // return an empty list
+        }
+    }
+
+    public List<Customer> queryAllCustomers() {
+        List<Customer> list = new LinkedList<>();
+        try {
+            ResultSet result = statement.executeQuery(SQLStrings.SQL_SELECT_ALL_CUSTOMERS);
+
+            while (result.next()) {
+                list.add(resultSetRowToCustomer(result));
+            }
+            return list;
+        } catch (SQLException ex) {
+            System.err.println(ex);
+            System.err.flush();
+            return null;
         }
     }
 
     public Customer queryCustomer(String searchID) {
         try {
-            PreparedStatement p = connection.prepareStatement(
-                    SQLStrings.SQL_SELECT_A_CUSTOMER);
-
+            // prepare a statement
+            PreparedStatement p = connection.prepareStatement(SQLStrings.SQL_SELECT_A_CUSTOMER);
+            // set the parameters
             p.setString(1, searchID);
+            // execute the statement
             ResultSet result = p.executeQuery();
 
             if (result.next()) {
-                String id = result.getString("customer_id");
-                String firstName = result.getString("first_name");
-                String lastName = result.getString("last_name");
-                String genderStr = result.getString("gender");
-                char gender = (genderStr == null) ? '\0' : genderStr.charAt(0);
-
-                LocalDate birthday = toLocalDate(result.getDate("date_of_birth"));
-                LocalDate regdate = toLocalDate(result.getDate("date_of_registration"));
-                String phone = result.getString("customer_phone");
-                String email = result.getString("customer_email");
-
-                return new Customer(id, firstName, lastName, gender,
-                        birthday, regdate, phone, email);
+                return resultSetRowToCustomer(result);
             }
             return null;
         } catch (SQLException ex) {
@@ -141,63 +147,54 @@ public class DatabaseManager {
         }
     }
 
+    private static Customer resultSetRowToCustomer(ResultSet result) 
+            throws SQLException {
+        String id = result.getString("customer_id");
+        String firstName = result.getString("first_name");
+        String lastName = result.getString("last_name");
+        char gender = toChar(result.getString("gender"));
+        LocalDate birthday = toLocalDate(result.getDate("date_of_birth"));
+        LocalDate regdate = toLocalDate(result.getDate("date_of_registration"));
+        String phone = result.getString("customer_phone");
+        String email = result.getString("customer_email");
+
+        return new Customer(id, firstName, lastName, gender,
+                birthday, regdate, phone, email);
+    }
+
     public int insertCustomer(Customer c)
             throws SQLException {
-        PreparedStatement p = connection.prepareStatement(
-                SQLStrings.SQL_INSERT_CUSTOMER);
-        // TODO: test insert customer
-
+        // prepare a statement
+        PreparedStatement p = connection.prepareStatement(SQLStrings.SQL_INSERT_CUSTOMER);
+        // set the parameters
         p.setString(1, c.getID());
         p.setString(2, c.getFirstName());
-        p.setString(3, c.getLastName());
-        if (c.getGender() == '\0') {
-            p.setNull(4, Types.CHAR);
-        } else {
-            p.setString(4, String.valueOf(c.getGender()));
-        }
-        LocalDate birthDay = c.getBirthDay();
-        if (birthDay == null) {
-            p.setNull(5, Types.DATE);
-        } else {
-            p.setDate(5, Date.valueOf(birthDay));
-        }
-        p.setDate(6, Date.valueOf(c.getRegisteredDate()));
-        p.setString(7, c.getPhoneNumber());
-        p.setString(8, c.getEmailAddress());
-
-        int rowCount = p.executeUpdate();
-        System.out.println("Insert new customer successful. Returned " + rowCount);
-        return rowCount;
+        p.setString(3, nullable(c.getLastName()));
+        p.setString(4, nullable(c.getGender()));
+        p.setDate(5, nullable(c.getBirthDay()));
+        p.setDate(6, nullable(c.getRegisteredDate())); // actually won't be null
+        p.setString(7, nullable(c.getPhoneNumber()));
+        p.setString(8, nullable(c.getEmailAddress()));
+        // execute the statement
+        return p.executeUpdate();
     }
 
     public int updateCustomer(Customer c)
             throws SQLException {
-        PreparedStatement p = connection.prepareStatement(
-                SQLStrings.SQL_UPDATE_CUSTOMER);
-        // TODO: test update customer
-
-        p.setString(1, c.getFirstName());
-        p.setString(2, c.getLastName());
-        if (c.getGender() == '\0') {
-            p.setNull(3, Types.CHAR);
-        } else {
-            p.setString(3, String.valueOf(c.getGender()));
-        }
-        LocalDate birthDay = c.getBirthDay();
-        if (birthDay == null) {
-            p.setNull(4, Types.DATE);
-        } else {
-            p.setDate(4, Date.valueOf(birthDay));
-        }
-        p.setDate(5, Date.valueOf(c.getRegisteredDate()));
-        p.setString(6, c.getPhoneNumber());
-        p.setString(7, c.getEmailAddress());
-
-        p.setString(8, c.getID());
-
-        int rowCount = p.executeUpdate();
-        System.out.println("Update customer (id = " + c.getID() + ") successful. Returned " + rowCount);
-        return rowCount;
+        // prepare a statement
+        PreparedStatement p = connection.prepareStatement(SQLStrings.SQL_UPDATE_CUSTOMER);
+        // set the parameters
+        p.setString(1, c.getID());
+        p.setString(2, c.getFirstName());
+        p.setString(3, nullable(c.getLastName()));
+        p.setString(4, nullable(c.getGender()));
+        p.setDate(5, nullable(c.getBirthDay()));
+        p.setDate(6, nullable(c.getRegisteredDate())); // actually won't be null
+        p.setString(7, nullable(c.getPhoneNumber()));
+        p.setString(8, nullable(c.getEmailAddress()));
+        p.setString(9, c.getID());
+        // execute the statement
+        return p.executeUpdate();
     }
 
     public void deleteCustomer(Customer c)
@@ -233,49 +230,46 @@ public class DatabaseManager {
 
     public TableModel queryCategoryOverview() {
         try {
-            ResultSet result = statement.executeQuery(
-                    SQLStrings.SQL_CATEGORY_OVERVIEW);
+            ResultSet result = statement.executeQuery(SQLStrings.SQL_CATEGORY_OVERVIEW);
             return DatabaseUtilities.buildTableModel(result);
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            System.err.println(ex);
+            System.err.flush();
             return null;
         }
     }
 
     public int insertCategory(String categoryID, String categoryName)
             throws SQLException {
-        PreparedStatement p = connection.prepareStatement(
-                SQLStrings.SQL_INSERT_CATEGORY);
+        // prepare a statement
+        PreparedStatement p = connection.prepareStatement(SQLStrings.SQL_INSERT_CATEGORY);
+        // set the parameters
         p.setString(1, categoryID);
         p.setString(2, categoryName);
-
-        int rowCount = p.executeUpdate();
-        System.out.println("Insert category (id = " + categoryID + ") successful. Returned " + rowCount);
-        return rowCount;
+        // execute the statement
+        return p.executeUpdate();
     }
 
-    public int updateCategory(String oldCategoryID, String newCategoryID, String categoryName)
+    public int updateCategory(String oldCategoryID, String categoryID, String categoryName)
             throws SQLException {
-        PreparedStatement p = connection.prepareStatement(
-                SQLStrings.SQL_UPDATE_CATEGORY);
-        p.setString(1, newCategoryID);
+        // prepare a statement
+        PreparedStatement p = connection.prepareStatement(SQLStrings.SQL_UPDATE_CATEGORY);
+        // set the parameters
+        p.setString(1, categoryID);
         p.setString(2, categoryName);
         p.setString(3, oldCategoryID);
-
-        int rowCount = p.executeUpdate();
-        System.out.println("Update category (id = " + oldCategoryID + " --> " + newCategoryID + ") successful. Returned " + rowCount);
-        return rowCount;
+        // execute the statement
+        return p.executeUpdate();
     }
-    
+
     public int deleteCategory(String categoryID)
             throws SQLException {
-        PreparedStatement p = connection.prepareStatement(
-                SQLStrings.SQL_DELETE_CATEGORY);
+        // prepare a statement
+        PreparedStatement p = connection.prepareStatement(SQLStrings.SQL_DELETE_CATEGORY);
+        // set the parameters
         p.setString(1, categoryID);
-
-        int rowCount = p.executeUpdate();
-        System.out.println("Delete category (id = " + categoryID + ") successful. Returned " + rowCount);
-        return rowCount;
+        // execute the statement
+        return p.executeUpdate();
     }
     //</editor-fold>
 

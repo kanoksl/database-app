@@ -118,10 +118,60 @@ public class DatabaseUtilities {
         return model;
     }
 
+    //<editor-fold desc="Data Conversion: Database Query Result --> Program">
+    /**
+     * Simple conversion from java.sql.Date to java.time.LocalDate
+     *
+     * @param sqlDate A date in java.sql.Date.
+     * @return The same date in java.time.LocalDate.
+     */
     public static LocalDate toLocalDate(Date sqlDate) {
-        if (sqlDate == null) {
-            return null;
-        }
-        return sqlDate.toLocalDate();
+        return sqlDate == null ? null : sqlDate.toLocalDate();
     }
+
+    /**
+     * Convert from a (single-character) string to char.
+     *
+     * @param string A string (can be longer, but the rest other than the first
+     * character will be ignored).
+     * @return The first character of the string. '\0' if the string is null.
+     */
+    public static char toChar(String string) {
+        return string == null ? '\0' : string.charAt(0);
+    }
+
+    //</editor-fold>
+    //<editor-fold desc="Data Conversion: Program --> Database Insert/Update">
+    /**
+     * Replace an empty string (after trimmed) with null.
+     *
+     * @param string A string.
+     * @return The trimmed string if not empty. Null otherwise.
+     */
+    public static String nullable(String string) {
+        string = string.trim();
+        return string.isEmpty() ? null : string;
+    }
+
+    /**
+     * Convert a java.time.LocalDate to java.sql.Date.
+     *
+     * @param date A date in java.time.LocalDate.
+     * @return The trimmed string if not empty. Null otherwise.
+     */
+    public static Date nullable(LocalDate date) {
+        return date == null ? null : Date.valueOf(date);
+    }
+
+    /**
+     * Convert a character to string.
+     *
+     * @param ch A character.
+     * @return Null if the character is '\0'. Otherwise a string representation
+     * of that character.
+     */
+    public static String nullable(char ch) {
+        return ch == '\0' ? null : String.valueOf(ch);
+    }
+    //</editor-fold>
 }

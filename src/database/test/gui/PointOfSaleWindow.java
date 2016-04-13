@@ -245,7 +245,9 @@ public class PointOfSaleWindow
     }
 
     public void showManageCustomersWindow() {
-
+        ManageCustomersWindow win = new ManageCustomersWindow();
+        win.refresh();
+        win.setVisible(true);
     }
 
     public void showManageProductsWindow() {
@@ -285,9 +287,8 @@ public class PointOfSaleWindow
         spnQuantity.setValue(1);
 
         chkRegisteredCustomer.setSelected(false);
-        cbxCustomerIDTextField.setText(Const.UNREGISTERED_CUSTOMER_ID);
+        this.toggleRegisteredCustomer();
         chkRegisteredCustomer.requestFocus();
-        this.checkCustomerID();
 
         shoppingList.clear();
         this.updateShoppingListGUI();
@@ -420,10 +421,10 @@ public class PointOfSaleWindow
         //</editor-fold>
         //<editor-fold desc="Customer ID Components">
         chkRegisteredCustomer.addActionListener((ActionEvent) -> {
-            toggleRegisteredCustomer();
+            this.toggleRegisteredCustomer();
         });
         btnCheckCustomerID.addActionListener((ActionEvent) -> {
-            checkCustomerID();
+            this.checkCustomerID();
         });
         cbxCustomerIDTextField.addKeyListener(new KeyAdapter() {
             @Override

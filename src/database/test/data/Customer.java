@@ -3,6 +3,10 @@ package database.test.data;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
+
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableModel;
 
 public class Customer {
 
@@ -46,7 +50,7 @@ public class Customer {
     }
 
     public void setID(String id) {
-        this.id = id;
+        this.id = id.trim();
     }
 
     public String getFirstName() {
@@ -54,7 +58,7 @@ public class Customer {
     }
 
     public void setFirstName(String firstName) {
-        this.firstName = firstName;
+        this.firstName = firstName.trim();
     }
 
     public String getLastName() {
@@ -133,6 +137,23 @@ public class Customer {
         }
     }
 
+    public String getGenderString() {
+        return (gender == 'M') ? "Male" : (gender == 'F') ? "Female" : "";
+    }
+
+    public String getPhoneNumberFormatted() {
+        String phone = phoneNumber;
+        if (phone == null) {
+            return "";
+        }
+        int len = phone.length();
+        if (len == 10 || len == 9) {
+            return phone.substring(0, len - 7) + "-" + phone.substring(len - 7, len - 4) + "-" + phone.substring(len - 4);
+        } else {
+            return phone;
+        }
+    }
+
     public long getDaysSinceRegistered() {
         return ChronoUnit.DAYS.between(registeredDate, LocalDate.now());
     }
@@ -168,11 +189,58 @@ public class Customer {
                 + "\n}";
     }
 
+    public static TableModel createTableModel(List<Customer> list) {
+        TableModel model = new AbstractTableModel() {
+            private final String[] COLUMNS = {"Customer ID", "First Name", "Last Name",
+                "Gender", "Birthday", "Registered", "Phone", "Email"};
+
+            @Override
+            public int getRowCount() {
+                return list.size();
+            }
+
+            @Override
+            public int getColumnCount() {
+                return COLUMNS.length;
+            }
+
+            @Override
+            public String getColumnName(int column) {
+                return COLUMNS[column];
+            }
+
+            @Override
+            public Object getValueAt(int rowIndex, int columnIndex) {
+                Customer c = list.get(rowIndex);
+                switch (columnIndex) {
+                    case 0:
+                        return c.getID();
+                    case 1:
+                        return c.getFirstName();
+                    case 2:
+                        return c.getLastName();
+                    case 3:
+                        return c.getGenderString();
+                    case 4:
+                        return c.getBirthDay();
+                    case 5:
+                        return c.getRegisteredDate();
+                    case 6:
+                        return c.getPhoneNumberFormatted();
+                    case 7:
+                        return c.getEmailAddress();
+                }
+                return null;
+            }
+        };
+        return model;
+    }
+
     /**
      * Create a new Customer object without any data except the given ID and
      * registration date (automatically set to now).
      *
-     * @param id CHAR(8) NOT NULL
+     * @param id CHAR(8), NOT NULL
      * @return A Customer with all other fields as null.
      */
     public static Customer createNewCustomer(String id) {
