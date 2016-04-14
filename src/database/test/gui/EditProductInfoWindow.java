@@ -45,7 +45,7 @@ public class EditProductInfoWindow
         tbxProductID = new javax.swing.JTextField();
         lblWarnID = new javax.swing.JLabel();
         javax.swing.JLabel l_prodName = new javax.swing.JLabel();
-        tbxProductName = new javax.swing.JTextField();
+        tbxProductName = new javax.swing.JFormattedTextField();
         lblWarnName = new javax.swing.JLabel();
         javax.swing.JLabel l_cat = new javax.swing.JLabel();
         cbxCategory = new javax.swing.JComboBox<>();
@@ -131,6 +131,7 @@ public class EditProductInfoWindow
         panel_basic.add(l_prodID, gridBagConstraints);
 
         tbxProductID.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        tbxProductID.setEnabled(false);
         tbxProductID.setMinimumSize(new java.awt.Dimension(140, 22));
         tbxProductID.setPreferredSize(new java.awt.Dimension(140, 22));
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -162,8 +163,16 @@ public class EditProductInfoWindow
         gridBagConstraints.insets = new java.awt.Insets(8, 20, 2, 4);
         panel_basic.add(l_prodName, gridBagConstraints);
 
+        try {
+            tbxProductName.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("****************************************************************")));
+        } catch (java.text.ParseException ex) {
+            ex.printStackTrace();
+        }
+        tbxProductName.setFocusLostBehavior(javax.swing.JFormattedTextField.PERSIST);
         tbxProductName.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
-        tbxProductName.setPreferredSize(new java.awt.Dimension(240, 22));
+        tbxProductName.setMaximumSize(new java.awt.Dimension(188, 22));
+        tbxProductName.setMinimumSize(new java.awt.Dimension(188, 22));
+        tbxProductName.setPreferredSize(new java.awt.Dimension(188, 22));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 2;
@@ -195,7 +204,6 @@ public class EditProductInfoWindow
         panel_basic.add(l_cat, gridBagConstraints);
 
         cbxCategory.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
-        cbxCategory.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" }));
         cbxCategory.setPreferredSize(new java.awt.Dimension(140, 22));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -673,7 +681,7 @@ public class EditProductInfoWindow
     private javax.swing.JTable tableSuppliers;
     private javax.swing.JScrollPane tableSuppliers_scrollPane;
     private javax.swing.JTextField tbxProductID;
-    private javax.swing.JTextField tbxProductName;
+    private javax.swing.JFormattedTextField tbxProductName;
     private javax.swing.JTextArea txtDescription;
     private javax.swing.JScrollPane txtDescription_scrollPane;
     // End of variables declaration//GEN-END:variables

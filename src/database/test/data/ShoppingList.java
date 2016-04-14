@@ -20,51 +20,49 @@ public class ShoppingList {
 
     //<editor-fold desc="List Methods (Add, Remove, Get, Clear)">
     /**
-     * Query the database for the given product ID and add to the shopping list
-     * if found.
+     * Add the specified product to the shopping list. The product should be
+     * queried from the database to make sure that it exists. The actual added
+     * amount is limited to the product's stock quantity.
      *
-     * @param productID Product to be added.
-     * @param quantity Amount to be added.
-     * @return Index of the added product in the list.
-     * @throws IllegalArgumentException if the given ID does not correspond to
-     * any product or is in a wrong format.
+     * @param product A product to add.
+     * @param quantity Amount to add.
+     * @return An array of two integers. First one is the amount actually added.
+     * The second one is the index of the added product in the list.
      */
-    public int addItem(String productID, int quantity)
-            throws IllegalArgumentException {
+    public int[] addItem(Product product, int quantity) {
         // search for the existing line with the same ID
-        LineItem newLine = null;
+        LineItem line = null;
+        String productID = product.getID();
+        int idx = 0;
+
         for (LineItem existingLine : itemList) {
             if (existingLine.product_id.equals(productID)) {
-                newLine = existingLine;
+                line = existingLine;
                 break;
             }
+            idx++;
         }
 
         // if the list already contain this product
-        if (newLine != null) {
-            newLine.quantity += quantity;
-            totalQuantity += quantity;
-            totalPrice += newLine.unitPrice * quantity;
-        } else {
-            boolean valid;
-            // TODO: look up product name and price from the ID
-            String productName = productID + productID;
-            double unitPrice = 5.00;
-            valid = (productID.length() > 1);
-            // =========================================
-
-            if (!valid) {
-                throw new IllegalArgumentException(
-                        "Invalid productID. Cannot find a product with the ID = " + productID);
+        if (line != null) {
+            int max = product.getStockQuantity();
+            if (line.quantity >= max) {
+                return new int[]{0, idx};
             }
-
+            int actualQty = (line.quantity + quantity > max) ? max - line.quantity : quantity;
+            line.quantity += actualQty;
+            totalQuantity += actualQty;
+            totalPrice += line.unitPrice * actualQty;
+            return new int[]{actualQty, idx};
+        } else {
             // add data to the shopping list
-            newLine = new LineItem(productID, productName, quantity, unitPrice);
-            itemList.add(newLine);
+            line = new LineItem(productID, product.getName(),
+                    quantity, product.getCurrentPrice());
+            itemList.add(line);
             totalQuantity += quantity;
-            totalPrice += newLine.subtotal();
+            totalPrice += line.subtotal();
+            return new int[]{quantity, idx};
         }
-        return itemList.indexOf(newLine);
     }
 
     public void removeItemAt(int idx) {

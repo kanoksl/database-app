@@ -3,6 +3,7 @@ package database.test.gui;
 import database.test.ApplicationMain;
 import database.test.DatabaseManager;
 import database.test.data.Customer;
+import database.test.data.Product;
 import database.test.data.ShoppingList;
 import database.test.gui.Const.InfoWindowMode;
 
@@ -23,6 +24,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumnModel;
 
@@ -137,8 +139,42 @@ public class PointOfSaleWindow
         }
         this.updateConfirmButtonEnabled();
     }
-
     //</editor-fold>
+
+    /**
+     * Query the database and check whether the entered product ID is valid or
+     * not.
+     *
+     * @return The Product with that ID if it's available for selling (selling
+     * status = 1 and quantity > 0). Null otherwise.
+     */
+    private Product checkProductID() {
+        String id = cbxProductIDTextField.getText().trim();
+        Product product = database.queryProduct(id);
+
+        if (product == null) {
+            lblListAddMessage.setText("<html>No product found with that ID.</html>");
+            lblListAddMessage.setForeground(Const.COLOR_ERROR_TEXT);
+        } else if (!product.isSelling()) {
+            lblListAddMessage.setText("<html>This product is not being sold anymore.</html>");
+            lblListAddMessage.setForeground(Const.COLOR_ERROR_TEXT);
+        } else if (product.getStockQuantity() < 1) {
+            lblListAddMessage.setText("<html>This product is currently out of stock.</html>");
+            lblListAddMessage.setForeground(Const.COLOR_ERROR_TEXT);
+        } else {
+            int max = product.getStockQuantity();
+            lblListAddMessage.setText("<html>Product: " + product.getName() + "<br/>"
+                    + "Stock Quantity: " + max + "</html>");
+            lblListAddMessage.setForeground(Color.BLACK);
+            // set the maximum to the stock quantity
+            int q = (int) spnQuantity.getValue();
+            spnQuantity.setModel(new SpinnerNumberModel(Math.min(q, max), 1, max, 1)
+            );
+            return product;
+        }
+        return null;
+    }
+
     //<editor-fold defaultstate="collapsed" desc="GUI + Data Code: Shopping List Manipulation">
     /**
      * Add a new entry to the shopping list. If the product to be added already
@@ -147,24 +183,36 @@ public class PointOfSaleWindow
     private void shoppingListAdd() {
         String id = cbxProductIDTextField.getText().trim();
         int quantity = (int) spnQuantity.getValue();
-        // TODO: find a way to deal with negative quantity
-        try {
-            int idx = shoppingList.addItem(id, quantity);
-            // update the GUI
-            this.updateShoppingListGUI();
-            this.updateTableSelection(idx);
-            lblListAddMessage.setText("Done.");
-            lblListAddMessage.setForeground(Color.BLACK);
-        } catch (IllegalArgumentException ex) {
-            lblListAddMessage.setText("Adding failed. Invalid product ID.");
-            lblListAddMessage.setForeground(Const.COLOR_ERROR_TEXT);
-        }
 
-        // clear the product input
-        cbxProductIDTextField.setSelectionStart(0);
-        cbxProductIDTextField.setSelectionEnd(Integer.MAX_VALUE);
-        spnQuantity.setValue(1);
-        cbxProductIDTextField.requestFocus();
+        Product product = this.checkProductID();
+        if (product != null) {
+            int result[] = shoppingList.addItem(product, quantity);
+            if (result[0] == 0) {
+                int stock = product.getStockQuantity();
+                lblListAddMessage.setText("<html>Cannot add.<br/>Only " + stock + " unit"
+                        + (stock == 1 ? "" : "s") + " available in total.</html>");
+                lblListAddMessage.setForeground(Const.COLOR_ERROR_TEXT);
+            } else {
+                // update the GUI
+                if (result[0] != quantity) {
+                    int stock = product.getStockQuantity();
+                    lblListAddMessage.setText("<html>Added " + result[0] + " unit.<br/>Only "
+                            + stock + " unit" + (stock == 1 ? "" : "s") + " available in total.</html>");
+                    lblListAddMessage.setForeground(Color.BLACK);
+                } else {
+                    lblListAddMessage.setText("Added " + quantity + " unit.");
+                    lblListAddMessage.setForeground(Color.BLACK);
+                }
+                this.updateShoppingListGUI();
+                this.updateTableSelection(result[1]);
+            }
+
+            // clear the product input
+            cbxProductIDTextField.setSelectionStart(0);
+            cbxProductIDTextField.setSelectionEnd(Integer.MAX_VALUE);
+            spnQuantity.setValue(1);
+            cbxProductIDTextField.requestFocus();
+        }
     }
 
     private void shoppingListRemove() {
@@ -295,12 +343,16 @@ public class PointOfSaleWindow
     }
 
     public void populateComboBoxData() {
-        // TODO: query the database for all customer IDs and product IDs
-        // TODO: change the customer ID and product ID textboxes to comboboxes
+        // customer IDs
         List<String> customerIDs = database.queryListOfCustomerIDs();
         String[] customerIDsArray = new String[customerIDs.size()];
         customerIDs.toArray(customerIDsArray);
         cbxCustomerID.setModel(new DefaultComboBoxModel<>(customerIDsArray));
+        // product IDs (selling and not out-of-stock)
+        List<String> productIDs = database.queryListOfSellingProductIDs();
+        String[] productIDsArray = new String[productIDs.size()];
+        productIDs.toArray(productIDsArray);
+        cbxProductID.setModel(new DefaultComboBoxModel<>(productIDsArray));
     }
 
     private void loadLogoImage() {
@@ -357,6 +409,8 @@ public class PointOfSaleWindow
         table.setSelectionBackground(Const.COLOR_HIGHLIGHT_BG);
         table.setSelectionForeground(Const.COLOR_HIGHLIGHT_FG);
         table.setGridColor(Const.COLOR_TABLE_GRID);
+
+        lblListAddMessage.setText("<html> <br/> </html>");
     }
 
     private void initListeners() {
@@ -436,7 +490,7 @@ public class PointOfSaleWindow
         });
         cbxCustomerID.addItemListener((ItemEvent e) -> {
             if (database.isConnected()) {
-                checkCustomerID();
+                this.checkCustomerID();
             }
         });
         //</editor-fold>
@@ -456,6 +510,19 @@ public class PointOfSaleWindow
             }
         };
         cbxProductIDTextField.addKeyListener(enterKeyAdd);
+        cbxProductIDTextField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    checkProductID();
+                }
+            }
+        });
+        cbxProductID.addItemListener((ItemEvent e) -> {
+            if (database.isConnected()) {
+                this.checkProductID();
+            }
+        });
         JFormattedTextField spnQuantityText
                 = (JFormattedTextField) spnQuantity.getEditor().getComponent(0);
         spnQuantityText.addKeyListener(enterKeyAdd);
@@ -817,6 +884,7 @@ public class PointOfSaleWindow
         panel_controls.add(l_AddQuantity, gridBagConstraints);
 
         spnQuantity.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        spnQuantity.setModel(new javax.swing.SpinnerNumberModel(1, 1, null, 1));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 5;
@@ -826,14 +894,17 @@ public class PointOfSaleWindow
         panel_controls.add(spnQuantity, gridBagConstraints);
 
         lblListAddMessage.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
-        lblListAddMessage.setText("Adding failed. Invalid product ID.");
+        lblListAddMessage.setText("<html>Product:<br/>Stock Quantity:</html>");
+        lblListAddMessage.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        lblListAddMessage.setMinimumSize(new java.awt.Dimension(78, 32));
+        lblListAddMessage.setPreferredSize(new java.awt.Dimension(78, 32));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 6;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(4, 4, 2, 4);
+        gridBagConstraints.insets = new java.awt.Insets(0, 8, 4, 8);
         panel_controls.add(lblListAddMessage, gridBagConstraints);
 
         btnListAdd.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N

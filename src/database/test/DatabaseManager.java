@@ -147,7 +147,7 @@ public class DatabaseManager {
         }
     }
 
-    private static Customer resultSetRowToCustomer(ResultSet result) 
+    private static Customer resultSetRowToCustomer(ResultSet result)
             throws SQLException {
         String id = result.getString("customer_id");
         String firstName = result.getString("first_name");
@@ -168,7 +168,7 @@ public class DatabaseManager {
         PreparedStatement p = connection.prepareStatement(SQLStrings.SQL_INSERT_CUSTOMER);
         // set the parameters
         p.setString(1, c.getID());
-        p.setString(2, c.getFirstName());
+        p.setString(2, nullable(c.getFirstName())); // will fail if null
         p.setString(3, nullable(c.getLastName()));
         p.setString(4, nullable(c.getGender()));
         p.setDate(5, nullable(c.getBirthDay()));
@@ -185,7 +185,7 @@ public class DatabaseManager {
         PreparedStatement p = connection.prepareStatement(SQLStrings.SQL_UPDATE_CUSTOMER);
         // set the parameters
         p.setString(1, c.getID());
-        p.setString(2, c.getFirstName());
+        p.setString(2, nullable(c.getFirstName())); // will fail if null
         p.setString(3, nullable(c.getLastName()));
         p.setString(4, nullable(c.getGender()));
         p.setDate(5, nullable(c.getBirthDay()));
@@ -211,8 +211,41 @@ public class DatabaseManager {
     //</editor-fold>
 
     //<editor-fold desc="Database Management: Products / Categories / Pricing">
+    public List<String> queryListOfSellingProductIDs() {
+        try {
+            return DatabaseUtilities.querySingleColumnToList(statement, SQLStrings.SQL_PRODUCT_ID_ALL_AVAILABLE);
+        } catch (SQLException ex) {
+            System.err.println(ex);
+            System.err.flush();
+            return new ArrayList<>(); // return an empty list
+        }
+    }
+
     public Product queryProduct(String searchID) {
-        return null;
+        try {
+            // prepare a statement
+            PreparedStatement p = connection.prepareStatement(SQLStrings.SQL_SELECT_A_PRODUCT);
+            // set the parameters
+            p.setString(1, searchID);
+            // execute the statement
+            ResultSet result = p.executeQuery();
+
+            if (result.next()) {
+                String id = result.getString("product_id");
+                String name = result.getString("product_name");
+                String description = result.getString("product_description");
+                int stockQuantity = result.getInt("stock_quantity");
+                boolean selling = result.getBoolean("selling_status");
+                String categoryID = result.getString("category_id");
+
+                return new Product(id, name, description, stockQuantity, selling, categoryID);
+            }
+            return null;
+        } catch (SQLException ex) {
+            System.err.println(ex);
+            System.err.flush();
+            return null;
+        }
     }
 
     public boolean insertProduct(Product p) {

@@ -6,6 +6,8 @@ import database.test.data.Customer;
 import database.test.gui.Const.InfoWindowMode;
 
 import java.awt.Frame;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import java.time.LocalDate;
 
@@ -30,6 +32,20 @@ public class EditCustomerInfoWindow
 
         lblWarnID.setText(" ");
         lblWarnName.setText(" ");
+        tbxFirstName.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                super.mousePressed(e);
+                tbxFirstName.setCaretPosition(tbxFirstName.getText().trim().length());
+            }
+        });
+        tbxLastName.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                super.mousePressed(e);
+                tbxLastName.setCaretPosition(tbxLastName.getText().trim().length());
+            }
+        });
 
         switch (mode) {
             case ADD:
@@ -80,13 +96,17 @@ public class EditCustomerInfoWindow
      */
     private void collectFormData() {
         customer.setID(tbxCustomerID.getText());
-        customer.setFirstName(tbxFirstName.getText());
-        customer.setLastName(tbxLastName.getText());
+        customer.setFirstName(tbxFirstName.getText().trim());
+        customer.setLastName(tbxLastName.getText().trim());
         customer.setGender(rdbMale.isSelected()
                 ? 'M' : rdbFemale.isSelected() ? 'F' : '\0');
         customer.setBirthDay(this.getBirthDayFromGUI());
         customer.setPhoneNumber(tbxPhone.getText().replace("-", "").replace(" ", ""));
-        customer.setEmailAddress(tbxEmail.getText());
+        customer.setEmailAddress(tbxEmail.getText().trim());
+        // display warnings
+//        if (customer.getFirstName() == null || customer.getFirstName().isEmpty()) {
+//            lblWarnName.setText(Const.ECIW_WARNING_NAME);
+//        }
     }
 
     //<editor-fold desc="Database: Update Operations (Insert, Update, Delete)">
@@ -372,10 +392,8 @@ public class EditCustomerInfoWindow
         lblRegisteredDate = new javax.swing.JLabel();
         javax.swing.JLabel l_basic = new javax.swing.JLabel();
         javax.swing.JLabel l_first = new javax.swing.JLabel();
-        tbxFirstName = new javax.swing.JTextField();
         lblWarnName = new javax.swing.JLabel();
         javax.swing.JLabel l_last = new javax.swing.JLabel();
-        tbxLastName = new javax.swing.JTextField();
         javax.swing.JLabel l_additional = new javax.swing.JLabel();
         javax.swing.JLabel l_gender = new javax.swing.JLabel();
         panel_gender = new javax.swing.JPanel();
@@ -397,6 +415,8 @@ public class EditCustomerInfoWindow
         btnSave = new javax.swing.JButton();
         btnDelete = new javax.swing.JButton();
         btnCancel = new javax.swing.JButton();
+        tbxFirstName = new javax.swing.JFormattedTextField();
+        tbxLastName = new javax.swing.JFormattedTextField();
         panel_shoppingHistory = new javax.swing.JPanel();
         tableSale_scrollPane = new javax.swing.JScrollPane();
         tableSale = new javax.swing.JTable();
@@ -512,16 +532,6 @@ public class EditCustomerInfoWindow
         gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
         panel_customerInfo.add(l_first, gridBagConstraints);
 
-        tbxFirstName.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
-        tbxFirstName.setMinimumSize(new java.awt.Dimension(188, 22));
-        tbxFirstName.setPreferredSize(new java.awt.Dimension(188, 22));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 8);
-        panel_customerInfo.add(tbxFirstName, gridBagConstraints);
-
         lblWarnName.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
         lblWarnName.setForeground(java.awt.Color.red);
         lblWarnName.setText("The first name cannot be blank.");
@@ -541,16 +551,6 @@ public class EditCustomerInfoWindow
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
         panel_customerInfo.add(l_last, gridBagConstraints);
-
-        tbxLastName.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
-        tbxLastName.setMinimumSize(new java.awt.Dimension(188, 22));
-        tbxLastName.setPreferredSize(new java.awt.Dimension(188, 22));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 8);
-        panel_customerInfo.add(tbxLastName, gridBagConstraints);
 
         l_additional.setFont(new java.awt.Font("Segoe UI", 1, 11)); // NOI18N
         l_additional.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -789,6 +789,40 @@ public class EditCustomerInfoWindow
         gridBagConstraints.weighty = 1.0;
         panel_customerInfo.add(panel_commandButtons, gridBagConstraints);
 
+        try {
+            tbxFirstName.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("********************************")));
+        } catch (java.text.ParseException ex) {
+            ex.printStackTrace();
+        }
+        tbxFirstName.setFocusLostBehavior(javax.swing.JFormattedTextField.PERSIST);
+        tbxFirstName.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        tbxFirstName.setMaximumSize(new java.awt.Dimension(188, 22));
+        tbxFirstName.setMinimumSize(new java.awt.Dimension(188, 22));
+        tbxFirstName.setPreferredSize(new java.awt.Dimension(188, 22));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 8);
+        panel_customerInfo.add(tbxFirstName, gridBagConstraints);
+
+        try {
+            tbxLastName.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("********************************")));
+        } catch (java.text.ParseException ex) {
+            ex.printStackTrace();
+        }
+        tbxLastName.setFocusLostBehavior(javax.swing.JFormattedTextField.PERSIST);
+        tbxLastName.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        tbxLastName.setMaximumSize(new java.awt.Dimension(188, 22));
+        tbxLastName.setMinimumSize(new java.awt.Dimension(188, 22));
+        tbxLastName.setPreferredSize(new java.awt.Dimension(188, 22));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 8);
+        panel_customerInfo.add(tbxLastName, gridBagConstraints);
+
         tabbedPane.addTab("Customer Information", panel_customerInfo);
 
         panel_shoppingHistory.setLayout(new java.awt.GridBagLayout());
@@ -988,8 +1022,8 @@ public class EditCustomerInfoWindow
     private javax.swing.JFormattedTextField tbxDateFrom;
     private javax.swing.JFormattedTextField tbxDateTo;
     private javax.swing.JTextField tbxEmail;
-    private javax.swing.JTextField tbxFirstName;
-    private javax.swing.JTextField tbxLastName;
+    private javax.swing.JFormattedTextField tbxFirstName;
+    private javax.swing.JFormattedTextField tbxLastName;
     private javax.swing.JFormattedTextField tbxPhone;
     // End of variables declaration//GEN-END:variables
     //</editor-fold>

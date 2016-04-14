@@ -42,9 +42,9 @@ public class SQLStrings {
     //</editor-fold>
 
     //<editor-fold desc="SQL Commands: Products">
-    public static final String SQL_PRODUCT_ID_ALL_SELLING
+    public static final String SQL_PRODUCT_ID_ALL_AVAILABLE
             = "SELECT product_id FROM product "
-            + "WHERE selling_status = 1 "
+            + "WHERE (selling_status = 1) AND (stock_quantity > 0) "
             + "ORDER BY product_id;";
 
     public static final String SQL_PRODUCT_ID_LATEST
@@ -112,4 +112,7 @@ public class SQLStrings {
             = "SELECT * FROM supplier "
             + "WHERE supplier_id = ?;";
     //</editor-fold>
+    
+    public static final java.sql.Date SQL_MINDATE = java.sql.Date.valueOf("1000-01-01");
+    public static final java.sql.Date SQL_MAXDATE = java.sql.Date.valueOf("9999-12-31");
 }

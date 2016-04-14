@@ -8,6 +8,8 @@ public class Product {
     private int stockQuantity;
     private boolean selling;
     private String categoryID;
+    
+    private double currentPrice = 10;
 
     /**
      * Create a new Product object from existing data.
@@ -79,6 +81,13 @@ public class Product {
         this.categoryID = categoryID;
     }
 
+    public double getCurrentPrice() {
+        return currentPrice;
+    }
+
+    public void setCurrentPrice(double currentPrice) {
+        this.currentPrice = currentPrice;
+    }
     //</editor-fold>
 
     /**

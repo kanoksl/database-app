@@ -13,6 +13,7 @@ import java.sql.SQLException;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+import javax.swing.text.PlainDocument;
 
 public class EditCategoryInfoWindow
         extends javax.swing.JFrame {
@@ -68,8 +69,8 @@ public class EditCategoryInfoWindow
     private void setFormData(String categoryID, String categoryName) {
         this.categoryID = categoryID;
         this.categoryName = categoryName;
-        tbxCategoryID.setText(categoryID);
-        tbxCategoryName.setText(categoryName);
+        tbxCategoryID.setValue(categoryID);
+        tbxCategoryName.setValue(categoryName);
     }
 
     /**
@@ -200,7 +201,7 @@ public class EditCategoryInfoWindow
         getContentPane().add(l_id, gridBagConstraints);
 
         try {
-            tbxCategoryID.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("AAAAAAAA")));
+            tbxCategoryID.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("********")));
         } catch (java.text.ParseException ex) {
             ex.printStackTrace();
         }
@@ -227,7 +228,7 @@ public class EditCategoryInfoWindow
         getContentPane().add(l_name, gridBagConstraints);
 
         try {
-            tbxCategoryName.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")));
+            tbxCategoryName.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("********************************")));
         } catch (java.text.ParseException ex) {
             ex.printStackTrace();
         }

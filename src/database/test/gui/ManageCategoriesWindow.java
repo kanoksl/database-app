@@ -2,6 +2,7 @@ package database.test.gui;
 
 import database.test.ApplicationMain;
 import database.test.DatabaseManager;
+
 import java.sql.SQLException;
 
 import javax.swing.JLabel;
@@ -101,6 +102,7 @@ public class ManageCategoriesWindow
      * also its UI.
      */
     public void refresh() {
+        System.out.println("ManageCategoriesWindow.refresh()");
         TableModel model = database.queryCategoryOverview();
         tableCategories.setModel(model);
 
@@ -137,6 +139,14 @@ public class ManageCategoriesWindow
         // select the last row
         int rowIndex = Math.max(0, tableCategories.getRowCount() - 1);
         tableCategories.setRowSelectionInterval(rowIndex, rowIndex);
+        
+        this.updateButtonsEnabled();
+    }
+
+    private void updateButtonsEnabled() {
+        boolean selectionNotEmpty = tableCategories.getSelectedRowCount() > 0;
+        btnRenameCategory.setEnabled(selectionNotEmpty);
+        btnDeleteCategory.setEnabled(selectionNotEmpty);
     }
 
     private void setColorTheme() {
@@ -149,6 +159,9 @@ public class ManageCategoriesWindow
     }
 
     private void initListeners() {
+        btnRefresh.addActionListener((ActionEvent) -> {
+            this.refresh();
+        });
         btnNewCategory.addActionListener((ActionEvent) -> {
             this.categoryAdd();
         });
@@ -160,9 +173,7 @@ public class ManageCategoriesWindow
         });
 
         tableCategories.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
-            boolean selectionNotEmpty = tableCategories.getSelectedRowCount() > 0;
-            btnRenameCategory.setEnabled(selectionNotEmpty);
-            btnDeleteCategory.setEnabled(selectionNotEmpty);
+            this.updateButtonsEnabled();
         });
     }
 
@@ -180,6 +191,7 @@ public class ManageCategoriesWindow
 
         panel_header = new javax.swing.JPanel();
         headerLabel = new javax.swing.JLabel();
+        btnRefresh = new javax.swing.JButton();
         tableCategories_scrollPane = new javax.swing.JScrollPane();
         tableCategories = new javax.swing.JTable();
         btnNewCategory = new javax.swing.JButton();
@@ -206,6 +218,20 @@ public class ManageCategoriesWindow
         gridBagConstraints.insets = new java.awt.Insets(8, 16, 8, 16);
         panel_header.add(headerLabel, gridBagConstraints);
 
+        btnRefresh.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        btnRefresh.setText("Refresh");
+        btnRefresh.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnRefresh.setMaximumSize(new java.awt.Dimension(128, 36));
+        btnRefresh.setMinimumSize(new java.awt.Dimension(128, 36));
+        btnRefresh.setName(""); // NOI18N
+        btnRefresh.setPreferredSize(new java.awt.Dimension(96, 28));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 6;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(4, 12, 4, 8);
+        panel_header.add(btnRefresh, gridBagConstraints);
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -229,7 +255,6 @@ public class ManageCategoriesWindow
         ));
         tableCategories.setGridColor(new java.awt.Color(204, 204, 204));
         tableCategories.setRowHeight(20);
-        tableCategories.setRowSorter(null);
         tableCategories.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         tableCategories_scrollPane.setViewportView(tableCategories);
 
@@ -292,6 +317,7 @@ public class ManageCategoriesWindow
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnDeleteCategory;
     private javax.swing.JButton btnNewCategory;
+    private javax.swing.JButton btnRefresh;
     private javax.swing.JButton btnRenameCategory;
     private javax.swing.JLabel headerLabel;
     private javax.swing.JPanel panel_header;

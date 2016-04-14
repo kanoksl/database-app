@@ -33,7 +33,7 @@ public class ManageCustomersWindow
         if (c != null) {
             customerList.add(c);
             tableCustomers.updateUI();
-            tableCustomers.setRowSelectionInterval(customerList.size(), customerList.size());
+            tableCustomers.setRowSelectionInterval(customerList.size() - 1, customerList.size() - 1);
         }
     }
 
@@ -124,6 +124,8 @@ public class ManageCustomersWindow
         // select the last row
         int rowIndex = Math.max(0, tableCustomers.getRowCount() - 1);
         tableCustomers.setRowSelectionInterval(rowIndex, rowIndex);
+        
+        this.updateButtonsEnabled();
     }
 
     private void updateButtonsEnabled() {
@@ -155,6 +157,9 @@ public class ManageCustomersWindow
     }
 
     private void initListeners() {
+        btnRefresh.addActionListener((ActionEvent) -> {
+            this.refresh();
+        });
         btnNewCustomer.addActionListener((ActionEvent) -> {
             this.customerAdd();
         });
@@ -187,6 +192,7 @@ public class ManageCustomersWindow
 
         panel_header = new javax.swing.JPanel();
         headerLabel = new javax.swing.JLabel();
+        btnRefresh = new javax.swing.JButton();
         tableCustomers_scrollPane = new javax.swing.JScrollPane();
         tableCustomers = new javax.swing.JTable();
         btnNewCustomer = new javax.swing.JButton();
@@ -211,6 +217,20 @@ public class ManageCustomersWindow
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(8, 16, 8, 16);
         panel_header.add(headerLabel, gridBagConstraints);
+
+        btnRefresh.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        btnRefresh.setText("Refresh");
+        btnRefresh.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnRefresh.setMaximumSize(new java.awt.Dimension(128, 36));
+        btnRefresh.setMinimumSize(new java.awt.Dimension(128, 36));
+        btnRefresh.setName(""); // NOI18N
+        btnRefresh.setPreferredSize(new java.awt.Dimension(96, 28));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 6;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(4, 12, 4, 8);
+        panel_header.add(btnRefresh, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -312,6 +332,7 @@ public class ManageCustomersWindow
     private javax.swing.JButton btnDeleteCustomer;
     private javax.swing.JButton btnEditCustomer;
     private javax.swing.JButton btnNewCustomer;
+    private javax.swing.JButton btnRefresh;
     private javax.swing.JButton btnViewCustomer;
     private javax.swing.JLabel headerLabel;
     private javax.swing.JPanel panel_header;
