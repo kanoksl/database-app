@@ -35,4 +35,17 @@ public class Util {
         return dia;
     }
     
+    
+    public static String formatPhoneNumber(String phone) {
+        if (phone == null) {
+            return "";
+        }
+        int len = phone.length();
+        if (len == 10 || len == 9) {
+            return phone.substring(0, len - 7) + "-" + phone.substring(len - 7, len - 4) + "-" + phone.substring(len - 4);
+        } else {
+            return phone;
+        }
+    }
+    
 }

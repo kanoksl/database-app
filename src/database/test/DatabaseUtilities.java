@@ -1,13 +1,15 @@
 package database.test;
 
 import database.test.gui.GenericTableWindow;
-import java.sql.Date;
 
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Time;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -129,6 +131,16 @@ public class DatabaseUtilities {
         return sqlDate == null ? null : sqlDate.toLocalDate();
     }
 
+    /**
+     * Simple conversion from java.sql.Time to java.time.LocalTime
+     *
+     * @param sqlTime A time in java.sql.Time.
+     * @return The same time in java.time.LocalTime.
+     */
+    public static LocalTime toLocalTime(Time sqlTime) {
+        return sqlTime == null ? null : sqlTime.toLocalTime();
+    }
+    
     /**
      * Convert from a (single-character) string to char.
      *

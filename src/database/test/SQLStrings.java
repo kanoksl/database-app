@@ -35,16 +35,41 @@ public class SQLStrings {
 
     public static final String SQL_SELECT_ALL_CUSTOMERS
             = "SELECT * FROM customer;";
-    
+
     public static final String SQL_SEARCH_CUSTOMER_BY_NAME
             = "SELECT * FROM customer "
-            + "WHERE (first_name LIKE ?) OR (last_name LIKE ?);";
+            + "WHERE CONCAT(first_name, ' ', last_name) LIKE ?;";
+
+    public static final String SQL_QUERY_CUSTOMER_SHOPPING_HISTORY
+            = "SELECT sale_id, sale_date, sale_time, item_count, special_discount, discounted_total FROM sale_overview "
+            + "WHERE (customer_id = ?) AND (sale_date BETWEEN ? AND ?);";
+
+    public static final String SQL_QUERY_SINGLE_SALE_DETAIL
+            = "SELECT  p.product_id, p.product_name, sd.sale_quantity AS quantity, "
+            + "    pr.product_price AS unit_price, (sd.sale_quantity * pr.product_price) AS subtotal "
+            + "FROM product p, product_price pr, sale_detail sd, sale s "
+            + "WHERE (s.sale_id = ?) "
+            + "    AND (s.sale_id = sd.sale_id) "
+            + "    AND (sd.product_id = p.product_id) "
+            + "    AND (sd.product_id = pr.product_id) "
+            + "    AND (s.sale_date BETWEEN pr.start_date AND pr.end_date);";
+    
+    public static final String SQL_DELETE_CUSTOMER_UPDATE_SALE
+            = "UPDATE sale SET customer_id = 'CDELETED' "
+            + "WHERE customer_id = ?;";
+    
+    public static final String SQL_DELETE_CUSTOMER
+            = "DELETE FROM customer WHERE customer_id = ?;";
     //</editor-fold>
 
     //<editor-fold desc="SQL Commands: Products">
     public static final String SQL_PRODUCT_ID_ALL_AVAILABLE
             = "SELECT product_id FROM product "
             + "WHERE (selling_status = 1) AND (stock_quantity > 0) "
+            + "ORDER BY product_id;";
+
+    public static final String SQL_PRODUCT_ID_ALL
+            = "SELECT product_id FROM product "
             + "ORDER BY product_id;";
 
     public static final String SQL_PRODUCT_ID_LATEST
@@ -63,21 +88,38 @@ public class SQLStrings {
             + "WHERE product_id = ?;";
 
     public static final String SQL_SELECT_A_PRODUCT
-            = "SELECT * FROM product "
-            + "WHERE product_id = ?;";
-    
+            = "SELECT pd.*, pr.product_price FROM product pd, product_price pr "
+            + "WHERE (pd.product_id = ?) AND (pd.product_id = pr.product_id)"
+            + "    AND (CURDATE() BETWEEN pr.start_date AND pr.end_date);";
+
+    public static final String SQL_PRODUCT_PRICING_HISTORY
+            = "SELECT start_date, end_date, (1 + DATEDIFF(end_date, start_date)) AS duration, product_price  "
+            + "FROM product_price "
+            + "WHERE product_id = ? "
+            + "ORDER BY start_date;";
+
+    public static final String SQL_PRODUCT_SUPPLIER_ID_LIST
+            = "SELECT supplier_id FROM product_supplier "
+            + "WHERE product_id = ?";
+
     public static final String SQL_SEARCH_PRODUCT_BY_NAME
             = "SELECT * FROM product "
             + "WHERE product_name LIKE ?;";
 
     public static final String SQL_SEARCH_PRODUCT_BY_QUANTITY
             = "SELECT * FROM product "
-            + "WHERE stock_quantity <= ?;";
+            + "WHERE stock_quantity <= ? "
+            + "ORDER BY stock_quantity;";
     //</editor-fold>
 
     //<editor-fold desc="SQL Commands: Products - Categories">
     public static final String SQL_CATEGORY_OVERVIEW
-            = "SELECT * FROM category_overview;";
+            = "SELECT * FROM category_overview "
+            + "ORDER BY category_id;";
+
+    public static final String SQL_CATEGORY_ID_ALL
+            = "SELECT category_id FROM category "
+            + "ORDER BY category_id;";
 
     public static final String SQL_INSERT_CATEGORY
             = "INSERT INTO category (category_id, category_name) "
@@ -93,6 +135,10 @@ public class SQLStrings {
     //</editor-fold>
 
     //<editor-fold desc="SQL Commands: Suppliers">
+    public static final String SQL_SUPPLIER_ID_ALL
+            = "SELECT supplier_id FROM supplier "
+            + "ORDER BY supplier_id;";
+    
     public static final String SQL_SUPPLIER_ID_LATEST
             = "SELECT supplier_id FROM supplier "
             + "ORDER BY supplier_id DESC "
@@ -107,12 +153,30 @@ public class SQLStrings {
             = "UPDATE supplier SET supplier_id = ?, supplier_name = ?, supplier_address = ?, "
             + "    supplier_phone = ?, supplier_email = ?, supplier_website = ?, notes = ? "
             + "WHERE supplier_id = ?;";
+    
+    public static final String SQL_DELETE_SUPPLIER
+            = "DELETE FROM supplier "
+            + "WHERE supplier_id = ?;";
 
     public static final String SQL_SELECT_A_SUPPLIER
             = "SELECT * FROM supplier "
             + "WHERE supplier_id = ?;";
-    //</editor-fold>
     
+    public static final String SQL_SELECT_ALL_SUPPLIERS
+            = "SELECT * FROM supplier "
+            + "ORDER BY supplier_id;";
+
+    public static final String SQL_SEARCH_SUPPLIER_BY_NAME
+            = "SELECT * FROM supplier "
+            + "WHERE supplier_name LIKE ? "
+            + "ORDER BY supplier_id;";
+    
+    public static final String SQL_SUPPLIER_PRODUCT_ID_LIST
+            = "SELECT product_id FROM product_supplier "
+            + "WHERE supplier_id = ? "
+            + "ORDER BY product_id;";
+    //</editor-fold>
+
     public static final java.sql.Date SQL_MINDATE = java.sql.Date.valueOf("1000-01-01");
     public static final java.sql.Date SQL_MAXDATE = java.sql.Date.valueOf("9999-12-31");
 }

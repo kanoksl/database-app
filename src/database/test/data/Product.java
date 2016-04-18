@@ -1,5 +1,7 @@
 package database.test.data;
 
+import database.test.gui.Const;
+
 public class Product {
 
     private String id;
@@ -8,31 +10,32 @@ public class Product {
     private int stockQuantity;
     private boolean selling;
     private String categoryID;
-    
-    private double currentPrice = 10;
+
+    private double currentPrice;
 
     /**
      * Create a new Product object from existing data.
      *
-     * @param id            CHAR(8), NOT NULL
-     * @param name          VARCHAR(64), NOT NULL
-     * @param description   TEXT
+     * @param id CHAR(8), NOT NULL
+     * @param name VARCHAR(64), NOT NULL
+     * @param description TEXT
      * @param stockQuantity INT, NOT NULL
-     * @param selling       BIT, NOT NULL: 0 = not selling, 1 = selling
-     * @param categoryID    CHAR(8)
+     * @param selling BIT, NOT NULL: 0 = not selling, 1 = selling
+     * @param categoryID CHAR(8)
+     * @param currentPrice
      */
     public Product(String id, String name, String description,
-                   int stockQuantity, boolean selling, String categoryID) {
+            int stockQuantity, boolean selling, String categoryID, double currentPrice) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.stockQuantity = stockQuantity;
         this.selling = selling;
         this.categoryID = categoryID;
+        this.currentPrice = currentPrice;
     }
 
     //<editor-fold defaultstate="collapsed" desc="Getters/Setters: Standard (With Some Input Validation)">
-
     public String getID() {
         return id;
     }
@@ -90,6 +93,27 @@ public class Product {
     }
     //</editor-fold>
 
+    public String getCurrentPriceString() {
+        return String.format("%,.2f " + Const.CURRENCY, currentPrice);
+    }
+
+    @Override
+    public String toString() {
+        return "Product { "
+                + "\n  product_id = " + id
+                + ", \n  product_name = " + name
+                + ", \n  product_description = " + description
+                + ", \n  stock_quantity = " + stockQuantity
+                + ", \n  selling_status = " + selling
+                + ", \n  category_id = " + categoryID
+                + ", \n  #product_price = " + currentPrice
+                + "\n}";
+    }
+
+    public String shortDescription() {
+        return String.format("%s : %s", id, name);
+    }
+
     /**
      * Create a new Product object without any data except the given ID. (The
      * stock quantity is automatically set to 0, and the selling status is set
@@ -99,6 +123,6 @@ public class Product {
      * @return A Product with all other fields as null.
      */
     public static Product createNewProduct(String id) {
-        return new Product(id, null, null, 0, true, null);
+        return new Product(id, null, null, 0, true, null, 0);
     }
 }

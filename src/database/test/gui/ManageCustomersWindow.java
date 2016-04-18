@@ -3,10 +3,10 @@ package database.test.gui;
 import database.test.ApplicationMain;
 import database.test.DatabaseManager;
 import database.test.data.Customer;
-import java.sql.SQLException;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.List;
 
-import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.TableColumnModel;
@@ -38,11 +38,17 @@ public class ManageCustomersWindow
     }
 
     private void customerView() {
+        if (tableCustomers.getSelectedRowCount() == 0) {
+            return;
+        }
         EditCustomerInfoWindow.showViewCustomerDialog(this,
                 customerList.get(tableCustomers.getSelectedRow()));
     }
 
     private void customerEdit() {
+        if (tableCustomers.getSelectedRowCount() == 0) {
+            return;
+        }
         int row = tableCustomers.getSelectedRow();
         Customer selected = customerList.get(row);
         Customer copy = database.queryCustomer(selected.getID());
@@ -54,35 +60,15 @@ public class ManageCustomersWindow
     }
 
     private void customerDelete() {
+        if (tableCustomers.getSelectedRowCount() == 0) {
+            return;
+        }
         int row = tableCustomers.getSelectedRow();
-        boolean deleted = this.databaseDeleteCustomer(customerList.get(row));
+        boolean deleted = database.tryDeleteCustomer(customerList.get(row), this);
         if (deleted) {
             customerList.remove(row);
             tableCustomers.updateUI();
         }
-    }
-
-    private boolean databaseDeleteCustomer(Customer customer) {
-        boolean result = false;
-        int proceed = JOptionPane.showConfirmDialog(this,
-                "Delete the following customer's information from the database?\n>> "
-                + customer.getID() + " - " + customer.getDisplayName(),
-                "Manage Customers", JOptionPane.OK_CANCEL_OPTION,
-                JOptionPane.QUESTION_MESSAGE, null);
-        if (proceed == JOptionPane.OK_OPTION) {
-            try {
-                database.deleteCustomer(customer); // actual delete operation
-                JOptionPane.showMessageDialog(this,
-                        "The customer's information was successfully deleted.",
-                        "Manage Customers", JOptionPane.INFORMATION_MESSAGE);
-                result = true;
-            } catch (SQLException ex) {
-                JOptionPane.showMessageDialog(this,
-                        "Error deleting the customer's information:\n" + ex.getMessage(),
-                        "Manage Customers", JOptionPane.ERROR_MESSAGE);
-            }
-        }
-        return result;
     }
 
     //<editor-fold defaultstate="collapsed" desc="GUI Code: Custom Initialization and Methods">
@@ -91,7 +77,14 @@ public class ManageCustomersWindow
      * also its UI.
      */
     public void refresh() {
-        customerList = database.queryAllCustomers();
+        String searchString = tbxSearch.getText().trim();
+        if (searchString.isEmpty()) {
+            customerList = database.queryAllCustomers();
+            System.out.println("ManageCustomersWindow.refresh(): all customers");
+        } else {
+            customerList = database.queryCustomersByName(searchString);
+            System.out.println("ManageCustomersWindow.refresh(): search for '" + searchString + "'");
+        }
         TableModel model = Customer.createTableModel(customerList);
         tableCustomers.setModel(model);
 
@@ -122,9 +115,11 @@ public class ManageCustomersWindow
         tableCustomers.updateUI();
 
         // select the last row
-        int rowIndex = Math.max(0, tableCustomers.getRowCount() - 1);
-        tableCustomers.setRowSelectionInterval(rowIndex, rowIndex);
-        
+        if (!customerList.isEmpty()) {
+            int rowIndex = Math.max(0, tableCustomers.getRowCount() - 1);
+            tableCustomers.setRowSelectionInterval(rowIndex, rowIndex);
+        }
+
         this.updateButtonsEnabled();
     }
 
@@ -154,6 +149,9 @@ public class ManageCustomersWindow
         tableCustomers.setFont(Const.FONT_DEFAULT_12);
         tableCustomers.getTableHeader().setFont(Const.FONT_DEFAULT_12);
         tableCustomers.setRowHeight(24);
+
+        tbxSearch.setSelectionColor(Const.COLOR_HIGHLIGHT_BG);
+        tbxSearch.setSelectedTextColor(Const.COLOR_HIGHLIGHT_FG);
     }
 
     private void initListeners() {
@@ -176,6 +174,15 @@ public class ManageCustomersWindow
         tableCustomers.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
             this.updateButtonsEnabled();
         });
+        
+        tbxSearch.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    refresh();
+                }
+            }
+        });
     }
 
     //</editor-fold>
@@ -192,6 +199,7 @@ public class ManageCustomersWindow
 
         panel_header = new javax.swing.JPanel();
         headerLabel = new javax.swing.JLabel();
+        tbxSearch = new javax.swing.JTextField();
         btnRefresh = new javax.swing.JButton();
         tableCustomers_scrollPane = new javax.swing.JScrollPane();
         tableCustomers = new javax.swing.JTable();
@@ -200,6 +208,7 @@ public class ManageCustomersWindow
         btnDeleteCustomer = new javax.swing.JButton();
         btnViewCustomer = new javax.swing.JButton();
 
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(600, 340));
         setPreferredSize(new java.awt.Dimension(900, 540));
         setSize(new java.awt.Dimension(900, 540));
@@ -218,6 +227,16 @@ public class ManageCustomersWindow
         gridBagConstraints.insets = new java.awt.Insets(8, 16, 8, 16);
         panel_header.add(headerLabel, gridBagConstraints);
 
+        tbxSearch.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        tbxSearch.setToolTipText("Search customers by first name or last name.");
+        tbxSearch.setPreferredSize(new java.awt.Dimension(128, 22));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(4, 0, 4, 0);
+        panel_header.add(tbxSearch, gridBagConstraints);
+
         btnRefresh.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
         btnRefresh.setText("Refresh");
         btnRefresh.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -226,10 +245,10 @@ public class ManageCustomersWindow
         btnRefresh.setName(""); // NOI18N
         btnRefresh.setPreferredSize(new java.awt.Dimension(96, 28));
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 6;
+        gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-        gridBagConstraints.insets = new java.awt.Insets(4, 12, 4, 8);
+        gridBagConstraints.insets = new java.awt.Insets(4, 8, 4, 8);
         panel_header.add(btnRefresh, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -338,6 +357,7 @@ public class ManageCustomersWindow
     private javax.swing.JPanel panel_header;
     private javax.swing.JTable tableCustomers;
     private javax.swing.JScrollPane tableCustomers_scrollPane;
+    private javax.swing.JTextField tbxSearch;
     // End of variables declaration//GEN-END:variables
 
     //</editor-fold>

@@ -49,6 +49,7 @@ public class ManageProductsWindow
         btnNewProduct = new javax.swing.JButton();
         btnRenameProduct = new javax.swing.JButton();
 
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(800, 350));
         setSize(new java.awt.Dimension(520, 540));
         getContentPane().setLayout(new java.awt.GridBagLayout());

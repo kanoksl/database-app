@@ -1,5 +1,6 @@
 package database.test.data;
 
+import database.test.gui.Util;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -141,19 +142,6 @@ public class Customer {
         return (gender == 'M') ? "Male" : (gender == 'F') ? "Female" : "";
     }
 
-    public String getPhoneNumberFormatted() {
-        String phone = phoneNumber;
-        if (phone == null) {
-            return "";
-        }
-        int len = phone.length();
-        if (len == 10 || len == 9) {
-            return phone.substring(0, len - 7) + "-" + phone.substring(len - 7, len - 4) + "-" + phone.substring(len - 4);
-        } else {
-            return phone;
-        }
-    }
-
     public long getDaysSinceRegistered() {
         return ChronoUnit.DAYS.between(registeredDate, LocalDate.now());
     }
@@ -187,6 +175,10 @@ public class Customer {
                 + ", \n  phoneNumber = " + phoneNumber
                 + ", \n  emailAddress = " + emailAddress
                 + "\n}";
+    }
+    
+    public String shortDescription() {
+        return String.format("%s : %s", id, this.getDisplayName());
     }
 
     public static TableModel createTableModel(List<Customer> list) {
@@ -226,7 +218,7 @@ public class Customer {
                     case 5:
                         return c.getRegisteredDate();
                     case 6:
-                        return c.getPhoneNumberFormatted();
+                        return Util.formatPhoneNumber(c.phoneNumber);
                     case 7:
                         return c.getEmailAddress();
                 }

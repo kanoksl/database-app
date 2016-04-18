@@ -85,6 +85,10 @@ public class ShoppingList {
         totalPrice = 0;
         totalQuantity = 0;
     }
+    
+    public int size() {
+        return itemList.size();
+    }
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Getters/Setters: Customer, Checkout DateTime">

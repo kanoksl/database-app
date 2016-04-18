@@ -1,29 +1,265 @@
 package database.test.gui;
 
+import database.test.ApplicationMain;
+import database.test.DatabaseManager;
+import database.test.data.Product;
+import database.test.data.Supplier;
+import database.test.gui.Const.InfoWindowMode;
+
+import java.awt.Frame;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.List;
+import java.util.ArrayList;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.SwingUtilities;
+import javax.swing.table.AbstractTableModel;
+
 public class EditProductInfoWindow
         extends javax.swing.JFrame {
 
+    private static DatabaseManager database = ApplicationMain.getDatabaseInstance();
+
+    private Product product = null;
+    private List<Supplier> suppliers = new ArrayList<>();
+
     /**
      * Creates new form EditCustomerInfoWindow.
+     *
+     * @param mode
      */
-    public EditProductInfoWindow() {
+    public EditProductInfoWindow(InfoWindowMode mode) {
         this.initComponents();
-        this.initListeners();
-        this.setLocationRelativeTo(null);
+        this.initializeBase();
         this.setColorTheme();
 
-        this.setTitle("" + " - " + Const.APP_TITLE);
+        switch (mode) {
+            case ADD:
+                this.initializeAddMode();
+                break;
+            case EDIT:
+                this.initializeEditMode();
+                break;
+            case VIEW:
+                this.initializeViewMode();
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void setProduct(Product product) {
+        this.product = product;
+        this.populateFormData();
+        if (cbxProductID.isEditable()) {
+            cbxProductID.setSelectedItem(product.getID());
+        }
+    }
+
+    private void populateFormData() {
+        tbxProductID.setText(product.getID());
+        tbxProductName.setValue(product.getName());
+        cbxCategory.setSelectedItem(product.getCategoryID());
+        txtDescription.setText(product.getDescription());
+
+        lblCurrentPrice.setText(product.getCurrentPriceString());
+        lblCurrentStock.setText(String.format("%,d", product.getStockQuantity()));
+        spnPrice.setValue(product.getCurrentPrice());
+        spnStock.setValue(product.getStockQuantity());
+
+        chkDiscontinued.setSelected(!product.isSelling());
+        
+        this.loadSuppliers();
+        
+        lblPriceSubheader.setText(product.shortDescription());
+        this.loadPricingHistory();
+        lblSellingSubheader.setText(product.shortDescription());
+        
+        // TODO: selling history
+    }
+
+    private void collectFormData() {
+        product.setID(tbxProductID.getText().trim());
+        product.setName(tbxProductName.getText().trim());
+        product.setCategoryID(cbxCategory.getSelectedItem().toString());
+        product.setDescription(txtDescription.getText());
+
+        // TODO: set price
+        product.setStockQuantity((int) spnStock.getValue());
+
+        // TODO: suppliers
     }
 
     //<editor-fold defaultstate="collapsed" desc="GUI Code: Custom Initialization and Methods">
+    private void initializeAddMode() {
+        headerLabel.setText(Const.EPIW_HEADER_ADD);
+
+        tabbedPane.remove(2); // selling history
+        tabbedPane.remove(1); // pricing history
+
+        cbxProductID.setVisible(false);
+        cbxProductID.setEnabled(false);
+    }
+
+    private void initializeEditMode() {
+        headerLabel.setText(Const.EPIW_HEADER_EDIT);
+
+        tabbedPane.remove(2); // selling history
+
+        cbxProductID.setVisible(false);
+        cbxProductID.setEnabled(false);
+    }
+
+    private void initializeViewMode() {
+        headerLabel.setText(Const.EPIW_HEADER_VIEW);
+
+        tbxProductName.setEditable(false);
+        cbxCategory.setEnabled(false);
+        txtDescription.setEditable(false);
+        chkDiscontinued.setEnabled(false);
+        spnPrice.setEnabled(false);
+        spnStock.setEnabled(false);
+        btnSupplierAdd.setEnabled(false);
+        btnSupplierDelete.setEnabled(false);
+
+        btnSave.setEnabled(false);
+        btnSave.setVisible(false);
+        btnCancel.setText("Close");
+        btnCancel.addActionListener((ActionEvent) -> {
+            SwingUtilities.getWindowAncestor(btnCancel).dispose();
+        });
+        
+        cbxProductID.setVisible(true);
+        cbxProductID.setEnabled(true);
+        List<String> productIDs = database.queryListOfAllProductIDs();
+        String[] productIDsArray = new String[productIDs.size()];
+        productIDs.toArray(productIDsArray);
+        cbxProductID.setModel(new DefaultComboBoxModel<>(productIDsArray));
+        cbxProductID.addActionListener((ActionEvent) -> {
+            this.setProduct(database.queryProduct(cbxProductID.getSelectedItem().toString()));
+        });
+    }
+
     private void setColorTheme() {
+        tablePrice.setSelectionBackground(Const.COLOR_HIGHLIGHT_BG);
+        tablePrice.setSelectionForeground(Const.COLOR_HIGHLIGHT_FG);
+        tablePrice.setGridColor(Const.COLOR_TABLE_GRID);
+        tablePrice.setFont(Const.FONT_DEFAULT_12);
+        tablePrice.getTableHeader().setFont(Const.FONT_DEFAULT_12);
+        tablePrice.setRowHeight(24);
 
+        tableSells.setSelectionBackground(Const.COLOR_HIGHLIGHT_BG);
+        tableSells.setSelectionForeground(Const.COLOR_HIGHLIGHT_FG);
+        tableSells.setGridColor(Const.COLOR_TABLE_GRID);
+        tableSells.setFont(Const.FONT_DEFAULT_12);
+        tableSells.getTableHeader().setFont(Const.FONT_DEFAULT_12);
+        tableSells.setRowHeight(24);
+
+        tableSuppliers.setSelectionBackground(Const.COLOR_HIGHLIGHT_BG);
+        tableSuppliers.setSelectionForeground(Const.COLOR_HIGHLIGHT_FG);
+        tableSuppliers.setGridColor(Const.COLOR_TABLE_GRID);
+        tableSuppliers.setFont(Const.FONT_DEFAULT_12);
+        tableSuppliers.getTableHeader().setFont(Const.FONT_DEFAULT_12);
+        tableSuppliers.setRowHeight(24);
     }
 
-    private void initListeners() {
+    private void initializeBase() {
+        lblWarnID.setText(" ");
+        lblWarnName.setText(" ");
 
+        tbxProductName.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                super.mousePressed(e);
+                tbxProductName.setCaretPosition(tbxProductName.getText().trim().length());
+            }
+        });
+
+        this.loadCategoryList();
     }
 
+    private void loadCategoryList() {
+        List<String> categoryIDs = database.queryListOfCategoryIDs();
+        String[] categoryIDsArray = new String[categoryIDs.size()];
+        categoryIDs.toArray(categoryIDsArray);
+        cbxCategory.setModel(new DefaultComboBoxModel<>(categoryIDsArray));
+    }
+
+    private void loadPricingHistory() {
+        List<Object[]> pricingList = database.queryProductPricingHistory(product.getID());
+        for (Object[] row : pricingList) {
+            boolean isMinDate = row[0].toString().equals("1000-01-01");
+            boolean isMaxDate = row[1].toString().equals("9999-12-31");
+            row[0] = isMinDate ? "BEGINNING" : row[0].toString();
+            row[1] = isMaxDate ? "UNSPECIFIED" : row[1].toString();
+            row[2] = (isMinDate || isMaxDate) ? "-" : String.format("%,d days", row[2]);
+            row[3] = String.format("%,.2f " + Const.CURRENCY, (Double) row[3]);
+        }
+
+        tablePrice.setModel(new AbstractTableModel() {
+            final String[] COLUMNS = {"Start Date", "End Date", "Duration", "Unit Price"};
+
+            @Override
+            public int getRowCount() {
+                return pricingList.size();
+            }
+
+            @Override
+            public int getColumnCount() {
+                return 4;
+            }
+
+            @Override
+            public Object getValueAt(int rowIndex, int columnIndex) {
+                return pricingList.get(rowIndex)[columnIndex];
+            }
+
+            @Override
+            public String getColumnName(int column) {
+                return COLUMNS[column];
+            }
+        });
+        tablePrice.updateUI();
+        lblPriceStats.setText("The price of this product has been changed "
+                + (pricingList.size() - 1) + " times.");
+    }
+
+    private void loadSuppliers() {
+        suppliers = new ArrayList<>();
+        List<String> supplierIDs = database.queryListOfProductSupplierIDs(product.getID());
+        for(String id : supplierIDs) {
+            suppliers.add(database.querySupplier(id));
+        }
+        
+        tableSuppliers.setModel(new AbstractTableModel() {
+            final String[] COLUMNS = {"Supplier ID", "Supplier Name"};
+
+            @Override
+            public int getRowCount() {
+                return suppliers.size();
+            }
+
+            @Override
+            public int getColumnCount() {
+                return 2;
+            }
+
+            @Override
+            public Object getValueAt(int rowIndex, int columnIndex) {
+                if (columnIndex == 0) {
+                    return suppliers.get(rowIndex).getID();
+                } else {
+                    return suppliers.get(rowIndex).getName();
+                }
+            }
+
+            @Override
+            public String getColumnName(int column) {
+                return COLUMNS[column];
+            }
+        });
+        tableSuppliers.updateUI();
+    }
     //</editor-fold>
     //<editor-fold defaultstate="collapsed" desc="GUI Code: Automatically Generated by NetBeans">
     /**
@@ -38,6 +274,7 @@ public class EditProductInfoWindow
 
         panel_header = new javax.swing.JPanel();
         headerLabel = new javax.swing.JLabel();
+        cbxProductID = new javax.swing.JComboBox<>();
         tabbedPane = new javax.swing.JTabbedPane();
         panel_productInfo = new javax.swing.JPanel();
         panel_basic = new javax.swing.JPanel();
@@ -60,7 +297,7 @@ public class EditProductInfoWindow
         spnPrice = new javax.swing.JSpinner();
         panel_stock = new javax.swing.JPanel();
         javax.swing.JLabel l_curStock = new javax.swing.JLabel();
-        javax.swing.JLabel lblCurrentStock = new javax.swing.JLabel();
+        lblCurrentStock = new javax.swing.JLabel();
         javax.swing.JLabel l_newStock = new javax.swing.JLabel();
         spnStock = new javax.swing.JSpinner();
         panel_suppliers = new javax.swing.JPanel();
@@ -86,6 +323,7 @@ public class EditProductInfoWindow
         panel_bottom_sells = new javax.swing.JPanel();
         lblSellingStats = new javax.swing.JLabel();
 
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setMaximumSize(new java.awt.Dimension(940, 600));
         setMinimumSize(new java.awt.Dimension(940, 600));
         setPreferredSize(new java.awt.Dimension(940, 600));
@@ -104,6 +342,16 @@ public class EditProductInfoWindow
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(8, 16, 8, 16);
         panel_header.add(headerLabel, gridBagConstraints);
+
+        cbxProductID.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        cbxProductID.setPreferredSize(new java.awt.Dimension(140, 22));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 16);
+        panel_header.add(cbxProductID, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -130,8 +378,8 @@ public class EditProductInfoWindow
         gridBagConstraints.insets = new java.awt.Insets(8, 20, 4, 4);
         panel_basic.add(l_prodID, gridBagConstraints);
 
+        tbxProductID.setEditable(false);
         tbxProductID.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
-        tbxProductID.setEnabled(false);
         tbxProductID.setMinimumSize(new java.awt.Dimension(140, 22));
         tbxProductID.setPreferredSize(new java.awt.Dimension(140, 22));
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -650,9 +898,11 @@ public class EditProductInfoWindow
     private javax.swing.JButton btnSupplierView;
     private javax.swing.JButton btnViewCategory;
     private javax.swing.JComboBox<String> cbxCategory;
+    private javax.swing.JComboBox<String> cbxProductID;
     private javax.swing.JCheckBox chkDiscontinued;
     private javax.swing.JLabel headerLabel;
     private javax.swing.JLabel lblCurrentPrice;
+    private javax.swing.JLabel lblCurrentStock;
     private javax.swing.JLabel lblPriceStats;
     private javax.swing.JLabel lblPriceSubheader;
     private javax.swing.JLabel lblSellingStats;
@@ -685,5 +935,56 @@ public class EditProductInfoWindow
     private javax.swing.JTextArea txtDescription;
     private javax.swing.JScrollPane txtDescription_scrollPane;
     // End of variables declaration//GEN-END:variables
+    //</editor-fold>
+
+    //<editor-fold desc="Static showDialog() Methods">
+    /**
+     * Show a dialog for adding a new product.
+     *
+     * @param owner The window that calls the dialog.
+     * @return A newly created Product. Null if the user canceled.
+     */
+    public static Product showNewProductDialog(Frame owner) {
+        EditProductInfoWindow win = new EditProductInfoWindow(InfoWindowMode.ADD);
+        win.setProduct(Product.createNewProduct(database.suggestNextProductID()));
+
+        Util.createAndShowDialog(owner, "Product Information - " + Const.APP_TITLE,
+                win.getContentPane(), win.getPreferredSize());
+        System.out.println("showNewProductDialog() returning: " + win.product);
+        return win.product;
+    }
+
+    /**
+     * Show a dialog for editing info of an existing product.
+     *
+     * @param owner The window that calls the dialog.
+     * @param product The Product to be edited.
+     * @return The same Product instance whether the user save their edits or
+     * not.
+     */
+    public static Product showEditProductDialog(Frame owner, Product product) {
+        EditProductInfoWindow win = new EditProductInfoWindow(InfoWindowMode.EDIT);
+        win.setProduct(product);
+
+        Util.createAndShowDialog(owner, "Product Information - " + Const.APP_TITLE,
+                win.getContentPane(), win.getPreferredSize());
+        System.out.println("showEditProductDialog() returning: " + win.product);
+        return win.product;
+    }
+
+    /**
+     * Show a dialog that allows the user to view info of an existing product.
+     *
+     * @param owner The window that calls the dialog.
+     * @param product The Product to be viewed.
+     */
+    public static void showViewProductDialog(Frame owner, Product product) {
+        EditProductInfoWindow win = new EditProductInfoWindow(InfoWindowMode.VIEW);
+        win.setProduct(product);
+
+        Util.createAndShowDialog(owner, "Product Information - " + Const.APP_TITLE,
+                win.getContentPane(), win.getPreferredSize());
+    }
+
     //</editor-fold>
 }

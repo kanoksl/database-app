@@ -81,45 +81,13 @@ public class EditCategoryInfoWindow
         categoryName = tbxCategoryName.getText().trim();
     }
 
-    //<editor-fold desc="Database: Update Operations (Insert and Update)">
-    private boolean databaseInsertCategory() {
-        try {
-            database.insertCategory(categoryID, categoryName);
-            JOptionPane.showMessageDialog(this,
-                    "The new category was successfully added to the database.",
-                    "Manage Categories", JOptionPane.INFORMATION_MESSAGE);
-            return true;
-        } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(this,
-                    "Error adding new category to the database:\n" + ex.getMessage(),
-                    "Manage Categories", JOptionPane.ERROR_MESSAGE);
-            return false;
-        }
-    }
-
-    private boolean databaseUpdateCategory() {
-        try {
-            database.updateCategory(categoryID_original, categoryID, categoryName);
-            JOptionPane.showMessageDialog(this,
-                    "The category information was successfully updated.",
-                    "Manage Categories", JOptionPane.INFORMATION_MESSAGE);
-            return true;
-        } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(this,
-                    "Error updating the category information:\n" + ex.getMessage(),
-                    "Manage Categories", JOptionPane.ERROR_MESSAGE);
-            return false;
-        }
-    }
-    //</editor-fold>
-
     //<editor-fold defaultstate="collapsed" desc="GUI Code: Custom Initialization and Methods">
     private void initializeAddMode() {
         headerLabel.setText(Const.ECATIW_HEADER_ADD);
         // listeners
         btnSave.addActionListener((ActionEvent) -> {
             this.collectFormData();
-            if (this.databaseInsertCategory()) {
+            if (database.tryInsertCategory(categoryID, categoryName, this)) {
                 SwingUtilities.getWindowAncestor(btnSave).dispose();
             }
         });
@@ -130,7 +98,7 @@ public class EditCategoryInfoWindow
         // listeners
         btnSave.addActionListener((ActionEvent) -> {
             this.collectFormData();
-            if (this.databaseUpdateCategory()) {
+            if (database.tryUpdateCategory(categoryID_original, categoryID, categoryName, this)) {
                 SwingUtilities.getWindowAncestor(btnSave).dispose();
             }
         });
@@ -159,6 +127,7 @@ public class EditCategoryInfoWindow
         btnSave = new javax.swing.JButton();
         btnCancel = new javax.swing.JButton();
 
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setMaximumSize(new java.awt.Dimension(330, 200));
         setMinimumSize(new java.awt.Dimension(330, 200));
         setPreferredSize(new java.awt.Dimension(330, 200));

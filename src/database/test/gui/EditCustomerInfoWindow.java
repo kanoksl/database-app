@@ -8,18 +8,29 @@ import database.test.gui.Const.InfoWindowMode;
 import java.awt.Frame;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JOptionPane;
+import javax.swing.JLabel;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
 
 public class EditCustomerInfoWindow
         extends javax.swing.JFrame {
 
     private static DatabaseManager database = ApplicationMain.getDatabaseInstance();
     private Customer customer = null;
+
+    private List<Object[]> shoppingHistory = null;
 
     /**
      * Creates new EditCustomerInfoWindow. Note: to use this window, use the
@@ -64,13 +75,17 @@ public class EditCustomerInfoWindow
 
     private void setCustomer(Customer customer) {
         this.customer = customer;
-        this.showCustomerInfo();
+        this.populateFormData();
+        if (cbxCustomerID.isEditable()) { // in View mode
+            cbxCustomerID.setSelectedItem(customer.getID());
+            this.refreshShoppingHistory();
+        }
     }
 
     /**
      * Customer instance variable --> GUI
      */
-    private void showCustomerInfo() {
+    private void populateFormData() {
         tbxCustomerID.setText(customer.getID());
         lblRegisteredDate.setText(customer.getRegistrationInfo());
         tbxFirstName.setText(customer.getFirstName());
@@ -109,65 +124,146 @@ public class EditCustomerInfoWindow
 //        }
     }
 
-    //<editor-fold desc="Database: Update Operations (Insert, Update, Delete)">
-    private boolean databaseInsertCustomer() {
-        try {
-            database.insertCustomer(customer); // actual insert operation
-            JOptionPane.showMessageDialog(this,
-                    "The new customer was successfully added to the database.",
-                    "Register Customer", JOptionPane.INFORMATION_MESSAGE);
-            return true;
-        } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(this,
-                    "Error adding the customer to the database:\n" + ex.getMessage(),
-                    "Register Customer", JOptionPane.ERROR_MESSAGE);
-            return false;
-        }
-    }
-
-    private boolean databaseUpdateCustomer() {
-        try {
-            database.updateCustomer(customer); // actual update operation
-            JOptionPane.showMessageDialog(this,
-                    "The customer's information was successfully updated.",
-                    "Edit Customer Info", JOptionPane.INFORMATION_MESSAGE);
-            return true;
-        } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(this,
-                    "Error updating the customer's information:\n" + ex.getMessage(),
-                    "Edit Customer Info", JOptionPane.ERROR_MESSAGE);
-            return false;
-        }
-    }
-
-    private boolean databaseDeleteCustomer() {
-        boolean result = false;
-        int proceed = JOptionPane.showConfirmDialog(this,
-                "Delete the following customer's information from the database?\n>> "
-                + customer.getID() + " - " + customer.getDisplayName(),
-                "Edit Customer Info", JOptionPane.OK_CANCEL_OPTION,
-                JOptionPane.QUESTION_MESSAGE, null);
-        if (proceed == JOptionPane.OK_OPTION) {
-            try {
-                database.deleteCustomer(customer); // actual delete operation
-                JOptionPane.showMessageDialog(this,
-                        "The customer's information was successfully deleted.",
-                        "Edit Customer Info", JOptionPane.INFORMATION_MESSAGE);
-                result = true;
-            } catch (SQLException ex) {
-                JOptionPane.showMessageDialog(this,
-                        "Error deleting the customer's information:\n" + ex.getMessage(),
-                        "Edit Customer Info", JOptionPane.ERROR_MESSAGE);
-            }
-        }
-        return result;
-    }
-    //</editor-fold>
-
-    private void updateShoppingHistory() {
+    private void refreshShoppingHistory() {
+        LocalDate dateFrom, dateTo;
         if (chkHistoryFiltering.isSelected()) {
-            // TODO: query shopping history
+            dateFrom = LocalDate.parse(tbxDateFrom.getText());
+            dateTo = LocalDate.parse(tbxDateTo.getText());
+        } else {
+            dateFrom = Const.SQL_MINDATE;
+            dateTo = Const.SQL_MAXDATE;
         }
+        shoppingHistory = database.queryCustomerShoppingHistory(customer.getID(), dateFrom, dateTo);
+        tableSale.setModel(new AbstractTableModel() {
+            final String[] COLUMNS = {"Date/Time", "Items", "Discount", "Total"};
+
+            @Override
+            public int getRowCount() {
+                return shoppingHistory.size();
+            }
+
+            @Override
+            public int getColumnCount() {
+                return 4;
+            }
+
+            @Override
+            public Object getValueAt(int rowIndex, int columnIndex) {
+                Object[] row = shoppingHistory.get(rowIndex);
+                if (columnIndex == 0) {
+                    LocalDate date = (LocalDate) row[0];
+                    LocalTime time = (LocalTime) row[1];
+                    return date.toString() + " " + time.format(DateTimeFormatter.ofPattern("HH:mm"));
+                } else if (columnIndex == 1) {
+                    return String.format("%,d ", (Integer) row[2]);
+                } else if (columnIndex == 2) {
+                    return String.format("%.2f %% ", (Double) row[3]);
+                } else if (columnIndex == 3) {
+                    return String.format("%,.2f " + Const.CURRENCY + " ", (Double) row[4]);
+                } else {
+                    return null;
+                }
+            }
+
+            @Override
+            public String getColumnName(int column) {
+                return COLUMNS[column];
+            }
+        });
+
+        // setting column  sizes
+        tableSale.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        final int width_datetime = 120, width_numbers = 60;
+        TableColumnModel colm = tableSale.getColumnModel();
+
+        colm.getColumn(0).setMinWidth(width_datetime);
+        colm.getColumn(0).setMaxWidth(width_datetime);
+        colm.getColumn(0).setResizable(false);
+
+        colm.getColumn(1).setMinWidth(50);
+        colm.getColumn(1).setMaxWidth(50);
+        colm.getColumn(1).setResizable(false);
+
+        colm.getColumn(2).setMinWidth(width_numbers);
+        colm.getColumn(2).setMaxWidth(width_numbers);
+        colm.getColumn(2).setResizable(false);
+
+        // set alignments
+        DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
+        rightRenderer.setHorizontalAlignment(JLabel.RIGHT);
+        colm.getColumn(1).setCellRenderer(rightRenderer);
+        colm.getColumn(2).setCellRenderer(rightRenderer);
+        colm.getColumn(3).setCellRenderer(rightRenderer);
+
+        tableSale.updateUI();
+
+        double sum = 0;
+        for (Object[] row : shoppingHistory) {
+            sum += (Double) row[4];
+        }
+
+        lblStats.setText(String.format("%,d Records Found, Total amount %,.2f ฿, "
+                + "Select a sale record on the left side to see more detail on the right.",
+                shoppingHistory.size(), sum));
+
+        if (shoppingHistory.size() > 0) {
+            tableSale.getSelectionModel().setSelectionInterval(0, 0);
+        }
+    }
+
+    private void showSaleDetail() {
+        // TODO: show sale detail
+        int row = tableSale.getSelectedRow();
+        if (row < 0 || row > shoppingHistory.size()) {
+            tableDetails.setModel(new DefaultTableModel(new String[]{
+                "Product ID", "Product Name", "Quantity", "Unit Price", "Subtotal"}, 0));
+            tableDetails.updateUI();
+            return;
+        }
+        String saleID = (String) shoppingHistory.get(row)[5];
+        List<Object[]> details = database.querySingleSaleDetail(saleID);
+        tableDetails.setModel(new AbstractTableModel() {
+            final String[] COLUMNS = {"Product ID", "Product Name", "Quantity", "Unit Price", "Subtotal"};
+
+            @Override
+            public int getRowCount() {
+                return details.size();
+            }
+
+            @Override
+            public int getColumnCount() {
+                return 5;
+            }
+
+            @Override
+            public Object getValueAt(int rowIndex, int columnIndex) {
+                Object[] row = details.get(rowIndex);
+                if (columnIndex <= 1) {
+                    return row[columnIndex];
+                } else if (columnIndex == 2) {
+                    return String.format("%,d ", (Integer) row[2]);
+                } else if (columnIndex <= 4) {
+                    return String.format("%,.2f " + Const.CURRENCY + " ", (Double) row[columnIndex]);
+                } else {
+                    return null;
+                }
+            }
+
+            @Override
+            public String getColumnName(int column) {
+                return COLUMNS[column];
+            }
+        });
+        tableDetails.updateUI();
+
+        tableDetails.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        TableColumnModel colm = tableDetails.getColumnModel();
+        // set alignments
+        DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
+        rightRenderer.setHorizontalAlignment(JLabel.RIGHT);
+        colm.getColumn(2).setCellRenderer(rightRenderer);
+        colm.getColumn(3).setCellRenderer(rightRenderer);
+        colm.getColumn(4).setCellRenderer(rightRenderer);
     }
 
     //<editor-fold defaultstate="collapsed" desc="GUI Code: Date ComboBoxes">
@@ -247,7 +343,7 @@ public class EditCustomerInfoWindow
         btnCancel.setVisible(true);
         btnCancel.setText("Cancel");
 
-        tbxCustomerID.setEnabled(false); // don't allow manually setting an ID
+        tbxCustomerID.setEditable(false); // don't allow manually setting an ID
         tbxFirstName.setEnabled(true);
         tbxLastName.setEnabled(true);
         rdbMale.setEnabled(true);
@@ -261,12 +357,15 @@ public class EditCustomerInfoWindow
         tbxPhone.setEnabled(true);
         tbxEmail.setEnabled(true);
 
+        cbxCustomerID.setEnabled(false);
+        cbxCustomerID.setVisible(false);
+
         tabbedPane.remove(1); // hide the shopping history
         //</editor-fold>
         // listeners
         btnSave.addActionListener((ActionEvent) -> {
             this.collectFormData();
-            if (this.databaseInsertCustomer()) {
+            if (database.tryInsertCustomer(customer, this)) {
                 SwingUtilities.getWindowAncestor(btnSave).dispose();
             }
         });
@@ -284,7 +383,7 @@ public class EditCustomerInfoWindow
         btnCancel.setVisible(true);
         btnCancel.setText("Cancel");
 
-        tbxCustomerID.setEnabled(false);
+        tbxCustomerID.setEditable(false);
         tbxFirstName.setEnabled(true);
         tbxLastName.setEnabled(true);
         rdbMale.setEnabled(true);
@@ -298,12 +397,15 @@ public class EditCustomerInfoWindow
         tbxPhone.setEnabled(true);
         tbxEmail.setEnabled(true);
 
+        cbxCustomerID.setEnabled(false);
+        cbxCustomerID.setVisible(false);
+
         tabbedPane.remove(1); // hide the shopping history
         //</editor-fold>
         // listeners
         btnSave.addActionListener((ActionEvent) -> {
             this.collectFormData();
-            if (this.databaseUpdateCustomer()) {
+            if (database.tryUpdateCustomer(customer, this)) {
                 SwingUtilities.getWindowAncestor(btnSave).dispose();
             }
         });
@@ -312,7 +414,7 @@ public class EditCustomerInfoWindow
             SwingUtilities.getWindowAncestor(btnCancel).dispose();
         });
         btnDelete.addActionListener((ActionEvent) -> {
-            if (this.databaseDeleteCustomer()) {
+            if (database.tryDeleteCustomer(customer, this)) {
                 customer = null;
                 SwingUtilities.getWindowAncestor(btnSave).dispose();
             }
@@ -327,9 +429,9 @@ public class EditCustomerInfoWindow
         btnCancel.setVisible(true);
         btnCancel.setText("Close");
 
-        tbxCustomerID.setEnabled(false);
-        tbxFirstName.setEnabled(false);
-        tbxLastName.setEnabled(false);
+        tbxCustomerID.setEditable(false);
+        tbxFirstName.setEditable(false);
+        tbxLastName.setEditable(false);
         rdbMale.setEnabled(false);
         rdbFemale.setEnabled(false);
         rdbNull.setEnabled(false);
@@ -337,9 +439,14 @@ public class EditCustomerInfoWindow
         cbxBirthdayMonth.setEnabled(false);
         cbxBirthdayYear.setEnabled(false);
         chkUnknownBirthday.setEnabled(false);
-        tbxPhone.setEnabled(false);
-        tbxEmail.setEnabled(false);
+        tbxPhone.setEditable(false);
+        tbxEmail.setEditable(false);
         //</editor-fold>
+
+        chkHistoryFiltering.setSelected(false);
+        tbxDateFrom.setEnabled(false);
+        tbxDateTo.setEnabled(false);
+
         // listeners: main
         btnCancel.addActionListener((ActionEvent) -> {
             SwingUtilities.getWindowAncestor(btnCancel).dispose();
@@ -350,7 +457,23 @@ public class EditCustomerInfoWindow
             tbxDateTo.setEnabled(chkHistoryFiltering.isSelected());
         });
         btnFilterRefresh.addActionListener((ActionEvent) -> {
-            this.updateShoppingHistory();
+            this.refreshShoppingHistory();
+        });
+
+        tableSale.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        ListSelectionModel selectionModel = tableSale.getSelectionModel();
+        selectionModel.addListSelectionListener((ListSelectionEvent e) -> {
+            this.showSaleDetail();
+        });
+
+        cbxCustomerID.setEnabled(true);
+        cbxCustomerID.setVisible(true);
+        List<String> customerIDs = database.queryListOfCustomerIDs();
+        String[] customerIDsArray = new String[customerIDs.size()];
+        customerIDs.toArray(customerIDsArray);
+        cbxCustomerID.setModel(new DefaultComboBoxModel<>(customerIDsArray));
+        cbxCustomerID.addActionListener((ActionEvent) -> {
+            this.setCustomer(database.queryCustomer(cbxCustomerID.getSelectedItem().toString()));
         });
     }
 
@@ -360,13 +483,14 @@ public class EditCustomerInfoWindow
         tableSale.setGridColor(Const.COLOR_TABLE_GRID);
         tableSale.setFont(Const.FONT_DEFAULT_12);
         tableSale.getTableHeader().setFont(Const.FONT_DEFAULT_12);
-        tableSale.setRowHeight(20);
+        tableSale.setRowHeight(24);
+
         tableDetails.setSelectionBackground(Const.COLOR_HIGHLIGHT_BG);
         tableDetails.setSelectionForeground(Const.COLOR_HIGHLIGHT_FG);
         tableDetails.setGridColor(Const.COLOR_TABLE_GRID);
         tableDetails.setFont(Const.FONT_DEFAULT_12);
         tableDetails.getTableHeader().setFont(Const.FONT_DEFAULT_12);
-        tableDetails.setRowHeight(20);
+        tableDetails.setRowHeight(24);
     }
 
     //</editor-fold>
@@ -384,6 +508,7 @@ public class EditCustomerInfoWindow
         genderButtonGroup = new javax.swing.ButtonGroup();
         panel_header = new javax.swing.JPanel();
         headerLabel = new javax.swing.JLabel();
+        cbxCustomerID = new javax.swing.JComboBox<>();
         tabbedPane = new javax.swing.JTabbedPane();
         panel_customerInfo = new javax.swing.JPanel();
         javax.swing.JLabel l_cusID = new javax.swing.JLabel();
@@ -451,6 +576,16 @@ public class EditCustomerInfoWindow
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(8, 16, 8, 16);
         panel_header.add(headerLabel, gridBagConstraints);
+
+        cbxCustomerID.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        cbxCustomerID.setPreferredSize(new java.awt.Dimension(140, 22));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 16);
+        panel_header.add(cbxCustomerID, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -695,7 +830,7 @@ public class EditCustomerInfoWindow
         panel_customerInfo.add(l_phone, gridBagConstraints);
 
         try {
-            tbxPhone.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("###-###-####")));
+            tbxPhone.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("##########")));
         } catch (java.text.ParseException ex) {
             ex.printStackTrace();
         }
@@ -830,13 +965,13 @@ public class EditCustomerInfoWindow
         tableSale.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
         tableSale.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null}
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
             },
             new String [] {
-                "Date/Time", "Items", "Total"
+                "Date/Time", "Items", "Discount", "Total"
             }
         ));
         tableSale.setGridColor(new java.awt.Color(204, 204, 204));
@@ -994,6 +1129,7 @@ public class EditCustomerInfoWindow
     private javax.swing.JComboBox<String> cbxBirthdayDay;
     private javax.swing.JComboBox<String> cbxBirthdayMonth;
     private javax.swing.JComboBox<String> cbxBirthdayYear;
+    private javax.swing.JComboBox<String> cbxCustomerID;
     private javax.swing.JCheckBox chkHistoryFiltering;
     private javax.swing.JCheckBox chkUnknownBirthday;
     private javax.swing.ButtonGroup genderButtonGroup;
@@ -1074,11 +1210,11 @@ public class EditCustomerInfoWindow
     public static void showViewCustomerDialog(Frame owner, Customer customer) {
         EditCustomerInfoWindow win = new EditCustomerInfoWindow(InfoWindowMode.VIEW);
         win.setCustomer(customer);
+        win.refreshShoppingHistory();
 
         Util.createAndShowDialog(owner, "Customer Information - " + Const.APP_TITLE,
                 win.getContentPane(), win.getPreferredSize());
     }
 
     //</editor-fold>
-
 }

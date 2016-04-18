@@ -63,37 +63,14 @@ public class ManageCategoriesWindow
     }
 
     private void categoryDelete() {
-        boolean deleted = this.databaseDeleteCategory();
-        if (deleted) {
-            this.refresh();
-        }
-    }
-
-    private boolean databaseDeleteCategory() {
         int row = tableCategories.getSelectedRow();
         String id = tableCategories.getValueAt(row, 0).toString();
         String name = tableCategories.getValueAt(row, 1).toString();
 
-        boolean result = false;
-        int proceed = JOptionPane.showConfirmDialog(this,
-                "Delete the following category from the database?\n>> "
-                + id + " - " + name + "\n\n(The products in the category will not be deleted.)",
-                "Manage Categories", JOptionPane.OK_CANCEL_OPTION,
-                JOptionPane.QUESTION_MESSAGE, null);
-        if (proceed == JOptionPane.OK_OPTION) {
-            try {
-                database.deleteCategory(id); // actual delete operation
-                JOptionPane.showMessageDialog(this,
-                        "The category was successfully deleted.",
-                        "Manage Categories", JOptionPane.INFORMATION_MESSAGE);
-                result = true;
-            } catch (SQLException ex) {
-                JOptionPane.showMessageDialog(this,
-                        "Error deleting the category:\n" + ex.getMessage(),
-                        "Manage Categories", JOptionPane.ERROR_MESSAGE);
-            }
+        boolean deleted = database.tryDeleteCategory(id, name, this);
+        if (deleted) {
+            this.refresh();
         }
-        return result;
     }
 
     //<editor-fold defaultstate="collapsed" desc="GUI Code: Custom Initialization and Methods">
@@ -139,7 +116,7 @@ public class ManageCategoriesWindow
         // select the last row
         int rowIndex = Math.max(0, tableCategories.getRowCount() - 1);
         tableCategories.setRowSelectionInterval(rowIndex, rowIndex);
-        
+
         this.updateButtonsEnabled();
     }
 
@@ -198,6 +175,7 @@ public class ManageCategoriesWindow
         btnRenameCategory = new javax.swing.JButton();
         btnDeleteCategory = new javax.swing.JButton();
 
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setMaximumSize(new java.awt.Dimension(520, 540));
         setMinimumSize(new java.awt.Dimension(520, 540));
         setPreferredSize(new java.awt.Dimension(520, 540));

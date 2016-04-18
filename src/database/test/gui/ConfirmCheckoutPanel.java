@@ -177,7 +177,7 @@ public class ConfirmCheckoutPanel
         add(l_discPer, gridBagConstraints);
 
         spnDiscount.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        spnDiscount.setModel(new javax.swing.SpinnerNumberModel(0.0d, 0.0d, null, 1.0d));
+        spnDiscount.setModel(new javax.swing.SpinnerNumberModel(0.0d, 0.0d, 100.0d, 1.0d));
         spnDiscount.setEditor(new javax.swing.JSpinner.NumberEditor(spnDiscount, "0.00"));
         spnDiscount.setMinimumSize(new java.awt.Dimension(64, 26));
         spnDiscount.setPreferredSize(new java.awt.Dimension(96, 30));

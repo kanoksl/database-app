@@ -2,6 +2,7 @@ package database.test.gui;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.time.LocalDate;
 
 /**
  * Containing constants shared by many GUI windows.
@@ -19,9 +20,12 @@ public class Const {
 
     // Fonts
     public static final Font FONT_DEFAULT_12 = new Font("Segoe UI", Font.PLAIN, 12);
+    public static final Font FONT_DEFAULT_24 = new Font("Segoe UI", Font.PLAIN, 24);
 
     // Strings - Window Titles
     public static final String APP_TITLE = "Retail Store Database System";
+    public static final String STORE_NAME = "printf Clothing Shop";
+    
     public static final String WIN_TITLE_LOGIN = "Login";
     public static final String WIN_TITLE_POINTOFSALE = "Point of Sale";
 
@@ -46,6 +50,16 @@ public class Const {
     public static final String ECATIW_HEADER_ADD = "New Category";
     public static final String ECATIW_HEADER_EDIT = "Edit Category";
 
+    // EditProductInfoWindow (EPIW)
+    public static final String EPIW_HEADER_ADD = "Add New Product";
+    public static final String EPIW_HEADER_EDIT = "Edit Product Information";
+    public static final String EPIW_HEADER_VIEW = "View Product Information";
+    
+    // EditSupplierInfoWindow (ESIW)
+    public static final String ESIW_HEADER_ADD = "Add New Supplier";
+    public static final String ESIW_HEADER_EDIT = "Edit Supplier Information";
+    public static final String ESIW_HEADER_VIEW = "View Supplier Information";
+    
     // JOptionPane Messages
     public static final String MESSAGE_POS_CONFIRM_LOGOUT
             = "The current shopping list is not checked out yet.\nAre you sure you want to logout?";
@@ -59,4 +73,7 @@ public class Const {
     public static final String UNREGISTERED_CUSTOMER_NAME = "Unregistered Customer";
     public static final String DELETED_CUSTOMER_ID = "CDELETED";
 
+    // DateTime
+    public static final LocalDate SQL_MINDATE = LocalDate.of(1000, 1, 1);
+    public static final LocalDate SQL_MAXDATE = LocalDate.of(9999, 12, 31);
 }

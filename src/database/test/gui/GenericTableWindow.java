@@ -46,6 +46,7 @@ public class GenericTableWindow
         table_scrollPane = new javax.swing.JScrollPane();
         table = new javax.swing.JTable();
 
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         table.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N

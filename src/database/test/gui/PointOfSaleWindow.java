@@ -186,6 +186,8 @@ public class PointOfSaleWindow
 
         Product product = this.checkProductID();
         if (product != null) {
+            EditProductInfoWindow.showViewProductDialog(this, product);
+            
             int result[] = shoppingList.addItem(product, quantity);
             if (result[0] == 0) {
                 int stock = product.getStockQuantity();
@@ -256,7 +258,10 @@ public class PointOfSaleWindow
         checkoutDialog = null;
 
         System.out.println("checkoutConfirmed(): " + shoppingList);
-
+        ReceiptWindow rew = new ReceiptWindow();
+        rew.setReceipt(ReceiptWindow.generateReceipt(shoppingList));
+        rew.setVisible(true);
+        
         // TODO: update the stock quantity
         this.clear();
     }
@@ -309,7 +314,9 @@ public class PointOfSaleWindow
     }
 
     public void showManageSuppliersWindow() {
-
+        ManageSuppliersWindow win = new ManageSuppliersWindow();
+        win.refresh();
+        win.setVisible(true);
     }
 
     public void showCheckStockWindow() {
@@ -424,7 +431,7 @@ public class PointOfSaleWindow
                             "Logout", JOptionPane.YES_NO_OPTION,
                             JOptionPane.QUESTION_MESSAGE, null);
                 }
-                if (sure == 0) {
+                if (sure == JOptionPane.YES_OPTION) {
                     this.clear();
                     logoutListener.logout();
                 }
@@ -438,7 +445,7 @@ public class PointOfSaleWindow
                         "Exit", JOptionPane.YES_NO_OPTION,
                         JOptionPane.QUESTION_MESSAGE, null);
             }
-            if (sure == 0) {
+            if (sure == JOptionPane.YES_OPTION) {
                 System.exit(0);
             }
         });

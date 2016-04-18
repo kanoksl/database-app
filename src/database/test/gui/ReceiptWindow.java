@@ -1,5 +1,9 @@
 package database.test.gui;
 
+import database.test.data.ShoppingList;
+import database.test.data.ShoppingList.LineItem;
+import java.time.format.DateTimeFormatter;
+
 public class ReceiptWindow
         extends javax.swing.JFrame {
 
@@ -14,7 +18,7 @@ public class ReceiptWindow
         });
     }
 
-    public void showReceipt(String receipt) {
+    public void setReceipt(String receipt) {
         txtReceipt.setText(receipt);
         txtReceipt.setSelectionStart(0);
         txtReceipt.setSelectionEnd(0);
@@ -35,7 +39,7 @@ public class ReceiptWindow
         txtReceipt = new javax.swing.JTextArea();
         btnDone = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setMaximumSize(new java.awt.Dimension(400, 460));
         setMinimumSize(new java.awt.Dimension(400, 460));
         setPreferredSize(new java.awt.Dimension(400, 460));
@@ -81,4 +85,39 @@ public class ReceiptWindow
     private javax.swing.JScrollPane txtReceipt_scrollPane;
     // End of variables declaration//GEN-END:variables
     //</editor-fold>
+
+    public static String generateReceipt(ShoppingList shoppingList) {
+        StringBuilder sb = new StringBuilder();
+        final int width = 50; // characters
+
+        String date = shoppingList.getCheckoutDate().toString();
+        String time = shoppingList.getCheckoutTime().format(DateTimeFormatter.ofPattern("HH:mm"));
+        
+        final int nameLen = Const.STORE_NAME.length();
+        final int namePos = (width + nameLen) / 2;
+        final int nameTrail = width - namePos;
+        
+        sb.append(String.format("\n%" + namePos + "s%" + nameTrail + "s", Const.STORE_NAME, "")).append("\n");
+        sb.append("                   Sale Receipt                   \n\n");
+        sb.append(String.format("%33s%17s", date + " " + time, "")).append("\n\n");
+        sb.append("--------------------------------------------------\n\n");
+        
+        for(int i = 0; i < shoppingList.size(); i++) {
+            LineItem item = shoppingList.getItemAt(i);
+            String qty = item.getQuantityString();
+            String name = item.getProductName();
+            name = name.substring(0, Math.min(name.length(), 30));
+            String subtt = String.format("%,.2f", item.subtotal());
+            sb.append(String.format("%3s%-37s%10s\n", qty, name, subtt));
+        }
+        
+        sb.append("\n");
+        sb.append("--------------------------------------------------\n\n");
+        sb.append("   Total    : ").append(String.format("%,.2f", shoppingList.getTotalPrice())).append("\n");
+        sb.append("   Discount : ").append(String.format("%,.2f", shoppingList.getDiscountAmount())).append("\n");
+        
+        
+        return sb.toString();
+    }
+
 }
