@@ -3,10 +3,11 @@ package database.test.gui;
 import database.test.ApplicationMain;
 import database.test.DatabaseManager;
 import database.test.data.Supplier;
+
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-
 import java.util.List;
+
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.TableColumnModel;
@@ -25,7 +26,7 @@ public class ManageSuppliersWindow
 
         this.setTitle("Manage Suppliers - " + Const.APP_TITLE);
         this.setLocationRelativeTo(null);
-//        this.updateButtonsEnabled();
+        this.updateButtonsEnabled();
     }
 
     private void supplierAdd() {
@@ -205,7 +206,7 @@ public class ManageSuppliersWindow
         panel_header.add(headerLabel, gridBagConstraints);
 
         tbxSearch.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
-        tbxSearch.setToolTipText("Search customers by first name or last name.");
+        tbxSearch.setToolTipText("Search suppliers by name.");
         tbxSearch.setPreferredSize(new java.awt.Dimension(128, 22));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;

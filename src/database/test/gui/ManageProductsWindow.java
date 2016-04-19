@@ -1,27 +1,180 @@
 package database.test.gui;
 
+import database.test.ApplicationMain;
+import database.test.DatabaseManager;
+import database.test.data.Product;
+
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.util.List;
+
+import javax.swing.JLabel;
+import javax.swing.JTable;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableColumnModel;
+import javax.swing.table.TableModel;
+
 public class ManageProductsWindow
         extends javax.swing.JFrame {
 
-    /**
-     * Creates new form EditCustomerInfoWindow.
-     */
+    private static DatabaseManager database = ApplicationMain.getDatabaseInstance();
+
+    private List<Product> productList;
+
     public ManageProductsWindow() {
         this.initComponents();
         this.initListeners();
-        this.setLocationRelativeTo(null);
         this.setColorTheme();
 
-        this.setTitle("" + " - " + Const.APP_TITLE);
+        this.setTitle("Manage Products - " + Const.APP_TITLE);
+        this.setLocationRelativeTo(null);
+
+        chkFiltering.setSelected(false);
+        cbxStatus.setEnabled(false);
+        tbxCategory.setEnabled(false);
+        this.updateButtonsEnabled();
+    }
+
+    private void productAdd() {
+        Product s = EditProductInfoWindow.showNewProductDialog(this);
+        if (s != null) {
+            productList.add(s);
+            tableProducts.updateUI();
+            tableProducts.setRowSelectionInterval(productList.size() - 1, productList.size() - 1);
+        }
+    }
+
+    private void productView() {
+        if (tableProducts.getSelectedRowCount() == 0) {
+            return;
+        }
+        EditProductInfoWindow.showViewProductDialog(this,
+                productList.get(tableProducts.getSelectedRow()));
+    }
+
+    private void productEdit() {
+        if (tableProducts.getSelectedRowCount() == 0) {
+            return;
+        }
+        int row = tableProducts.getSelectedRow();
+        Product selected = productList.get(row);
+        Product copy = database.queryProduct(selected.getID());
+        copy = EditProductInfoWindow.showEditProductDialog(this, copy);
+        if (copy != null) {
+            productList.set(row, copy);
+            tableProducts.updateUI();
+        }
     }
 
     //<editor-fold defaultstate="collapsed" desc="GUI Code: Custom Initialization and Methods">
-    private void setColorTheme() {
+    public void refresh() {
+        System.out.println("ManageProductsWindow.refresh()");
+        productList = database.queryProductsByFilter(this.getSQLQueryConditions());
 
+        TableModel model = Product.createTableModel(productList);
+        tableProducts.setModel(model);
+
+        // setting column headers and sizes
+        tableProducts.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
+        final int width_id = 80, width_num = 90;
+        TableColumnModel colm = tableProducts.getColumnModel();
+
+        colm.getColumn(0).setMinWidth(width_id);
+        colm.getColumn(0).setMaxWidth(width_id);
+        colm.getColumn(0).setResizable(false);
+
+        colm.getColumn(2).setMinWidth(width_id);
+        colm.getColumn(2).setMaxWidth(width_id);
+        colm.getColumn(2).setResizable(false);
+
+        colm.getColumn(3).setMinWidth(width_num);
+        colm.getColumn(3).setMaxWidth(width_num);
+        colm.getColumn(3).setResizable(false);
+
+        colm.getColumn(4).setMinWidth(width_num);
+        colm.getColumn(4).setMaxWidth(width_num);
+        colm.getColumn(4).setResizable(false);
+
+        // set alignments
+        DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
+        rightRenderer.setHorizontalAlignment(JLabel.RIGHT);
+        colm.getColumn(3).setCellRenderer(rightRenderer);
+        colm.getColumn(4).setCellRenderer(rightRenderer);
+
+        tableProducts.updateUI();
+
+        // select the last row
+        if (!productList.isEmpty()) {
+            int rowIndex = Math.max(0, tableProducts.getRowCount() - 1);
+            tableProducts.setRowSelectionInterval(rowIndex, rowIndex);
+        }
+
+        this.updateButtonsEnabled();
+        System.out.println("ManageProductsWindow.refresh(): done. " + productList.size() + " results.");
+    }
+
+    private void updateButtonsEnabled() {
+        boolean selectionNotEmpty = tableProducts.getSelectedRowCount() > 0;
+        btnEditProduct.setEnabled(selectionNotEmpty);
+        btnViewProduct.setEnabled(selectionNotEmpty);
+    }
+
+    private void setColorTheme() {
+        tableProducts.setSelectionBackground(Const.COLOR_HIGHLIGHT_BG);
+        tableProducts.setSelectionForeground(Const.COLOR_HIGHLIGHT_FG);
+        tableProducts.setGridColor(Const.COLOR_TABLE_GRID);
+        tableProducts.setFont(Const.FONT_DEFAULT_12);
+        tableProducts.getTableHeader().setFont(Const.FONT_DEFAULT_12);
+        tableProducts.setRowHeight(24);
+
+        tbxSearch.setSelectionColor(Const.COLOR_HIGHLIGHT_BG);
+        tbxSearch.setSelectedTextColor(Const.COLOR_HIGHLIGHT_FG);
     }
 
     private void initListeners() {
+        btnRefresh.addActionListener((ActionEvent) -> {
+            this.refresh();
+        });
+        btnNewProduct.addActionListener((ActionEvent) -> {
+            this.productAdd();
+        });
+        btnViewProduct.addActionListener((ActionEvent) -> {
+            this.productView();
+        });
+        btnEditProduct.addActionListener((ActionEvent) -> {
+            this.productEdit();
+        });
 
+        tableProducts.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
+            this.updateButtonsEnabled();
+        });
+
+        tbxSearch.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    refresh();
+                }
+            }
+        });
+        tbxCategory.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    refresh();
+                }
+            }
+        });
+        cbxStatus.addActionListener((ActionEvent) -> {
+            this.refresh();
+        });
+
+        chkFiltering.addActionListener((ActionEvent) -> {
+            cbxStatus.setEnabled(chkFiltering.isSelected());
+            tbxCategory.setEnabled(chkFiltering.isSelected());
+            this.refresh();
+        });
     }
 
     //</editor-fold>
@@ -38,16 +191,19 @@ public class ManageProductsWindow
 
         panel_header = new javax.swing.JPanel();
         headerLabel = new javax.swing.JLabel();
+        btnRefresh = new javax.swing.JButton();
+        tbxSearch = new javax.swing.JTextField();
+        panel_filter = new javax.swing.JPanel();
         chkFiltering = new javax.swing.JCheckBox();
         javax.swing.JLabel l_filterCat = new javax.swing.JLabel();
-        cbxCategory = new javax.swing.JComboBox<>();
+        tbxCategory = new javax.swing.JTextField();
         javax.swing.JLabel l_filterStatus = new javax.swing.JLabel();
         cbxStatus = new javax.swing.JComboBox<>();
-        btnFilterRefresh = new javax.swing.JButton();
         tableProducts_scrollPane = new javax.swing.JScrollPane();
         tableProducts = new javax.swing.JTable();
         btnNewProduct = new javax.swing.JButton();
-        btnRenameProduct = new javax.swing.JButton();
+        btnEditProduct = new javax.swing.JButton();
+        btnViewProduct = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(800, 350));
@@ -67,68 +223,29 @@ public class ManageProductsWindow
         gridBagConstraints.insets = new java.awt.Insets(8, 16, 8, 16);
         panel_header.add(headerLabel, gridBagConstraints);
 
-        chkFiltering.setBackground(new java.awt.Color(255, 255, 255));
-        chkFiltering.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
-        chkFiltering.setSelected(true);
-        chkFiltering.setText("Enable Filtering:");
-        chkFiltering.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(4, 0, 4, 8);
-        panel_header.add(chkFiltering, gridBagConstraints);
-
-        l_filterCat.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
-        l_filterCat.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        l_filterCat.setText("Category:");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.insets = new java.awt.Insets(4, 8, 4, 4);
-        panel_header.add(l_filterCat, gridBagConstraints);
-
-        cbxCategory.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
-        cbxCategory.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" }));
-        cbxCategory.setMinimumSize(new java.awt.Dimension(128, 22));
-        cbxCategory.setPreferredSize(new java.awt.Dimension(128, 22));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 0;
-        panel_header.add(cbxCategory, gridBagConstraints);
-
-        l_filterStatus.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
-        l_filterStatus.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        l_filterStatus.setText("Status:");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 4;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.insets = new java.awt.Insets(4, 16, 4, 4);
-        panel_header.add(l_filterStatus, gridBagConstraints);
-
-        cbxStatus.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
-        cbxStatus.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Available for Sale", "Discontinued", "(Both)" }));
-        cbxStatus.setMinimumSize(new java.awt.Dimension(128, 22));
-        cbxStatus.setPreferredSize(new java.awt.Dimension(128, 22));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 5;
-        gridBagConstraints.gridy = 0;
-        panel_header.add(cbxStatus, gridBagConstraints);
-
-        btnFilterRefresh.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
-        btnFilterRefresh.setText("Refresh");
-        btnFilterRefresh.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnFilterRefresh.setMaximumSize(new java.awt.Dimension(128, 36));
-        btnFilterRefresh.setMinimumSize(new java.awt.Dimension(128, 36));
-        btnFilterRefresh.setName(""); // NOI18N
-        btnFilterRefresh.setPreferredSize(new java.awt.Dimension(96, 28));
+        btnRefresh.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        btnRefresh.setText("Refresh");
+        btnRefresh.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnRefresh.setMaximumSize(new java.awt.Dimension(128, 36));
+        btnRefresh.setMinimumSize(new java.awt.Dimension(128, 36));
+        btnRefresh.setName(""); // NOI18N
+        btnRefresh.setPreferredSize(new java.awt.Dimension(96, 28));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 6;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.insets = new java.awt.Insets(4, 12, 4, 8);
-        panel_header.add(btnFilterRefresh, gridBagConstraints);
+        panel_header.add(btnRefresh, gridBagConstraints);
+
+        tbxSearch.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        tbxSearch.setToolTipText("Search products by product name.");
+        tbxSearch.setPreferredSize(new java.awt.Dimension(128, 22));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(4, 0, 4, 0);
+        panel_header.add(tbxSearch, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -139,16 +256,75 @@ public class ManageProductsWindow
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 4, 0);
         getContentPane().add(panel_header, gridBagConstraints);
 
+        panel_filter.setLayout(new java.awt.GridBagLayout());
+
+        chkFiltering.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        chkFiltering.setSelected(true);
+        chkFiltering.setText("Enable Filtering:");
+        chkFiltering.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(4, 0, 4, 8);
+        panel_filter.add(chkFiltering, gridBagConstraints);
+
+        l_filterCat.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        l_filterCat.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        l_filterCat.setText("Category:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.insets = new java.awt.Insets(4, 8, 4, 4);
+        panel_filter.add(l_filterCat, gridBagConstraints);
+
+        tbxCategory.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        tbxCategory.setToolTipText("Category ID or name.");
+        tbxCategory.setPreferredSize(new java.awt.Dimension(128, 22));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(4, 0, 4, 0);
+        panel_filter.add(tbxCategory, gridBagConstraints);
+
+        l_filterStatus.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        l_filterStatus.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        l_filterStatus.setText("Status:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.insets = new java.awt.Insets(4, 16, 4, 4);
+        panel_filter.add(l_filterStatus, gridBagConstraints);
+
+        cbxStatus.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        cbxStatus.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Available for Sale", "Out of Stock", "--------", "Still Selling", "Discontinued", "--------", "Any" }));
+        cbxStatus.setMinimumSize(new java.awt.Dimension(128, 22));
+        cbxStatus.setPreferredSize(new java.awt.Dimension(128, 22));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 5;
+        gridBagConstraints.gridy = 0;
+        panel_filter.add(cbxStatus, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(2, 8, 0, 8);
+        getContentPane().add(panel_filter, gridBagConstraints);
+
         tableProducts.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
         tableProducts.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
             },
             new String [] {
-                "Product ID", "Product Name", "Stock Quantity", "Current Unit Price"
+                "Product ID", "Product Name", "Category ID", "Stock Quantity", "Current Price"
             }
         ));
         tableProducts.setGridColor(new java.awt.Color(204, 204, 204));
@@ -158,7 +334,7 @@ public class ManageProductsWindow
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridy = 2;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
@@ -175,40 +351,108 @@ public class ManageProductsWindow
         btnNewProduct.setPreferredSize(new java.awt.Dimension(128, 26));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridy = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.insets = new java.awt.Insets(4, 8, 8, 4);
         getContentPane().add(btnNewProduct, gridBagConstraints);
 
-        btnRenameProduct.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
-        btnRenameProduct.setText("Edit Selected Product Info...");
-        btnRenameProduct.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnRenameProduct.setMaximumSize(new java.awt.Dimension(196, 26));
-        btnRenameProduct.setMinimumSize(new java.awt.Dimension(196, 26));
-        btnRenameProduct.setName(""); // NOI18N
-        btnRenameProduct.setPreferredSize(new java.awt.Dimension(196, 26));
+        btnEditProduct.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        btnEditProduct.setText("Edit Selected Product Info...");
+        btnEditProduct.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnEditProduct.setMaximumSize(new java.awt.Dimension(196, 26));
+        btnEditProduct.setMinimumSize(new java.awt.Dimension(196, 26));
+        btnEditProduct.setName(""); // NOI18N
+        btnEditProduct.setPreferredSize(new java.awt.Dimension(196, 26));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(4, 4, 8, 8);
+        getContentPane().add(btnEditProduct, gridBagConstraints);
+
+        btnViewProduct.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        btnViewProduct.setText("View Selected...");
+        btnViewProduct.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnViewProduct.setMaximumSize(new java.awt.Dimension(128, 26));
+        btnViewProduct.setMinimumSize(new java.awt.Dimension(128, 26));
+        btnViewProduct.setName(""); // NOI18N
+        btnViewProduct.setPreferredSize(new java.awt.Dimension(128, 26));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(4, 4, 8, 4);
-        getContentPane().add(btnRenameProduct, gridBagConstraints);
+        getContentPane().add(btnViewProduct, gridBagConstraints);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnFilterRefresh;
+    private javax.swing.JButton btnEditProduct;
     private javax.swing.JButton btnNewProduct;
-    private javax.swing.JButton btnRenameProduct;
-    private javax.swing.JComboBox<String> cbxCategory;
+    private javax.swing.JButton btnRefresh;
+    private javax.swing.JButton btnViewProduct;
     private javax.swing.JComboBox<String> cbxStatus;
     private javax.swing.JCheckBox chkFiltering;
     private javax.swing.JLabel headerLabel;
+    private javax.swing.JPanel panel_filter;
     private javax.swing.JPanel panel_header;
     private javax.swing.JTable tableProducts;
     private javax.swing.JScrollPane tableProducts_scrollPane;
+    private javax.swing.JTextField tbxCategory;
+    private javax.swing.JTextField tbxSearch;
     // End of variables declaration//GEN-END:variables
     //</editor-fold>
+
+    private static final int FILTER_STATUS_AVAILABLE = 0;
+    private static final int FILTER_STATUS_OUT_OF_STOCK = 1;
+    private static final int FILTER_STATUS_SELLING = 3;
+    private static final int FILTER_STATUS_DISCONTINUED = 4;
+    private static final int NO_FILTER_STATUS = 6;
+
+    /**
+     * Translate GUI search options into SQL query.
+     *
+     * @return A part of SQL WHERE clause, specifying the selected filter.
+     * Example: " AND (pd.product_name LIKE %abc%);"
+     */
+    public String getSQLQueryConditions() {
+        StringBuilder sql = new StringBuilder();
+
+        String nameSearch = tbxSearch.getText().trim();
+        if (!nameSearch.isEmpty()) {
+            sql.append(" AND (pd.product_name LIKE '%")
+                    .append(nameSearch).append("%')");
+        }
+
+        if (!chkFiltering.isSelected()) {
+            return sql.append(";").toString();
+        }
+
+        String catSearch = tbxCategory.getText().trim();
+        if (!catSearch.isEmpty()) {
+            sql.append(" AND (pd.category_id LIKE '%").append(catSearch)
+                    .append("%' OR c.category_name LIKE '%")
+                    .append(catSearch).append("%')");
+        }
+
+        switch (cbxStatus.getSelectedIndex()) {
+            case FILTER_STATUS_AVAILABLE:
+                sql.append(" AND (selling_status = 1) AND (stock_quantity > 0)");
+                break;
+            case FILTER_STATUS_OUT_OF_STOCK:
+                sql.append(" AND (selling_status = 1) AND (stock_quantity <= 0)");
+                break;
+            case FILTER_STATUS_SELLING:
+                sql.append(" AND (selling_status = 1)");
+                break;
+            case FILTER_STATUS_DISCONTINUED:
+                sql.append(" AND (selling_status = 0)");
+                break;
+            default:
+        }
+
+        return sql.append(";").toString();
+    }
 }

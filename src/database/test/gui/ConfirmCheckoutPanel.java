@@ -38,6 +38,7 @@ public class ConfirmCheckoutPanel
         });
         spnDiscount.addChangeListener((ChangeEvent e) -> {
             this.calculateDiscount();
+            this.calculateChange();
         });
         spnPaid.addChangeListener((ChangeEvent e) -> {
             this.calculateChange();
@@ -65,6 +66,7 @@ public class ConfirmCheckoutPanel
         // set the checkout date/time of the shopping list
         shoppingList.setCheckoutDate(LocalDate.now());
         shoppingList.setCheckoutTime(LocalTime.now());
+        shoppingList.setAmountPaid((double) spnPaid.getValue());
 
         if (checkoutListener != null) {
             checkoutListener.checkoutConfirmed();

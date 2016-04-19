@@ -11,6 +11,7 @@ import java.awt.event.MouseEvent;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 
 import javax.swing.DefaultComboBoxModel;
@@ -76,7 +77,7 @@ public class EditCustomerInfoWindow
     private void setCustomer(Customer customer) {
         this.customer = customer;
         this.populateFormData();
-        if (cbxCustomerID.isEditable()) { // in View mode
+        if (cbxCustomerID.isVisible()) { // in View mode
             cbxCustomerID.setSelectedItem(customer.getID());
             this.refreshShoppingHistory();
         }
@@ -127,8 +128,18 @@ public class EditCustomerInfoWindow
     private void refreshShoppingHistory() {
         LocalDate dateFrom, dateTo;
         if (chkHistoryFiltering.isSelected()) {
-            dateFrom = LocalDate.parse(tbxDateFrom.getText());
-            dateTo = LocalDate.parse(tbxDateTo.getText());
+            try {
+                dateFrom = LocalDate.parse(tbxDateFrom.getText());
+            } catch (DateTimeParseException ex) {
+                dateFrom = Const.SQL_MINDATE;
+                tbxDateFrom.setText(Const.SQL_MINDATE.toString());
+            }
+            try {
+                dateTo = LocalDate.parse(tbxDateTo.getText());
+            } catch (DateTimeParseException ex) {
+                dateTo = Const.SQL_MAXDATE;
+                tbxDateTo.setText(Const.SQL_MAXDATE.toString());
+            }
         } else {
             dateFrom = Const.SQL_MINDATE;
             dateTo = Const.SQL_MAXDATE;
@@ -455,6 +466,7 @@ public class EditCustomerInfoWindow
         chkHistoryFiltering.addActionListener((ActionEvent) -> {
             tbxDateFrom.setEnabled(chkHistoryFiltering.isSelected());
             tbxDateTo.setEnabled(chkHistoryFiltering.isSelected());
+            this.refreshShoppingHistory();
         });
         btnFilterRefresh.addActionListener((ActionEvent) -> {
             this.refreshShoppingHistory();

@@ -1,9 +1,12 @@
 package database.test.data;
 
+import database.test.data.ShoppingList.LineItem;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
@@ -17,6 +20,10 @@ public class ShoppingList {
     private double discountPercent = 0;
     private LocalDate checkoutDate = null;
     private LocalTime checkoutTime = null;
+    
+    private double amountPaid = 0;
+    
+    private String sale_id = null;
 
     //<editor-fold desc="List Methods (Add, Remove, Get, Clear)">
     /**
@@ -88,6 +95,10 @@ public class ShoppingList {
     
     public int size() {
         return itemList.size();
+    }
+    
+    public List<LineItem> getList() {
+        return itemList;
     }
     //</editor-fold>
 
@@ -192,6 +203,22 @@ public class ShoppingList {
     }
     //</editor-fold>
 
+    public String getSaleID() {
+        return sale_id;
+    }
+
+    public void setSaleID(String sale_id) {
+        this.sale_id = sale_id;
+    }
+
+    public double getAmountPaid() {
+        return amountPaid;
+    }
+
+    public void setAmountPaid(double amountPaid) {
+        this.amountPaid = amountPaid;
+    }
+    
     @Override
     public String toString() {
         return "ShoppingList {"
@@ -230,6 +257,10 @@ public class ShoppingList {
             return product_name;
         }
 
+        public int getQuantity() {
+            return quantity;
+        }
+        
         public String getQuantityString() {
             return String.format("%,d ", quantity);
         }

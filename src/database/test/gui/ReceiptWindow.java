@@ -9,6 +9,8 @@ public class ReceiptWindow
 
     public ReceiptWindow() {
         this.initComponents();
+        
+        this.setTitle("Receipt");
 
         txtReceipt.setSelectionColor(Const.COLOR_HIGHLIGHT_BG);
         txtReceipt.setSelectedTextColor(Const.COLOR_HIGHLIGHT_FG);
@@ -40,11 +42,11 @@ public class ReceiptWindow
         btnDone = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setMaximumSize(new java.awt.Dimension(400, 460));
-        setMinimumSize(new java.awt.Dimension(400, 460));
-        setPreferredSize(new java.awt.Dimension(400, 460));
+        setMaximumSize(new java.awt.Dimension(400, 560));
+        setMinimumSize(new java.awt.Dimension(400, 560));
+        setPreferredSize(new java.awt.Dimension(400, 560));
         setResizable(false);
-        setSize(new java.awt.Dimension(400, 460));
+        setSize(new java.awt.Dimension(400, 560));
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         txtReceipt_scrollPane.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
@@ -97,10 +99,11 @@ public class ReceiptWindow
         final int namePos = (width + nameLen) / 2;
         final int nameTrail = width - namePos;
         
-        sb.append(String.format("\n%" + namePos + "s%" + nameTrail + "s", Const.STORE_NAME, "")).append("\n");
-        sb.append("                   Sale Receipt                   \n\n");
+        sb.append(String.format("\n%" + namePos + "s%" + nameTrail + "s", Const.STORE_NAME, "")).append("\n\n");
+//        sb.append("                   Sale Receipt                   \n\n");
+        sb.append("             Receipt ID: ").append(shoppingList.getSaleID()).append("             \n");
         sb.append(String.format("%33s%17s", date + " " + time, "")).append("\n\n");
-        sb.append("--------------------------------------------------\n\n");
+        sb.append("==================================================\n\n");
         
         for(int i = 0; i < shoppingList.size(); i++) {
             LineItem item = shoppingList.getItemAt(i);
@@ -108,14 +111,34 @@ public class ReceiptWindow
             String name = item.getProductName();
             name = name.substring(0, Math.min(name.length(), 30));
             String subtt = String.format("%,.2f", item.subtotal());
-            sb.append(String.format("%3s%-37s%10s\n", qty, name, subtt));
+            sb.append(String.format("%3s%-36s%10s \n", qty, name, subtt));
         }
         
         sb.append("\n");
         sb.append("--------------------------------------------------\n\n");
-        sb.append("   Total    : ").append(String.format("%,.2f", shoppingList.getTotalPrice())).append("\n");
-        sb.append("   Discount : ").append(String.format("%,.2f", shoppingList.getDiscountAmount())).append("\n");
         
+        String totalQty = String.format("%,d", shoppingList.getTotalQuantity());
+        String total = String.format("%,.2f", shoppingList.getTotalPrice());
+        String dscPer = String.format("%.2f", shoppingList.getDiscountPercent());
+        String dscAmt = String.format("%,.2f", shoppingList.getDiscountAmount());
+        String totalDsc = String.format("%,.2f", shoppingList.getTotalAfterDiscount());
+        
+        sb.append("   Total Item Sold : ").append(String.format("%28s ", totalQty)).append("\n");
+        sb.append("   Total : ").append(String.format("%38s ", total)).append("\n");
+        sb.append("   Discount Percent : ").append(String.format("%27s ", dscPer)).append("\n");
+        sb.append("   Discount Amount : ").append(String.format("%28s ", dscAmt)).append("\n");
+        sb.append("   Total After Discount : ").append(String.format("%23s ", totalDsc)).append("\n");
+        sb.append("\n");
+        
+        String payment = String.format("%,.2f", shoppingList.getAmountPaid());
+        String change = String.format("%,.2f", shoppingList.getAmountPaid() - shoppingList.getTotalAfterDiscount());
+        
+        sb.append("   Payment : ").append(String.format("%36s ", payment)).append("\n");
+        sb.append("   Change : ").append(String.format("%37s ", change)).append("\n");
+        
+        sb.append("\n");
+        sb.append("==================================================\n\n");
+        sb.append("                     Thank You                    \n");
         
         return sb.toString();
     }

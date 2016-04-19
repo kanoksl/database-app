@@ -1,6 +1,9 @@
 package database.test.data;
 
 import database.test.gui.Const;
+import java.util.List;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableModel;
 
 public class Product {
 
@@ -12,6 +15,8 @@ public class Product {
     private String categoryID;
 
     private double currentPrice;
+    
+    private boolean priceChanged = false;
 
     /**
      * Create a new Product object from existing data.
@@ -91,6 +96,16 @@ public class Product {
     public void setCurrentPrice(double currentPrice) {
         this.currentPrice = currentPrice;
     }
+
+    public boolean isPriceChanged() {
+        return priceChanged;
+    }
+
+    public void setPriceChanged(boolean priceChanged) {
+        this.priceChanged = priceChanged;
+    }
+    
+    
     //</editor-fold>
 
     public String getCurrentPriceString() {
@@ -112,6 +127,47 @@ public class Product {
 
     public String shortDescription() {
         return String.format("%s : %s", id, name);
+    }
+    
+    public static TableModel createTableModel(List<Product> list) {
+        TableModel model = new AbstractTableModel() {
+            private final String[] COLUMNS = {"Product ID", "Product Name", 
+                "Category ID", "Stock Quantity", "Current Price"};
+
+            @Override
+            public int getRowCount() {
+                return list.size();
+            }
+
+            @Override
+            public int getColumnCount() {
+                return COLUMNS.length;
+            }
+
+            @Override
+            public String getColumnName(int column) {
+                return COLUMNS[column];
+            }
+
+            @Override
+            public Object getValueAt(int rowIndex, int columnIndex) {
+                Product p = list.get(rowIndex);
+                switch (columnIndex) {
+                    case 0:
+                        return p.getID();
+                    case 1:
+                        return p.getName();
+                    case 2:
+                        return p.getCategoryID();
+                    case 3:
+                        return p.getStockQuantity();
+                    case 4:
+                        return p.getCurrentPriceString();
+                }
+                return null;
+            }
+        };
+        return model;
     }
 
     /**

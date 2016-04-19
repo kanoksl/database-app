@@ -174,6 +174,16 @@ public class DatabaseUtilities {
     public static Date nullable(LocalDate date) {
         return date == null ? null : Date.valueOf(date);
     }
+    
+    /**
+     * Convert a java.time.LocalTime to java.sql.Time.
+     *
+     * @param time A time in java.time.LocalTime.
+     * @return The trimmed string if not empty. Null otherwise.
+     */
+    public static Time nullable(LocalTime time) {
+        return time == null ? null : Time.valueOf(time);
+    }
 
     /**
      * Convert a character to string.

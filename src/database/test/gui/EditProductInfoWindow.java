@@ -9,6 +9,7 @@ import database.test.gui.Const.InfoWindowMode;
 import java.awt.Frame;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.ArrayList;
 import javax.swing.DefaultComboBoxModel;
@@ -21,7 +22,10 @@ public class EditProductInfoWindow
     private static DatabaseManager database = ApplicationMain.getDatabaseInstance();
 
     private Product product = null;
+    private Product trueProduct = null;
+
     private List<Supplier> suppliers = new ArrayList<>();
+    private boolean suppliersChanged = false;
 
     /**
      * Creates new form EditCustomerInfoWindow.
@@ -46,12 +50,23 @@ public class EditProductInfoWindow
             default:
                 break;
         }
+
+        btnSupplierAdd.addActionListener((ActionEvent) -> {
+            this.productSupplierAdd();
+        });
+        btnSupplierRemove.addActionListener((ActionEvent) -> {
+            this.productSupplierRemove();
+        });
+        btnSupplierView.addActionListener((ActionEvent) -> {
+            this.productSupplierView();
+        });
     }
 
     private void setProduct(Product product) {
         this.product = product;
+        this.trueProduct = database.queryProduct(product.getID());
         this.populateFormData();
-        if (cbxProductID.isEditable()) {
+        if (cbxProductID.isVisible()) {
             cbxProductID.setSelectedItem(product.getID());
         }
     }
@@ -62,19 +77,19 @@ public class EditProductInfoWindow
         cbxCategory.setSelectedItem(product.getCategoryID());
         txtDescription.setText(product.getDescription());
 
-        lblCurrentPrice.setText(product.getCurrentPriceString());
-        lblCurrentStock.setText(String.format("%,d", product.getStockQuantity()));
+        lblCurrentPrice.setText(trueProduct.getCurrentPriceString());
+        lblCurrentStock.setText(String.format("%,d", trueProduct.getStockQuantity()));
         spnPrice.setValue(product.getCurrentPrice());
         spnStock.setValue(product.getStockQuantity());
 
         chkDiscontinued.setSelected(!product.isSelling());
-        
+
         this.loadSuppliers();
-        
+
         lblPriceSubheader.setText(product.shortDescription());
         this.loadPricingHistory();
         lblSellingSubheader.setText(product.shortDescription());
-        
+
         // TODO: selling history
     }
 
@@ -84,30 +99,93 @@ public class EditProductInfoWindow
         product.setCategoryID(cbxCategory.getSelectedItem().toString());
         product.setDescription(txtDescription.getText());
 
-        // TODO: set price
         product.setStockQuantity((int) spnStock.getValue());
+        
+        double newPrice = (Double) spnPrice.getValue();
+        if (newPrice != trueProduct.getCurrentPrice()) {
+            System.out.println("--product price changed");
+            product.setPriceChanged(true);
+            product.setCurrentPrice(newPrice);
+        }
+        
+        product.setSelling(!chkDiscontinued.isSelected());
+    }
 
-        // TODO: suppliers
+    private void productSupplierAdd() {
+        List<String> add = SelectorWindow.showSupplierSelectorDialog(this);
+        if (add != null) {
+            for (String id : add) {
+                boolean dupe = false;
+                for (Supplier s : suppliers) {
+                    if (s.getID().equals(id)) {
+                        dupe = true;
+                        break;
+                    }
+                }
+                if (!dupe) {
+                    suppliers.add(database.querySupplier(id));
+                    suppliersChanged = true;
+                }
+            }
+            tableSuppliers.updateUI();
+        }
+    }
+
+    private void productSupplierRemove() {
+        if (tableSuppliers.getSelectedRowCount() == 0 || suppliers.isEmpty()) {
+            return;
+        }
+        suppliers.remove(tableSuppliers.getSelectedRow());
+        suppliersChanged = true;
+        tableSuppliers.updateUI();
+    }
+
+    private void productSupplierView() {
+        if (tableSuppliers.getSelectedRowCount() == 0 || suppliers.isEmpty()) {
+            return;
+        }
+        EditSupplierInfoWindow.showViewSupplierDialog(this,
+                suppliers.get(tableSuppliers.getSelectedRow()));
     }
 
     //<editor-fold defaultstate="collapsed" desc="GUI Code: Custom Initialization and Methods">
     private void initializeAddMode() {
         headerLabel.setText(Const.EPIW_HEADER_ADD);
-
         tabbedPane.remove(2); // selling history
         tabbedPane.remove(1); // pricing history
-
         cbxProductID.setVisible(false);
         cbxProductID.setEnabled(false);
+        
+        // listeners
+        btnSave.addActionListener((ActionEvent) -> {
+            this.collectFormData();
+            if (database.tryInsertProduct(product, suppliers, this)) {
+                SwingUtilities.getWindowAncestor(btnSave).dispose();
+            }
+        });
+        btnCancel.addActionListener((ActionEvent) -> {
+            product = null;
+            SwingUtilities.getWindowAncestor(btnCancel).dispose();
+        });
     }
 
     private void initializeEditMode() {
         headerLabel.setText(Const.EPIW_HEADER_EDIT);
-
         tabbedPane.remove(2); // selling history
-
         cbxProductID.setVisible(false);
         cbxProductID.setEnabled(false);
+        
+        // listeners
+        btnSave.addActionListener((ActionEvent) -> {
+            this.collectFormData();
+            if (database.tryUpdateProduct(product, suppliersChanged ? suppliers : null, this)) {
+                SwingUtilities.getWindowAncestor(btnSave).dispose();
+            }
+        });
+        btnCancel.addActionListener((ActionEvent) -> {
+            product = database.queryProduct(product.getID());
+            SwingUtilities.getWindowAncestor(btnCancel).dispose();
+        });
     }
 
     private void initializeViewMode() {
@@ -120,7 +198,7 @@ public class EditProductInfoWindow
         spnPrice.setEnabled(false);
         spnStock.setEnabled(false);
         btnSupplierAdd.setEnabled(false);
-        btnSupplierDelete.setEnabled(false);
+        btnSupplierRemove.setEnabled(false);
 
         btnSave.setEnabled(false);
         btnSave.setVisible(false);
@@ -128,7 +206,7 @@ public class EditProductInfoWindow
         btnCancel.addActionListener((ActionEvent) -> {
             SwingUtilities.getWindowAncestor(btnCancel).dispose();
         });
-        
+
         cbxProductID.setVisible(true);
         cbxProductID.setEnabled(true);
         List<String> productIDs = database.queryListOfAllProductIDs();
@@ -187,6 +265,12 @@ public class EditProductInfoWindow
 
     private void loadPricingHistory() {
         List<Object[]> pricingList = database.queryProductPricingHistory(product.getID());
+        
+        Object[] lastRow = pricingList.get(pricingList.size() - 1);
+        if (lastRow[0].equals(LocalDate.now().plusDays(1).toString())) {
+            spnPrice.setValue((Double) lastRow[3]);
+        }
+        
         for (Object[] row : pricingList) {
             boolean isMinDate = row[0].toString().equals("1000-01-01");
             boolean isMaxDate = row[1].toString().equals("9999-12-31");
@@ -227,10 +311,10 @@ public class EditProductInfoWindow
     private void loadSuppliers() {
         suppliers = new ArrayList<>();
         List<String> supplierIDs = database.queryListOfProductSupplierIDs(product.getID());
-        for(String id : supplierIDs) {
+        for (String id : supplierIDs) {
             suppliers.add(database.querySupplier(id));
         }
-        
+
         tableSuppliers.setModel(new AbstractTableModel() {
             final String[] COLUMNS = {"Supplier ID", "Supplier Name"};
 
@@ -260,6 +344,7 @@ public class EditProductInfoWindow
         });
         tableSuppliers.updateUI();
     }
+
     //</editor-fold>
     //<editor-fold defaultstate="collapsed" desc="GUI Code: Automatically Generated by NetBeans">
     /**
@@ -286,7 +371,6 @@ public class EditProductInfoWindow
         lblWarnName = new javax.swing.JLabel();
         javax.swing.JLabel l_cat = new javax.swing.JLabel();
         cbxCategory = new javax.swing.JComboBox<>();
-        btnViewCategory = new javax.swing.JButton();
         panel_desc = new javax.swing.JPanel();
         txtDescription_scrollPane = new javax.swing.JScrollPane();
         txtDescription = new javax.swing.JTextArea();
@@ -305,7 +389,7 @@ public class EditProductInfoWindow
         tableSuppliers = new javax.swing.JTable();
         btnSupplierView = new javax.swing.JButton();
         btnSupplierAdd = new javax.swing.JButton();
-        btnSupplierDelete = new javax.swing.JButton();
+        btnSupplierRemove = new javax.swing.JButton();
         chkDiscontinued = new javax.swing.JCheckBox();
         panel_commandButtons = new javax.swing.JPanel();
         btnSave = new javax.swing.JButton();
@@ -427,7 +511,8 @@ public class EditProductInfoWindow
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(8, 4, 2, 4);
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(8, 4, 2, 8);
         panel_basic.add(tbxProductName, gridBagConstraints);
 
         lblWarnName.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
@@ -452,30 +537,16 @@ public class EditProductInfoWindow
         panel_basic.add(l_cat, gridBagConstraints);
 
         cbxCategory.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        cbxCategory.setMaximumSize(new java.awt.Dimension(140, 22));
+        cbxCategory.setMinimumSize(new java.awt.Dimension(140, 22));
         cbxCategory.setPreferredSize(new java.awt.Dimension(140, 22));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 4;
-        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(4, 4, 8, 4);
         panel_basic.add(cbxCategory, gridBagConstraints);
-
-        btnViewCategory.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
-        btnViewCategory.setText("View Categories...");
-        btnViewCategory.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnViewCategory.setMaximumSize(new java.awt.Dimension(128, 26));
-        btnViewCategory.setMinimumSize(new java.awt.Dimension(128, 26));
-        btnViewCategory.setName(""); // NOI18N
-        btnViewCategory.setPreferredSize(new java.awt.Dimension(128, 26));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 4;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 4, 4, 4);
-        panel_basic.add(btnViewCategory, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -493,7 +564,9 @@ public class EditProductInfoWindow
 
         txtDescription.setColumns(20);
         txtDescription.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        txtDescription.setLineWrap(true);
         txtDescription.setRows(5);
+        txtDescription.setWrapStyleWord(true);
         txtDescription_scrollPane.setViewportView(txtDescription);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -681,19 +754,19 @@ public class EditProductInfoWindow
         gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
         panel_suppliers.add(btnSupplierAdd, gridBagConstraints);
 
-        btnSupplierDelete.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
-        btnSupplierDelete.setText("Delete Selected");
-        btnSupplierDelete.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnSupplierDelete.setMaximumSize(new java.awt.Dimension(128, 26));
-        btnSupplierDelete.setMinimumSize(new java.awt.Dimension(128, 26));
-        btnSupplierDelete.setName(""); // NOI18N
-        btnSupplierDelete.setPreferredSize(new java.awt.Dimension(128, 26));
+        btnSupplierRemove.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        btnSupplierRemove.setText("Remove Selected");
+        btnSupplierRemove.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnSupplierRemove.setMaximumSize(new java.awt.Dimension(128, 26));
+        btnSupplierRemove.setMinimumSize(new java.awt.Dimension(128, 26));
+        btnSupplierRemove.setName(""); // NOI18N
+        btnSupplierRemove.setPreferredSize(new java.awt.Dimension(128, 26));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
-        panel_suppliers.add(btnSupplierDelete, gridBagConstraints);
+        panel_suppliers.add(btnSupplierRemove, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -894,9 +967,8 @@ public class EditProductInfoWindow
     private javax.swing.JButton btnCancel;
     private javax.swing.JButton btnSave;
     private javax.swing.JButton btnSupplierAdd;
-    private javax.swing.JButton btnSupplierDelete;
+    private javax.swing.JButton btnSupplierRemove;
     private javax.swing.JButton btnSupplierView;
-    private javax.swing.JButton btnViewCategory;
     private javax.swing.JComboBox<String> cbxCategory;
     private javax.swing.JComboBox<String> cbxProductID;
     private javax.swing.JCheckBox chkDiscontinued;

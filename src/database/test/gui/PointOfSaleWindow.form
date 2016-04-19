@@ -2,6 +2,24 @@
 
 <Form version="1.5" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
   <NonVisualComponents>
+    <Container class="javax.swing.JPopupMenu" name="popupProduct">
+
+      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout">
+        <Property name="useNullLayout" type="boolean" value="true"/>
+      </Layout>
+      <SubComponents>
+        <MenuItem class="javax.swing.JMenuItem" name="menuViewProduct">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="View Product Info..."/>
+          </Properties>
+        </MenuItem>
+        <MenuItem class="javax.swing.JMenuItem" name="menuEditProduct">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Edit Product Info..."/>
+          </Properties>
+        </MenuItem>
+      </SubComponents>
+    </Container>
     <Menu class="javax.swing.JMenuBar" name="menuBar">
       <SubComponents>
         <Menu class="javax.swing.JMenu" name="menuFile">
@@ -80,6 +98,7 @@
             <MenuItem class="javax.swing.JMenuItem" name="menuCheckStock">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Check Stock..."/>
+                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
             </MenuItem>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator3">
@@ -124,6 +143,7 @@
                   <KeyStroke key="Ctrl+F5"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="View Sale Records..."/>
+                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
             </MenuItem>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator5">
@@ -135,6 +155,7 @@
             <MenuItem class="javax.swing.JMenuItem" name="menuReports">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Sale Statistics and Reports..."/>
+                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
             </MenuItem>
           </SubComponents>

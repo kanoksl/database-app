@@ -3,10 +3,7 @@ package database.test.gui;
 import database.test.ApplicationMain;
 import database.test.DatabaseManager;
 
-import java.sql.SQLException;
-
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -25,6 +22,7 @@ public class ManageCategoriesWindow
 
         this.setTitle("Manage Product Categories - " + Const.APP_TITLE);
         this.setLocationRelativeTo(null);
+        this.updateButtonsEnabled();
     }
 
     private void categoryAdd() {

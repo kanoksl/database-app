@@ -24,6 +24,9 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 import javax.swing.table.TableModel;
+import static database.test.DatabaseUtilities.nullable;
+import database.test.data.ShoppingList.LineItem;
+import database.test.gui.Const;
 
 public class DatabaseManager {
 
@@ -291,8 +294,6 @@ public class DatabaseManager {
 
     public void deleteCustomer(String customerID)
             throws SQLException {
-        // TODO: 1. find all sale with customer_id = c.id, update them to CDELETED
-        // TODO: 2. delete the customer
         connection.setAutoCommit(false);
         try {
             PreparedStatement p1 = connection.prepareStatement(SQLStrings.SQL_DELETE_CUSTOMER_UPDATE_SALE);
@@ -302,8 +303,10 @@ public class DatabaseManager {
             PreparedStatement p2 = connection.prepareStatement(SQLStrings.SQL_DELETE_CUSTOMER);
             p2.setString(1, customerID);
             p2.executeUpdate();
+            connection.commit();
         } catch (SQLException ex) {
             connection.rollback();
+            connection.setAutoCommit(true);
             throw ex;
         }
         connection.setAutoCommit(true);
@@ -336,6 +339,62 @@ public class DatabaseManager {
         }
     }
 
+    public List<Product> queryAllProducts() {
+        List<Product> list = new LinkedList<>();
+        try {
+            ResultSet result = statement.executeQuery(SQLStrings.SQL_SELECT_ALL_PRODUCTS);
+
+            while (result.next()) {
+                list.add(resultSetRowToProduct(result));
+            }
+            return list;
+        } catch (SQLException ex) {
+            System.err.println(ex);
+            System.err.flush();
+            return null;
+        }
+    }
+
+    public List<Product> queryProductsByName(String searchString) {
+        List<Product> list = new LinkedList<>();
+        try {
+            // prepare a statement
+            PreparedStatement p = connection.prepareStatement(SQLStrings.SQL_SEARCH_PRODUCT_BY_NAME);
+            // set the parameters
+            p.setString(1, '%' + searchString + '%');
+            // execute the statement
+            ResultSet result = p.executeQuery();
+
+            while (result.next()) {
+                list.add(resultSetRowToProduct(result));
+            }
+            return list;
+        } catch (SQLException ex) {
+            System.err.println(ex);
+            System.err.flush();
+            return null;
+        }
+    }
+
+    public List<Product> queryProductsByFilter(String filterSQL) {
+        List<Product> list = new LinkedList<>();
+        try {
+            // prepare a statement
+            PreparedStatement p = connection.prepareStatement(SQLStrings.SQL_SEARCH_PRODUCT_FILTER_BASE + filterSQL);
+            // execute the statement
+            ResultSet result = p.executeQuery();
+
+            while (result.next()) {
+                list.add(resultSetRowToProduct(result));
+            }
+            return list;
+        } catch (SQLException ex) {
+            System.err.println(ex);
+            System.err.flush();
+            return null;
+        }
+    }
+
     public Product queryProduct(String searchID) {
         try {
             // prepare a statement
@@ -346,15 +405,7 @@ public class DatabaseManager {
             ResultSet result = p.executeQuery();
 
             if (result.next()) {
-                String id = result.getString("product_id");
-                String name = result.getString("product_name");
-                String description = result.getString("product_description");
-                int stockQuantity = result.getInt("stock_quantity");
-                boolean selling = result.getBoolean("selling_status");
-                String categoryID = result.getString("category_id");
-                double price = result.getDouble("product_price");
-
-                return new Product(id, name, description, stockQuantity, selling, categoryID, price);
+                return resultSetRowToProduct(result);
             }
             return null;
         } catch (SQLException ex) {
@@ -362,6 +413,19 @@ public class DatabaseManager {
             System.err.flush();
             return null;
         }
+    }
+
+    private static Product resultSetRowToProduct(ResultSet result)
+            throws SQLException {
+        String id = result.getString("product_id");
+        String name = result.getString("product_name");
+        String description = result.getString("product_description");
+        int stockQuantity = result.getInt("stock_quantity");
+        boolean selling = result.getBoolean("selling_status");
+        String categoryID = result.getString("category_id");
+        double price = result.getDouble("product_price");
+
+        return new Product(id, name, description, stockQuantity, selling, categoryID, price);
     }
 
     /**
@@ -434,12 +498,227 @@ public class DatabaseManager {
         }
     }
 
-    public boolean insertProduct(Product p) {
-        return false;
+    public void insertProduct(Product p)
+            throws SQLException {
+        connection.setAutoCommit(false);
+        try {
+            PreparedStatement p1 = connection.prepareStatement(SQLStrings.SQL_INSERT_PRODUCT);
+            p1.setString(1, p.getID());
+            p1.setString(2, nullable(p.getName())); // will fail if null
+            p1.setString(3, nullable(p.getDescription()));
+            p1.setInt(4, p.getStockQuantity());
+            p1.setBoolean(5, p.isSelling());
+            p1.setString(6, nullable(p.getCategoryID()));
+            p1.executeUpdate();
+
+            PreparedStatement p2 = connection.prepareStatement(SQLStrings.SQL_INSERT_PRODUCT_PRICE_NEW);
+            p2.setString(1, p.getID());
+            p2.setDouble(2, p.getCurrentPrice());
+
+            connection.commit();
+        } catch (SQLException ex) {
+            connection.rollback();
+            connection.setAutoCommit(true);
+            throw ex;
+        }
+        connection.setAutoCommit(true);
     }
 
-    public boolean updateProduct(Product p) {
-        return false;
+    public String updateProduct(Product p)
+            throws SQLException {
+        String message = null;
+        connection.setAutoCommit(false);
+        
+        String productID = p.getID();
+        double newPrice = p.getCurrentPrice();
+        
+        try {
+            PreparedStatement p1 = connection.prepareStatement(SQLStrings.SQL_UPDATE_PRODUCT);
+            p1.setString(1, productID);
+            p1.setString(2, nullable(p.getName())); // will fail if null
+            p1.setString(3, nullable(p.getDescription()));
+            p1.setInt(4, p.getStockQuantity());
+            p1.setBoolean(5, p.isSelling());
+            p1.setString(6, nullable(p.getCategoryID()));
+            p1.setString(7, productID);
+            p1.executeUpdate();
+
+            if (p.isPriceChanged()) {
+                PreparedStatement p2 = connection.prepareStatement(
+                        SQLStrings.SQL_SELECT_PRODUCT_SALE_RECORD_TODAY);
+                p2.setString(1, productID);
+                ResultSet r2 = p2.executeQuery();
+
+                boolean isSoldToday = r2.next();
+                r2.close();
+
+                if (isSoldToday) {
+                    PreparedStatement p3 = connection.prepareStatement(
+                            SQLStrings.SQL_UPDATE_PRODUCT_PRICE_TOMORROW_ROW_PRICE);
+                    p3.setDouble(1, newPrice);
+                    p3.setString(2, productID);
+                    if (p3.executeUpdate() == 0) {
+                        PreparedStatement p4 = connection.prepareStatement(
+                                SQLStrings.SQL_UPDATE_PRODUCT_PRICE_CURRENT_ROW_END_DATE);
+                        p4.setDate(1, nullable(LocalDate.now()));
+                        p4.setString(2, productID);
+                        p4.executeUpdate();
+                        PreparedStatement p5 = connection.prepareStatement(
+                                SQLStrings.SQL_INSERT_PRODUCT_PRICE_ROW);
+                        p5.setString(1, productID);
+                        p5.setDate(2, nullable(LocalDate.now().plusDays(1)));
+                        p5.setDouble(3, newPrice);
+                        p5.executeUpdate();
+                        message = "The product has been sold today. The new price "
+                                + "will take effect tomorrow.";
+                    } else {
+                        PreparedStatement p6 = connection.prepareStatement(
+                                SQLStrings.SQL_SELECT_PRODUCT_PRICE_ENDING_TODAY);
+                        p6.setString(1, productID);
+                        ResultSet r6 = p6.executeQuery();
+                        r6.next();
+                        double prevPrice = r6.getDouble("product_price");
+                        if (prevPrice == newPrice) {
+                            PreparedStatement p7 = connection.prepareStatement(
+                                    SQLStrings.SQL_DELETE_PRODUCT_PRICE_TOMORROW_ROW);
+                            p7.setString(1, productID);
+                            p7.executeUpdate();
+
+                            PreparedStatement p8 = connection.prepareStatement(
+                                    SQLStrings.SQL_UPDATE_PRODUCT_PRICE_CURRENT_ROW_END_DATE);
+                            p8.setDate(1, SQLStrings.SQL_MAXDATE);
+                            p8.setString(2, productID);
+                            p8.executeUpdate();
+
+                            message = "The product's price change has been reverted.";
+                        } else {
+                            message = "The product's price (starting tomorrow) has been updated.";
+                        }
+                    }
+                } else {
+                    PreparedStatement p3 = connection.prepareStatement(
+                            SQLStrings.SQL_UPDATE_PRODUCT_PRICE_TODAY_ROW_PRICE);
+                    p3.setDouble(1, newPrice);
+                    p3.setString(2, productID);
+                    if (p3.executeUpdate() == 0) {
+                        PreparedStatement p4 = connection.prepareStatement(
+                                SQLStrings.SQL_UPDATE_PRODUCT_PRICE_CURRENT_ROW_END_DATE);
+                        p4.setDate(1, nullable(LocalDate.now().minusDays(1)));
+                        p4.setString(2, productID);
+                        p4.executeUpdate();
+                        PreparedStatement p5 = connection.prepareStatement(
+                                SQLStrings.SQL_INSERT_PRODUCT_PRICE_ROW);
+                        p5.setString(1, productID);
+                        p5.setDate(2, nullable(LocalDate.now()));
+                        p5.setDouble(3, newPrice);
+                        p5.executeUpdate();
+                        message = "The product's price has been updated.";
+                    } else {
+                        PreparedStatement p6 = connection.prepareStatement(
+                                SQLStrings.SQL_SELECT_PRODUCT_PRICE_ENDING_YESTERDAY);
+                        p6.setString(1, productID);
+                        ResultSet r6 = p6.executeQuery();
+                        r6.next();
+                        double prevPrice = r6.getDouble("product_price");
+                        if (prevPrice == newPrice) {
+                            PreparedStatement p7 = connection.prepareStatement(
+                                    SQLStrings.SQL_DELETE_PRODUCT_PRICE_TODAY_ROW);
+                            p7.setString(1, productID);
+                            p7.executeUpdate();
+
+                            PreparedStatement p8 = connection.prepareStatement(
+                                    SQLStrings.SQL_UPDATE_PRODUCT_PRICE_YESTERDAY_ROW_END_DATE);
+                            p8.setDate(1, SQLStrings.SQL_MAXDATE);
+                            p8.setString(2, productID);
+                            p8.executeUpdate();
+                            
+                            message = "The product's price change has been reverted.";
+                        } else {
+                            message = "The product's price has been updated (again).";
+                        }
+                    }
+                }
+            }
+
+            connection.commit();
+        } catch (SQLException ex) {
+            connection.rollback();
+            connection.setAutoCommit(true);
+            throw ex;
+        }
+        connection.setAutoCommit(true);
+        return message;
+    }
+
+    public void deleteProduct(String productID)
+            throws SQLException {
+        PreparedStatement p1 = connection.prepareStatement(SQLStrings.SQL_SELECT_PRODUCT_SALE_RECORD);
+        p1.setString(1, productID);
+        ResultSet r1 = p1.executeQuery();
+        boolean hasBeenSold = r1.next();
+        if (hasBeenSold) {
+            throw new SQLException("Cannot delete a product that appears in a sale record.");
+        } else {
+            PreparedStatement p2 = connection.prepareStatement(SQLStrings.SQL_DELETE_PRODUCT);
+            p2.setString(1, productID);
+            p2.executeUpdate();
+        }
+    }
+
+    public void updateProductSupplierRelationship(Product p, List<Supplier> allSuppliers)
+            throws SQLException {
+        String productID = p.getID();
+        connection.setAutoCommit(false);
+        try {
+            PreparedStatement p1 = connection.prepareStatement(SQLStrings.SQL_PRODUCTSUPPLIER_DELETE_BY_PRODUCT);
+            p1.setString(1, productID);
+            p1.executeUpdate();
+
+            if (!allSuppliers.isEmpty()) {
+                PreparedStatement p2 = connection.prepareStatement(SQLStrings.SQL_PRODUCTSUPPLIER_INSERT);
+                for (Supplier s : allSuppliers) {
+                    p2.setString(1, productID);
+                    p2.setString(2, s.getID());
+                    p2.addBatch();
+                }
+                p2.executeBatch();
+            }
+
+            connection.commit();
+        } catch (SQLException ex) {
+            connection.rollback();
+            connection.setAutoCommit(true);
+            throw ex;
+        }
+        connection.setAutoCommit(true);
+    }
+
+    public void updateProductSupplierRelationship(Supplier s, List<Product> allProducts)
+            throws SQLException {
+        String supplierID = s.getID();
+        connection.setAutoCommit(false);
+        try {
+            PreparedStatement p1 = connection.prepareStatement(SQLStrings.SQL_PRODUCTSUPPLIER_DELETE_BY_SUPPLIER);
+            p1.setString(1, supplierID);
+            p1.executeUpdate();
+
+            if (!allProducts.isEmpty()) {
+                PreparedStatement p2 = connection.prepareStatement(SQLStrings.SQL_PRODUCTSUPPLIER_INSERT);
+                for (Product p : allProducts) {
+                    p2.setString(1, p.getID());
+                    p2.setString(2, supplierID);
+                    p2.addBatch();
+                }
+                p2.executeBatch();
+            }
+
+            connection.commit();
+        } catch (SQLException ex) {
+            connection.rollback();
+            connection.setAutoCommit(true);
+            throw ex;
+        }
+        connection.setAutoCommit(true);
     }
 
     public String suggestNextProductID() {
@@ -630,11 +909,78 @@ public class DatabaseManager {
         return DatabaseUtilities.suggestNextID(statement,
                 SQLStrings.SQL_SUPPLIER_ID_LATEST, "S", 8);
     }
+
+    public List<String[]> queryIDsAndNames(String sql, String searchString) {
+        List<String[]> list = new LinkedList<>();
+        try {
+            // prepare a statement
+            PreparedStatement p = connection.prepareStatement(sql);
+            // set the parameters
+            p.setString(1, '%' + searchString + '%');
+            p.setString(2, '%' + searchString + '%');
+            // execute the statement
+            ResultSet result = p.executeQuery();
+
+            while (result.next()) {
+                list.add(new String[]{result.getString(1), result.getString(2)});
+            }
+            return list;
+        } catch (SQLException ex) {
+            System.err.println(ex);
+            System.err.flush();
+            return new LinkedList<>();
+        }
+    }
     //</editor-fold>
 
     //<editor-fold desc="Database Management: Sale Records">
-    public boolean insertSaleRecord(ShoppingList shoppingList) {
-        return false;
+    public void insertSaleRecord(ShoppingList list) throws SQLException {
+        connection.setAutoCommit(false);
+        try {
+            String saleID = this.suggestNextSaleID();
+            PreparedStatement p1 = connection.prepareStatement(SQLStrings.SQL_INSERT_SALE);
+            p1.setString(1, saleID);
+            p1.setDate(2, nullable(list.getCheckoutDate()));
+            p1.setTime(3, nullable(list.getCheckoutTime()));
+            p1.setDouble(4, list.getDiscountPercent());
+            Customer c = list.getCustomer();
+            p1.setString(5, c == null ? Const.UNREGISTERED_CUSTOMER_ID : c.getID());
+            p1.executeUpdate();
+
+            PreparedStatement p2 = connection.prepareStatement(SQLStrings.SQL_INSERT_SALE_DETAIL);
+            for (LineItem item : list.getList()) {
+                p2.setString(1, saleID);
+                p2.setString(2, item.getProductID());
+                p2.setInt(3, item.getQuantity());
+                p2.addBatch();
+            }
+            p2.executeBatch();
+
+            list.setSaleID(saleID);
+
+            connection.commit();
+        } catch (SQLException ex) {
+            connection.rollback();
+            connection.setAutoCommit(true);
+            throw ex;
+        }
+        connection.setAutoCommit(true);
+    }
+
+    public void updateProductQuantities(ShoppingList list)
+            throws SQLException {
+        PreparedStatement p = connection.prepareStatement(SQLStrings.SQL_UPDATE_PRODUCT_SUBTRACT_STOCK_QUANTITY);
+        for (LineItem item : list.getList()) {
+            p.setInt(1, item.getQuantity());
+            p.setString(2, item.getProductID());
+            p.addBatch();
+        }
+        p.executeBatch();
+    }
+
+    public String suggestNextSaleID() {
+        return DatabaseUtilities.suggestNextID(statement,
+                SQLStrings.SQL_SALE_ID_LATEST, "SL", 12);
     }
     //</editor-fold>
 
@@ -761,21 +1107,76 @@ public class DatabaseManager {
         return result;
     }
 
-    public boolean tryInsertProduct(Product product, Component caller) {
-        throw new UnsupportedOperationException();
+    public boolean tryInsertProduct(Product product, List<Supplier> suppliers, Component caller) {
+        try {
+            this.insertProduct(product); // actual insert operation
+            this.updateProductSupplierRelationship(product, suppliers);
+            JOptionPane.showMessageDialog(caller,
+                    "The new product was successfully added to the database:\n>> "
+                    + product.shortDescription(),
+                    "Add New Product",
+                    JOptionPane.INFORMATION_MESSAGE);
+            return true;
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(caller,
+                    "Error adding the product to the database:\n>> " + ex.getMessage(),
+                    "Add New Product",
+                    JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
     }
 
-    public boolean tryUpdateProduct(Product product, Component caller) {
-        throw new UnsupportedOperationException();
+    public boolean tryUpdateProduct(Product product, List<Supplier> suppliers, Component caller) {
+        try {
+            String message = this.updateProduct(product); // actual update operation
+            if (suppliers != null) {
+                this.updateProductSupplierRelationship(product, suppliers);
+            }
+            JOptionPane.showMessageDialog(caller,
+                    "The following product's information was successfully updated:\n>> "
+                    + product.shortDescription() + (message == null ? "" : "\n\n" + message),
+                    "Edit Product Info",
+                    JOptionPane.INFORMATION_MESSAGE);
+            return true;
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(caller,
+                    "Error updating the product's information:\n>> " + ex.getMessage(),
+                    "Edit Product Info",
+                    JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
     }
 
     public boolean tryDeleteProduct(Product product, Component caller) {
-        throw new UnsupportedOperationException();
+        boolean result = false;
+        int proceed = JOptionPane.showConfirmDialog(caller,
+                "Delete the following product from the database?\n>> "
+                + product.shortDescription(),
+                "Manage Products",
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.QUESTION_MESSAGE, null);
+        if (proceed == JOptionPane.OK_OPTION) {
+            try {
+                this.deleteProduct(product.getID()); // actual delete operation
+                JOptionPane.showMessageDialog(caller,
+                        "The product information was successfully deleted.",
+                        "Manage Products",
+                        JOptionPane.INFORMATION_MESSAGE);
+                result = true;
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(caller,
+                        "Error deleting the product information:\n>>" + ex.getMessage(),
+                        "Manage Products",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        return result;
     }
 
-    public boolean tryInsertSupplier(Supplier supplier, Component caller) {
+    public boolean tryInsertSupplier(Supplier supplier, List<Product> products, Component caller) {
         try {
             this.insertSupplier(supplier); // actual insert operation
+            this.updateProductSupplierRelationship(supplier, products);
             JOptionPane.showMessageDialog(caller,
                     "The new supplier was successfully added to the database:\n>> "
                     + supplier.shortDescription(),
@@ -791,9 +1192,12 @@ public class DatabaseManager {
         }
     }
 
-    public boolean tryUpdateSupplier(Supplier supplier, Component caller) {
+    public boolean tryUpdateSupplier(Supplier supplier, List<Product> products, Component caller) {
         try {
             this.updateSupplier(supplier); // actual update operation
+            if (products != null) {
+                this.updateProductSupplierRelationship(supplier, products);
+            }
             JOptionPane.showMessageDialog(caller,
                     "The following supplier's information was successfully updated:\n>> "
                     + supplier.shortDescription(),
@@ -833,6 +1237,20 @@ public class DatabaseManager {
             }
         }
         return result;
+    }
+
+    public boolean tryProcessSale(ShoppingList list, Component caller) {
+        try {
+            this.insertSaleRecord(list);
+            this.updateProductQuantities(list);
+            return true;
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(caller,
+                    "Error recording sale information:\n>> " + ex.getMessage(),
+                    "Checkout",
+                    JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
     }
     //</editor-fold>
 }
