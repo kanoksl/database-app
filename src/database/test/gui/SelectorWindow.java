@@ -212,7 +212,7 @@ public class SelectorWindow
     //</editor-fold>
     public static List<String> showProductSelectorDialog(Frame owner) {
         SelectorWindow win = new SelectorWindow();
-        win.sql = SQLStrings.SQL_ID_AND_NAME_PRODUCTS;
+        win.sql = SQLStrings.SQL_SEARCH_ID_AND_NAME_PRODUCTS;
         win.refresh();
 
         Util.createAndShowDialog(owner, "Select Product(s)",
@@ -223,7 +223,7 @@ public class SelectorWindow
 
     public static List<String> showSupplierSelectorDialog(Frame owner) {
         SelectorWindow win = new SelectorWindow();
-        win.sql = SQLStrings.SQL_ID_AND_NAME_SUPPLIERS;
+        win.sql = SQLStrings.SQL_SEARCH_ID_AND_NAME_SUPPLIERS;
         win.refresh();
 
         Util.createAndShowDialog(owner, "Select Product(s)",

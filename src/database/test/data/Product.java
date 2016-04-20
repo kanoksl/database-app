@@ -15,8 +15,7 @@ public class Product {
     private String categoryID;
 
     private double currentPrice;
-    
-    private boolean priceChanged = false;
+    private boolean priceChanged;
 
     /**
      * Create a new Product object from existing data.
@@ -38,6 +37,7 @@ public class Product {
         this.selling = selling;
         this.categoryID = categoryID;
         this.currentPrice = currentPrice;
+        this.priceChanged = false;
     }
 
     //<editor-fold defaultstate="collapsed" desc="Getters/Setters: Standard (With Some Input Validation)">
@@ -121,19 +121,21 @@ public class Product {
                 + ", \n  stock_quantity = " + stockQuantity
                 + ", \n  selling_status = " + selling
                 + ", \n  category_id = " + categoryID
-                + ", \n  #product_price = " + currentPrice
+                + ", \n  # product_price = " + currentPrice
+                + ", \n  # price_changed = " + priceChanged
                 + "\n}";
     }
 
     public String shortDescription() {
         return String.format("%s : %s", id, name);
     }
-    
-    public static TableModel createTableModel(List<Product> list) {
-        TableModel model = new AbstractTableModel() {
-            private final String[] COLUMNS = {"Product ID", "Product Name", 
-                "Category ID", "Stock Quantity", "Current Price"};
 
+    //<editor-fold defaultstate="collapsed" desc="GUI Code: Table Model">
+    public static final String[] TABLE_COLUMNS = {
+            "Product ID", "Product Name", "Category ID", "Stock Quantity", "Current Price"};
+
+    public static TableModel createTableModel(List<Product> list) {
+        return new AbstractTableModel() {
             @Override
             public int getRowCount() {
                 return list.size();
@@ -141,12 +143,12 @@ public class Product {
 
             @Override
             public int getColumnCount() {
-                return COLUMNS.length;
+                return TABLE_COLUMNS.length;
             }
 
             @Override
             public String getColumnName(int column) {
-                return COLUMNS[column];
+                return TABLE_COLUMNS[column];
             }
 
             @Override
@@ -162,13 +164,22 @@ public class Product {
                     case 3:
                         return p.getStockQuantity();
                     case 4:
-                        return p.getCurrentPriceString();
+                        return p.getCurrentPrice();
                 }
                 return null;
             }
+
+            @Override
+            public Class<?> getColumnClass(int columnIndex) {
+                if (columnIndex == 3) return Integer.class;
+                if (columnIndex == 4) return Double.class;
+                else return String.class;
+            }
+
+            
         };
-        return model;
     }
+    //</editor-fold>
 
     /**
      * Create a new Product object without any data except the given ID. (The

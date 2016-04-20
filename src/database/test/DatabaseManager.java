@@ -1,14 +1,16 @@
 package database.test;
 
-import static database.test.DatabaseUtilities.nullable;
-import static database.test.DatabaseUtilities.toChar;
-import static database.test.DatabaseUtilities.toLocalDate;
-import static database.test.DatabaseUtilities.toLocalTime;
+import static database.test.DatabaseUtility.nullable;
+import static database.test.DatabaseUtility.toChar;
+import static database.test.DatabaseUtility.toLocalDate;
+import static database.test.DatabaseUtility.toLocalTime;
 
 import database.test.data.Customer;
 import database.test.data.Product;
 import database.test.data.ShoppingList;
+import database.test.data.ShoppingList.LineItem;
 import database.test.data.Supplier;
+import database.test.gui.Const;
 
 import java.awt.Component;
 import java.sql.Connection;
@@ -24,9 +26,6 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 import javax.swing.table.TableModel;
-import static database.test.DatabaseUtilities.nullable;
-import database.test.data.ShoppingList.LineItem;
-import database.test.gui.Const;
 
 public class DatabaseManager {
 
@@ -109,7 +108,7 @@ public class DatabaseManager {
     //<editor-fold desc="Database Management: Customers">
     public List<String> queryListOfCustomerIDs() {
         try {
-            return DatabaseUtilities.querySingleColumnToList(statement, SQLStrings.SQL_CUSTOMER_ID_ALL);
+            return DatabaseUtility.querySingleColumnToList(statement, SQLStrings.SQL_SELECT_ALL_CUSTOMER_IDS);
         } catch (SQLException ex) {
             System.err.println(ex);
             System.err.flush();
@@ -313,15 +312,15 @@ public class DatabaseManager {
     }
 
     public String suggestNextCustomerID() {
-        return DatabaseUtilities.suggestNextID(statement,
-                SQLStrings.SQL_CUSTOMER_ID_LATEST, "C", 8);
+        return DatabaseUtility.suggestNextID(statement,
+                SQLStrings.SQL_SELECT_LATEST_CUSTOMER_ID, "C", 8);
     }
     //</editor-fold>
 
     //<editor-fold desc="Database Management: Products / Categories / Pricing">
     public List<String> queryListOfSellingProductIDs() {
         try {
-            return DatabaseUtilities.querySingleColumnToList(statement, SQLStrings.SQL_PRODUCT_ID_ALL_AVAILABLE);
+            return DatabaseUtility.querySingleColumnToList(statement, SQLStrings.SQL_SELECT_ALL_AVAILABLE_PRODUCT_IDS);
         } catch (SQLException ex) {
             System.err.println(ex);
             System.err.flush();
@@ -331,7 +330,7 @@ public class DatabaseManager {
 
     public List<String> queryListOfAllProductIDs() {
         try {
-            return DatabaseUtilities.querySingleColumnToList(statement, SQLStrings.SQL_PRODUCT_ID_ALL_AVAILABLE);
+            return DatabaseUtility.querySingleColumnToList(statement, SQLStrings.SQL_SELECT_ALL_PRODUCT_IDS);
         } catch (SQLException ex) {
             System.err.println(ex);
             System.err.flush();
@@ -380,7 +379,7 @@ public class DatabaseManager {
         List<Product> list = new LinkedList<>();
         try {
             // prepare a statement
-            PreparedStatement p = connection.prepareStatement(SQLStrings.SQL_SEARCH_PRODUCT_FILTER_BASE + filterSQL);
+            PreparedStatement p = connection.prepareStatement(SQLStrings.SQL_SEARCH_PRODUCT_BY_FILTER_BASECASE + filterSQL);
             // execute the statement
             ResultSet result = p.executeQuery();
 
@@ -437,7 +436,7 @@ public class DatabaseManager {
         List<Object[]> list = new ArrayList<>();
         try {
             // prepare a statement
-            PreparedStatement p = connection.prepareStatement(SQLStrings.SQL_PRODUCT_PRICING_HISTORY);
+            PreparedStatement p = connection.prepareStatement(SQLStrings.SQL_QUERY_PRODUCT_PRICING_HISTORY);
             // set the parameters
             p.setString(1, productID);
             // execute the statement
@@ -457,12 +456,45 @@ public class DatabaseManager {
             return new ArrayList<>();
         }
     }
+    
+    /**
+     *
+     * @param productID
+     * @return [sale_id, date_time, customer_id, first_name, quantity, unit_price, subtotal]
+     */
+    public List<Object[]> queryProductSellingHistory(String productID) {
+        List<Object[]> list = new ArrayList<>();
+        try {
+            // prepare a statement
+            PreparedStatement p = connection.prepareStatement(SQLStrings.SQL_QUERY_PRODUCT_SELLING_HISTORY);
+            // set the parameters
+            p.setString(1, productID);
+            // execute the statement
+            ResultSet result = p.executeQuery();
+            while (result.next()) {
+                Object[] row = new Object[7];
+                row[0] = result.getString("sale_id");
+                row[1] = result.getString("date_time");
+                row[2] = result.getString("customer_id");
+                row[3] = result.getString("first_name");
+                row[4] = result.getInt("quantity");
+                row[5] = result.getDouble("unit_price");
+                row[6] = result.getDouble("subtotal");
+                list.add(row);
+            }
+            return list;
+        } catch (SQLException ex) {
+            System.err.println(ex);
+            System.err.flush();
+            return new ArrayList<>();
+        }
+    }
 
     public List<String> queryListOfProductSupplierIDs(String productID) {
         List<String> suppliers = new ArrayList<>();
         try {
             // prepare a statement
-            PreparedStatement p = connection.prepareStatement(SQLStrings.SQL_PRODUCT_SUPPLIER_ID_LIST);
+            PreparedStatement p = connection.prepareStatement(SQLStrings.SQL_SELECT_SUPPLIERS_OF_A_PRODUCT);
             // set the parameters
             p.setString(1, productID);
             // execute the statement
@@ -482,7 +514,7 @@ public class DatabaseManager {
         List<String> products = new ArrayList<>();
         try {
             // prepare a statement
-            PreparedStatement p = connection.prepareStatement(SQLStrings.SQL_SUPPLIER_PRODUCT_ID_LIST);
+            PreparedStatement p = connection.prepareStatement(SQLStrings.SQL_SELECT_PRODUCTS_OF_A_SUPPLIER);
             // set the parameters
             p.setString(1, supplierID);
             // execute the statement
@@ -511,7 +543,7 @@ public class DatabaseManager {
             p1.setString(6, nullable(p.getCategoryID()));
             p1.executeUpdate();
 
-            PreparedStatement p2 = connection.prepareStatement(SQLStrings.SQL_INSERT_PRODUCT_PRICE_NEW);
+            PreparedStatement p2 = connection.prepareStatement(SQLStrings.SQL_INSERT_NEW_PRODUCT_PRICE);
             p2.setString(1, p.getID());
             p2.setDouble(2, p.getCurrentPrice());
 
@@ -545,7 +577,7 @@ public class DatabaseManager {
 
             if (p.isPriceChanged()) {
                 PreparedStatement p2 = connection.prepareStatement(
-                        SQLStrings.SQL_SELECT_PRODUCT_SALE_RECORD_TODAY);
+                        SQLStrings.SQL_QUERY_PRODUCT_SALE_RECORD_TODAY);
                 p2.setString(1, productID);
                 ResultSet r2 = p2.executeQuery();
 
@@ -652,7 +684,7 @@ public class DatabaseManager {
 
     public void deleteProduct(String productID)
             throws SQLException {
-        PreparedStatement p1 = connection.prepareStatement(SQLStrings.SQL_SELECT_PRODUCT_SALE_RECORD);
+        PreparedStatement p1 = connection.prepareStatement(SQLStrings.SQL_QUERY_PRODUCT_SALE_RECORD);
         p1.setString(1, productID);
         ResultSet r1 = p1.executeQuery();
         boolean hasBeenSold = r1.next();
@@ -722,14 +754,14 @@ public class DatabaseManager {
     }
 
     public String suggestNextProductID() {
-        return DatabaseUtilities.suggestNextID(statement,
-                SQLStrings.SQL_PRODUCT_ID_LATEST, "P", 8);
+        return DatabaseUtility.suggestNextID(statement,
+                SQLStrings.SQL_SELECT_LATEST_PRODUCT_ID, "P", 8);
     }
 
     public TableModel queryCategoryOverview() {
         try {
-            ResultSet result = statement.executeQuery(SQLStrings.SQL_CATEGORY_OVERVIEW);
-            return DatabaseUtilities.buildTableModel(result);
+            ResultSet result = statement.executeQuery(SQLStrings.SQL_SELECT_CATEGORY_OVERVIEW);
+            return DatabaseUtility.buildTableModel(result);
         } catch (SQLException ex) {
             System.err.println(ex);
             System.err.flush();
@@ -739,7 +771,7 @@ public class DatabaseManager {
 
     public List<String> queryListOfCategoryIDs() {
         try {
-            return DatabaseUtilities.querySingleColumnToList(statement, SQLStrings.SQL_CATEGORY_ID_ALL);
+            return DatabaseUtility.querySingleColumnToList(statement, SQLStrings.SQL_SELECT_ALL_CATEGORY_IDS);
         } catch (SQLException ex) {
             System.err.println(ex);
             System.err.flush();
@@ -784,7 +816,7 @@ public class DatabaseManager {
     //<editor-fold desc="Database Management: Suppliers">
     public List<String> queryListOfSupplierIDs() {
         try {
-            return DatabaseUtilities.querySingleColumnToList(statement, SQLStrings.SQL_SUPPLIER_ID_ALL);
+            return DatabaseUtility.querySingleColumnToList(statement, SQLStrings.SQL_SELECT_ALL_SUPPLIER_IDS);
         } catch (SQLException ex) {
             System.err.println(ex);
             System.err.flush();
@@ -906,8 +938,8 @@ public class DatabaseManager {
     }
 
     public String suggestNextSupplierID() {
-        return DatabaseUtilities.suggestNextID(statement,
-                SQLStrings.SQL_SUPPLIER_ID_LATEST, "S", 8);
+        return DatabaseUtility.suggestNextID(statement,
+                SQLStrings.SQL_SELECT_LATEST_SUPPLIER_ID, "S", 8);
     }
 
     public List<String[]> queryIDsAndNames(String sql, String searchString) {
@@ -979,10 +1011,11 @@ public class DatabaseManager {
     }
 
     public String suggestNextSaleID() {
-        return DatabaseUtilities.suggestNextID(statement,
-                SQLStrings.SQL_SALE_ID_LATEST, "SL", 12);
+        return DatabaseUtility.suggestNextID(statement,
+                SQLStrings.SQL_SELECT_LATEST_SALE_ID, "SL", 12);
     }
     //</editor-fold>
+
 
     //<editor-fold desc="Database Operations with Message Dialogs">
     public boolean tryInsertCustomer(Customer customer, Component caller) {

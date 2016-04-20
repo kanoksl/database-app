@@ -93,8 +93,8 @@ public class Supplier {
     public void setNotes(String notes) {
         this.notes = notes;
     }
-
     //</editor-fold>
+
     @Override
     public String toString() {
         return "Supplier {"
@@ -109,12 +109,15 @@ public class Supplier {
     }
     
     public String shortDescription() {
-        return String.format("%s : %s", id, this.getName());
+        return String.format("%s : %s", id, name);
     }
 
+    //<editor-fold defaultstate="collapsed" desc="GUI Code: Table Model">
+    public static final String[] TABLE_COLUMNS = {
+            "Supplier ID", "Name", "Address", "Phone", "Email", "Website"};
+
     public static TableModel createTableModel(List<Supplier> list) {
-        TableModel model = new AbstractTableModel() {
-            private final String[] COLUMNS = {"Supplier ID", "Name", "Address", "Phone", "Email", "Website"};
+        return new AbstractTableModel() {
 
             @Override
             public int getRowCount() {
@@ -123,12 +126,12 @@ public class Supplier {
 
             @Override
             public int getColumnCount() {
-                return COLUMNS.length;
+                return TABLE_COLUMNS.length;
             }
 
             @Override
             public String getColumnName(int column) {
-                return COLUMNS[column];
+                return TABLE_COLUMNS[column];
             }
 
             @Override
@@ -151,9 +154,9 @@ public class Supplier {
                 return null;
             }
         };
-        return model;
     }
-    
+    //</editor-fold>
+
     /**
      * Create a new Supplier object without any data except the given ID.
      *

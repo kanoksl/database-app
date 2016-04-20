@@ -988,6 +988,7 @@ public class EditCustomerInfoWindow
         ));
         tableSale.setGridColor(new java.awt.Color(204, 204, 204));
         tableSale.setRowHeight(20);
+        tableSale.getTableHeader().setReorderingAllowed(false);
         tableSale_scrollPane.setViewportView(tableSale);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -1108,6 +1109,7 @@ public class EditCustomerInfoWindow
         ));
         tableDetails.setGridColor(new java.awt.Color(204, 204, 204));
         tableDetails.setRowHeight(20);
+        tableDetails.getTableHeader().setReorderingAllowed(false);
         tableDetails_scrollPane.setViewportView(tableDetails);
 
         gridBagConstraints = new java.awt.GridBagConstraints();

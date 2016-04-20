@@ -606,6 +606,7 @@ public class EditSupplierInfoWindow
         ));
         tableProducts.setGridColor(new java.awt.Color(204, 204, 204));
         tableProducts.setRowHeight(20);
+        tableProducts.getTableHeader().setReorderingAllowed(false);
         tableProducts_scrollPane.setViewportView(tableProducts);
 
         gridBagConstraints = new java.awt.GridBagConstraints();

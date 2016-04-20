@@ -11,7 +11,7 @@ import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 
 public class ManageCategoriesWindow
-        extends javax.swing.JFrame {
+        extends DataDisplayWindow {
 
     private static DatabaseManager database = ApplicationMain.getDatabaseInstance();
 
@@ -30,9 +30,9 @@ public class ManageCategoriesWindow
         if (cat[0] != null) {
             this.refresh();
             // select the added category
-            for (int i = 0; i < tableCategories.getRowCount(); i++) {
-                if (cat[0].equals(tableCategories.getValueAt(i, 0))) {
-                    tableCategories.setRowSelectionInterval(i, i);
+            for (int i = 0; i < table.getRowCount(); i++) {
+                if (cat[0].equals(table.getValueAt(i, 0))) {
+                    table.setRowSelectionInterval(i, i);
                     return;
                 }
             }
@@ -40,20 +40,20 @@ public class ManageCategoriesWindow
     }
 
     private void categoryRename() {
-        int row = tableCategories.getSelectedRow();
-        String id = tableCategories.getValueAt(row, 0).toString();
-        String name = tableCategories.getValueAt(row, 1).toString();
+        int row = table.getSelectedRow();
+        String id = table.getValueAt(row, 0).toString();
+        String name = table.getValueAt(row, 1).toString();
         String[] cat = EditCategoryInfoWindow.showEditCategoryDialog(this, id, name);
         if (cat[0] != null) {
             this.refresh();
             // select the added category
             if (cat[0].equals(id)) {
-                tableCategories.setRowSelectionInterval(row, row);
+                table.setRowSelectionInterval(row, row);
                 return;
             }
-            for (int i = 0; i < tableCategories.getRowCount(); i++) {
-                if (cat[0].equals(tableCategories.getValueAt(i, 0))) {
-                    tableCategories.setRowSelectionInterval(i, i);
+            for (int i = 0; i < table.getRowCount(); i++) {
+                if (cat[0].equals(table.getValueAt(i, 0))) {
+                    table.setRowSelectionInterval(i, i);
                     return;
                 }
             }
@@ -61,9 +61,9 @@ public class ManageCategoriesWindow
     }
 
     private void categoryDelete() {
-        int row = tableCategories.getSelectedRow();
-        String id = tableCategories.getValueAt(row, 0).toString();
-        String name = tableCategories.getValueAt(row, 1).toString();
+        int row = table.getSelectedRow();
+        String id = table.getValueAt(row, 0).toString();
+        String name = table.getValueAt(row, 1).toString();
 
         boolean deleted = database.tryDeleteCategory(id, name, this);
         if (deleted) {
@@ -76,15 +76,16 @@ public class ManageCategoriesWindow
      * Query the category list from the database, and update the table model and
      * also its UI.
      */
+    @Override
     public void refresh() {
         System.out.println("ManageCategoriesWindow.refresh()");
         TableModel model = database.queryCategoryOverview();
-        tableCategories.setModel(model);
+        table.setModel(model);
 
         // setting column headers and sizes
-        tableCategories.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         final int width_id = 90, width_numbers = 90;
-        TableColumnModel colm = tableCategories.getColumnModel();
+        TableColumnModel colm = table.getColumnModel();
 
         colm.getColumn(0).setHeaderValue("Category ID");
         colm.getColumn(0).setMinWidth(width_id);
@@ -109,28 +110,28 @@ public class ManageCategoriesWindow
         colm.getColumn(2).setCellRenderer(rightRenderer);
         colm.getColumn(3).setCellRenderer(rightRenderer);
 
-        tableCategories.updateUI();
+        table.updateUI();
 
         // select the last row
-        int rowIndex = Math.max(0, tableCategories.getRowCount() - 1);
-        tableCategories.setRowSelectionInterval(rowIndex, rowIndex);
+        int rowIndex = Math.max(0, table.getRowCount() - 1);
+        table.setRowSelectionInterval(rowIndex, rowIndex);
 
         this.updateButtonsEnabled();
     }
 
     private void updateButtonsEnabled() {
-        boolean selectionNotEmpty = tableCategories.getSelectedRowCount() > 0;
+        boolean selectionNotEmpty = table.getSelectedRowCount() > 0;
         btnRenameCategory.setEnabled(selectionNotEmpty);
         btnDeleteCategory.setEnabled(selectionNotEmpty);
     }
 
     private void setColorTheme() {
-        tableCategories.setSelectionBackground(Const.COLOR_HIGHLIGHT_BG);
-        tableCategories.setSelectionForeground(Const.COLOR_HIGHLIGHT_FG);
-        tableCategories.setGridColor(Const.COLOR_TABLE_GRID);
-        tableCategories.setFont(Const.FONT_DEFAULT_12);
-        tableCategories.getTableHeader().setFont(Const.FONT_DEFAULT_12);
-        tableCategories.setRowHeight(24);
+        table.setSelectionBackground(Const.COLOR_HIGHLIGHT_BG);
+        table.setSelectionForeground(Const.COLOR_HIGHLIGHT_FG);
+        table.setGridColor(Const.COLOR_TABLE_GRID);
+        table.setFont(Const.FONT_DEFAULT_12);
+        table.getTableHeader().setFont(Const.FONT_DEFAULT_12);
+        table.setRowHeight(24);
     }
 
     private void initListeners() {
@@ -147,7 +148,7 @@ public class ManageCategoriesWindow
             this.categoryDelete();
         });
 
-        tableCategories.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
+        table.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
             this.updateButtonsEnabled();
         });
     }
@@ -168,7 +169,7 @@ public class ManageCategoriesWindow
         headerLabel = new javax.swing.JLabel();
         btnRefresh = new javax.swing.JButton();
         tableCategories_scrollPane = new javax.swing.JScrollPane();
-        tableCategories = new javax.swing.JTable();
+        table = new javax.swing.JTable();
         btnNewCategory = new javax.swing.JButton();
         btnRenameCategory = new javax.swing.JButton();
         btnDeleteCategory = new javax.swing.JButton();
@@ -217,8 +218,8 @@ public class ManageCategoriesWindow
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 4, 0);
         getContentPane().add(panel_header, gridBagConstraints);
 
-        tableCategories.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
-        tableCategories.setModel(new javax.swing.table.DefaultTableModel(
+        table.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        table.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -229,10 +230,11 @@ public class ManageCategoriesWindow
                 "Category ID", "Category Name", "Product Count", "Stock Quantity"
             }
         ));
-        tableCategories.setGridColor(new java.awt.Color(204, 204, 204));
-        tableCategories.setRowHeight(20);
-        tableCategories.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        tableCategories_scrollPane.setViewportView(tableCategories);
+        table.setGridColor(new java.awt.Color(204, 204, 204));
+        table.setRowHeight(20);
+        table.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        table.getTableHeader().setReorderingAllowed(false);
+        tableCategories_scrollPane.setViewportView(table);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -297,7 +299,7 @@ public class ManageCategoriesWindow
     private javax.swing.JButton btnRenameCategory;
     private javax.swing.JLabel headerLabel;
     private javax.swing.JPanel panel_header;
-    private javax.swing.JTable tableCategories;
+    private javax.swing.JTable table;
     private javax.swing.JScrollPane tableCategories_scrollPane;
     // End of variables declaration//GEN-END:variables
     //</editor-fold>

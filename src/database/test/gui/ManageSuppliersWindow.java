@@ -10,11 +10,12 @@ import java.util.List;
 
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
+import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 
 public class ManageSuppliersWindow
-        extends javax.swing.JFrame {
+        extends DataDisplayWindow {
 
     private static DatabaseManager database = ApplicationMain.getDatabaseInstance();
     private List<Supplier> supplierList;
@@ -33,42 +34,51 @@ public class ManageSuppliersWindow
         Supplier s = EditSupplierInfoWindow.showNewSupplierDialog(this);
         if (s != null) {
             supplierList.add(s);
-            tableSuppliers.updateUI();
-            tableSuppliers.setRowSelectionInterval(supplierList.size() - 1, supplierList.size() - 1);
+            ((AbstractTableModel) table.getModel()).fireTableDataChanged();
+            int viewRow = table.convertRowIndexToView(supplierList.size() - 1);
+            table.setRowSelectionInterval(viewRow, viewRow);
         }
+    }
+
+    private Supplier getSelection() {
+        int viewRow = table.getSelectedRow();
+        int modelRow = table.convertRowIndexToModel(viewRow);
+        return supplierList.get(modelRow);
     }
 
     private void supplierView() {
-        if (tableSuppliers.getSelectedRowCount() == 0) {
+        if (table.getSelectedRowCount() == 0 || supplierList.isEmpty()) {
             return;
         }
-        EditSupplierInfoWindow.showViewSupplierDialog(this,
-                supplierList.get(tableSuppliers.getSelectedRow()));
+        EditSupplierInfoWindow.showViewSupplierDialog(this, this.getSelection());
     }
 
     private void supplierEdit() {
-        if (tableSuppliers.getSelectedRowCount() == 0) {
+        if (table.getSelectedRowCount() == 0 || supplierList.isEmpty()) {
             return;
         }
-        int row = tableSuppliers.getSelectedRow();
-        Supplier selected = supplierList.get(row);
+        int viewRow = table.getSelectedRow();
+        int modelRow = table.convertRowIndexToModel(viewRow);
+        Supplier selected = supplierList.get(modelRow);
         Supplier copy = database.querySupplier(selected.getID());
         copy = EditSupplierInfoWindow.showEditSupplierDialog(this, copy);
         if (copy != null) {
-            supplierList.set(row, copy);
-            tableSuppliers.updateUI();
+            supplierList.set(modelRow, copy);
+            ((AbstractTableModel) table.getModel()).fireTableDataChanged();
+            viewRow = table.convertRowIndexToView(modelRow);
+            table.setRowSelectionInterval(viewRow, viewRow);
         }
     }
 
     private void supplierDelete() {
-        if (tableSuppliers.getSelectedRowCount() == 0) {
+        if (table.getSelectedRowCount() == 0 || supplierList.isEmpty()) {
             return;
         }
-        int row = tableSuppliers.getSelectedRow();
-        boolean deleted = database.tryDeleteSupplier(supplierList.get(row), this);
+        Supplier s = this.getSelection();
+        boolean deleted = database.tryDeleteSupplier(s, this);
         if (deleted) {
-            supplierList.remove(row);
-            tableSuppliers.updateUI();
+            supplierList.remove(s);
+            ((AbstractTableModel) table.getModel()).fireTableDataChanged();
         }
     }
 
@@ -77,6 +87,7 @@ public class ManageSuppliersWindow
      * Query the category list from the database, and update the table model and
      * also its UI.
      */
+    @Override
     public void refresh() {
         String searchString = tbxSearch.getText().trim();
         if (searchString.isEmpty()) {
@@ -87,12 +98,12 @@ public class ManageSuppliersWindow
             System.out.println("ManageSuppliersWindow.refresh(): search for '" + searchString + "'");
         }
         TableModel model = Supplier.createTableModel(supplierList);
-        tableSuppliers.setModel(model);
+        table.setModel(model);
 
         // setting column headers and sizes
-        tableSuppliers.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
         final int width_id = 80, width_phone = 90;
-        TableColumnModel colm = tableSuppliers.getColumnModel();
+        TableColumnModel colm = table.getColumnModel();
 
         colm.getColumn(0).setMinWidth(width_id);
         colm.getColumn(0).setMaxWidth(width_id);
@@ -102,31 +113,31 @@ public class ManageSuppliersWindow
         colm.getColumn(3).setMaxWidth(width_phone);
         colm.getColumn(3).setResizable(false);
 
-        tableSuppliers.updateUI();
+        table.updateUI();
 
         // select the last row
         if (!supplierList.isEmpty()) {
-            int rowIndex = Math.max(0, tableSuppliers.getRowCount() - 1);
-            tableSuppliers.setRowSelectionInterval(rowIndex, rowIndex);
+            int rowIndex = Math.max(0, table.getRowCount() - 1);
+            table.setRowSelectionInterval(rowIndex, rowIndex);
         }
 
         this.updateButtonsEnabled();
     }
 
     private void updateButtonsEnabled() {
-        boolean selectionNotEmpty = tableSuppliers.getSelectedRowCount() > 0;
+        boolean selectionNotEmpty = table.getSelectedRowCount() > 0;
         btnEditSupplier.setEnabled(selectionNotEmpty);
         btnDeleteSupplier.setEnabled(selectionNotEmpty);
         btnViewSupplier.setEnabled(selectionNotEmpty);
     }
 
     private void setColorTheme() {
-        tableSuppliers.setSelectionBackground(Const.COLOR_HIGHLIGHT_BG);
-        tableSuppliers.setSelectionForeground(Const.COLOR_HIGHLIGHT_FG);
-        tableSuppliers.setGridColor(Const.COLOR_TABLE_GRID);
-        tableSuppliers.setFont(Const.FONT_DEFAULT_12);
-        tableSuppliers.getTableHeader().setFont(Const.FONT_DEFAULT_12);
-        tableSuppliers.setRowHeight(24);
+        table.setSelectionBackground(Const.COLOR_HIGHLIGHT_BG);
+        table.setSelectionForeground(Const.COLOR_HIGHLIGHT_FG);
+        table.setGridColor(Const.COLOR_TABLE_GRID);
+        table.setFont(Const.FONT_DEFAULT_12);
+        table.getTableHeader().setFont(Const.FONT_DEFAULT_12);
+        table.setRowHeight(24);
 
         tbxSearch.setSelectionColor(Const.COLOR_HIGHLIGHT_BG);
         tbxSearch.setSelectedTextColor(Const.COLOR_HIGHLIGHT_FG);
@@ -149,7 +160,7 @@ public class ManageSuppliersWindow
             this.supplierDelete();
         });
 
-        tableSuppliers.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
+        table.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
             this.updateButtonsEnabled();
         });
 
@@ -180,7 +191,7 @@ public class ManageSuppliersWindow
         tbxSearch = new javax.swing.JTextField();
         btnRefresh = new javax.swing.JButton();
         tableSuppliers_scrollPane = new javax.swing.JScrollPane();
-        tableSuppliers = new javax.swing.JTable();
+        table = new javax.swing.JTable();
         btnNewSupplier = new javax.swing.JButton();
         btnEditSupplier = new javax.swing.JButton();
         btnDeleteSupplier = new javax.swing.JButton();
@@ -238,8 +249,9 @@ public class ManageSuppliersWindow
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 4, 0);
         getContentPane().add(panel_header, gridBagConstraints);
 
-        tableSuppliers.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
-        tableSuppliers.setModel(new javax.swing.table.DefaultTableModel(
+        table.setAutoCreateRowSorter(true);
+        table.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        table.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null},
                 {null, null, null, null, null, null},
@@ -250,10 +262,10 @@ public class ManageSuppliersWindow
                 "Supplier ID", "Name", "Address", "Phone", "Email", "Website"
             }
         ));
-        tableSuppliers.setGridColor(new java.awt.Color(204, 204, 204));
-        tableSuppliers.setRowHeight(20);
-        tableSuppliers.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        tableSuppliers_scrollPane.setViewportView(tableSuppliers);
+        table.setGridColor(new java.awt.Color(204, 204, 204));
+        table.setRowHeight(20);
+        table.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        tableSuppliers_scrollPane.setViewportView(table);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -333,7 +345,7 @@ public class ManageSuppliersWindow
     private javax.swing.JButton btnViewSupplier;
     private javax.swing.JLabel headerLabel;
     private javax.swing.JPanel panel_header;
-    private javax.swing.JTable tableSuppliers;
+    private javax.swing.JTable table;
     private javax.swing.JScrollPane tableSuppliers_scrollPane;
     private javax.swing.JTextField tbxSearch;
     // End of variables declaration//GEN-END:variables

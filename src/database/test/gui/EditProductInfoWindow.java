@@ -13,8 +13,12 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.ArrayList;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JLabel;
+import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableColumnModel;
 
 public class EditProductInfoWindow
         extends javax.swing.JFrame {
@@ -91,6 +95,7 @@ public class EditProductInfoWindow
         lblSellingSubheader.setText(product.shortDescription());
 
         // TODO: selling history
+        this.loadSellingHistory();
     }
 
     private void collectFormData() {
@@ -100,14 +105,14 @@ public class EditProductInfoWindow
         product.setDescription(txtDescription.getText());
 
         product.setStockQuantity((int) spnStock.getValue());
-        
+
         double newPrice = (Double) spnPrice.getValue();
         if (newPrice != trueProduct.getCurrentPrice()) {
             System.out.println("--product price changed");
             product.setPriceChanged(true);
             product.setCurrentPrice(newPrice);
         }
-        
+
         product.setSelling(!chkDiscontinued.isSelected());
     }
 
@@ -155,7 +160,7 @@ public class EditProductInfoWindow
         tabbedPane.remove(1); // pricing history
         cbxProductID.setVisible(false);
         cbxProductID.setEnabled(false);
-        
+
         // listeners
         btnSave.addActionListener((ActionEvent) -> {
             this.collectFormData();
@@ -174,7 +179,7 @@ public class EditProductInfoWindow
         tabbedPane.remove(2); // selling history
         cbxProductID.setVisible(false);
         cbxProductID.setEnabled(false);
-        
+
         // listeners
         btnSave.addActionListener((ActionEvent) -> {
             this.collectFormData();
@@ -265,12 +270,12 @@ public class EditProductInfoWindow
 
     private void loadPricingHistory() {
         List<Object[]> pricingList = database.queryProductPricingHistory(product.getID());
-        
+
         Object[] lastRow = pricingList.get(pricingList.size() - 1);
         if (lastRow[0].equals(LocalDate.now().plusDays(1).toString())) {
             spnPrice.setValue((Double) lastRow[3]);
         }
-        
+
         for (Object[] row : pricingList) {
             boolean isMinDate = row[0].toString().equals("1000-01-01");
             boolean isMaxDate = row[1].toString().equals("9999-12-31");
@@ -306,6 +311,80 @@ public class EditProductInfoWindow
         tablePrice.updateUI();
         lblPriceStats.setText("The price of this product has been changed "
                 + (pricingList.size() - 1) + " times.");
+    }
+
+    private void loadSellingHistory() {
+        List<Object[]> history = database.queryProductSellingHistory(product.getID());
+
+        tableSells.setModel(new AbstractTableModel() {
+            final String[] COLUMNS = {"Sale ID", "Date/Time", "Customer ID",
+                "Customer Name", "Quantity", "Unit Price", "Subtotal"};
+
+            @Override
+            public int getRowCount() {
+                return history.size();
+            }
+
+            @Override
+            public int getColumnCount() {
+                return 7;
+            }
+
+            @Override
+            public Object getValueAt(int rowIndex, int columnIndex) {
+                return history.get(rowIndex)[columnIndex];
+            }
+
+            @Override
+            public String getColumnName(int column) {
+                return COLUMNS[column];
+            }
+
+            @Override
+            public Class<?> getColumnClass(int columnIndex) {
+                if (columnIndex == 4) {
+                    return Integer.class;
+                }
+                if (columnIndex >= 5) {
+                    return Double.class;
+                } else {
+                    return String.class;
+                }
+            }
+        });
+
+        // setting column headers and sizes
+        tableSells.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
+        TableColumnModel colm = tableSells.getColumnModel();
+
+        colm.getColumn(0).setMinWidth(100);
+        colm.getColumn(0).setMaxWidth(100);
+        colm.getColumn(0).setResizable(false);
+
+        colm.getColumn(1).setMinWidth(120);
+        colm.getColumn(1).setMaxWidth(120);
+        colm.getColumn(1).setResizable(false);
+
+        colm.getColumn(2).setMinWidth(90);
+        colm.getColumn(2).setMaxWidth(90);
+        colm.getColumn(2).setResizable(false);
+
+        colm.getColumn(4).setCellRenderer(Util.TABLE_CELL_INTEGER);
+        colm.getColumn(5).setCellRenderer(Util.TABLE_CELL_MONEY);
+        colm.getColumn(6).setCellRenderer(Util.TABLE_CELL_MONEY);
+
+        tableSells.updateUI();
+
+        int sumQty = 0;
+        double sumAmt = 0;
+        for (Object[] row : history) {
+            sumQty += (int) row[4];
+            sumAmt += (double) row[6];
+        }
+        lblSellingStats.setText(String.format("This product has been purchased "
+                + "%,d times for a total of %,d units. Total income: %,.2f %s.",
+                history.size(), sumQty, sumAmt, Const.CURRENCY));
+
     }
 
     private void loadSuppliers() {
@@ -713,6 +792,7 @@ public class EditProductInfoWindow
         tableSuppliers.setGridColor(new java.awt.Color(204, 204, 204));
         tableSuppliers.setRowHeight(20);
         tableSuppliers.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        tableSuppliers.getTableHeader().setReorderingAllowed(false);
         tableSuppliers_scrollPane.setViewportView(tableSuppliers);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -849,17 +929,18 @@ public class EditProductInfoWindow
         tablePrice.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
         tablePrice.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null}
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
             },
             new String [] {
-                "Start Date", "End Date", "Unit Price"
+                "Start Date", "End Date", "Duration", "Unit Price"
             }
         ));
         tablePrice.setGridColor(new java.awt.Color(204, 204, 204));
         tablePrice.setRowHeight(20);
+        tablePrice.getTableHeader().setReorderingAllowed(false);
         tablePrice_scrollPane.setViewportView(tablePrice);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -918,6 +999,7 @@ public class EditProductInfoWindow
         ));
         tableSells.setGridColor(new java.awt.Color(204, 204, 204));
         tableSells.setRowHeight(20);
+        tableSells.getTableHeader().setReorderingAllowed(false);
         tableSells_scrollPane.setViewportView(tableSells);
 
         gridBagConstraints = new java.awt.GridBagConstraints();

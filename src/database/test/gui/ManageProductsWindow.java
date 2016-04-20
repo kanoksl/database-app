@@ -3,6 +3,7 @@ package database.test.gui;
 import database.test.ApplicationMain;
 import database.test.DatabaseManager;
 import database.test.data.Product;
+import java.awt.Color;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -11,12 +12,13 @@ import java.util.List;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
+import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 
 public class ManageProductsWindow
-        extends javax.swing.JFrame {
+        extends DataDisplayWindow {
 
     private static DatabaseManager database = ApplicationMain.getDatabaseInstance();
 
@@ -40,45 +42,55 @@ public class ManageProductsWindow
         Product s = EditProductInfoWindow.showNewProductDialog(this);
         if (s != null) {
             productList.add(s);
-            tableProducts.updateUI();
-            tableProducts.setRowSelectionInterval(productList.size() - 1, productList.size() - 1);
+            ((AbstractTableModel) table.getModel()).fireTableDataChanged();
+            int viewRow = table.convertRowIndexToView(productList.size() - 1);
+            table.setRowSelectionInterval(viewRow, viewRow);
         }
+    }
+
+    private Product getSelection() {
+        int viewRow = table.getSelectedRow();
+        int modelRow = table.convertRowIndexToModel(viewRow);
+        return productList.get(modelRow);
     }
 
     private void productView() {
-        if (tableProducts.getSelectedRowCount() == 0) {
+        if (table.getSelectedRowCount() == 0 || productList.isEmpty()) {
             return;
         }
-        EditProductInfoWindow.showViewProductDialog(this,
-                productList.get(tableProducts.getSelectedRow()));
+        EditProductInfoWindow.showViewProductDialog(this, this.getSelection());
     }
 
     private void productEdit() {
-        if (tableProducts.getSelectedRowCount() == 0) {
+        if (table.getSelectedRowCount() == 0 || productList.isEmpty()) {
             return;
         }
-        int row = tableProducts.getSelectedRow();
-        Product selected = productList.get(row);
+        int viewRow = table.getSelectedRow();
+        int modelRow = table.convertRowIndexToModel(viewRow);
+        Product selected = productList.get(modelRow);
         Product copy = database.queryProduct(selected.getID());
         copy = EditProductInfoWindow.showEditProductDialog(this, copy);
         if (copy != null) {
-            productList.set(row, copy);
-            tableProducts.updateUI();
+            productList.set(modelRow, copy);
+            ((AbstractTableModel) table.getModel()).fireTableDataChanged();
+            viewRow = table.convertRowIndexToView(modelRow);
+            table.setRowSelectionInterval(viewRow, viewRow);
         }
     }
 
     //<editor-fold defaultstate="collapsed" desc="GUI Code: Custom Initialization and Methods">
+    @Override
     public void refresh() {
         System.out.println("ManageProductsWindow.refresh()");
         productList = database.queryProductsByFilter(this.getSQLQueryConditions());
 
         TableModel model = Product.createTableModel(productList);
-        tableProducts.setModel(model);
+        table.setModel(model);
 
         // setting column headers and sizes
-        tableProducts.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
         final int width_id = 80, width_num = 90;
-        TableColumnModel colm = tableProducts.getColumnModel();
+        TableColumnModel colm = table.getColumnModel();
 
         colm.getColumn(0).setMinWidth(width_id);
         colm.getColumn(0).setMaxWidth(width_id);
@@ -96,18 +108,15 @@ public class ManageProductsWindow
         colm.getColumn(4).setMaxWidth(width_num);
         colm.getColumn(4).setResizable(false);
 
-        // set alignments
-        DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
-        rightRenderer.setHorizontalAlignment(JLabel.RIGHT);
-        colm.getColumn(3).setCellRenderer(rightRenderer);
-        colm.getColumn(4).setCellRenderer(rightRenderer);
+        colm.getColumn(3).setCellRenderer(Util.TABLE_CELL_STOCK_QUANTITY);
+        colm.getColumn(4).setCellRenderer(Util.TABLE_CELL_MONEY);
 
-        tableProducts.updateUI();
+        table.updateUI();
 
         // select the last row
         if (!productList.isEmpty()) {
-            int rowIndex = Math.max(0, tableProducts.getRowCount() - 1);
-            tableProducts.setRowSelectionInterval(rowIndex, rowIndex);
+            int rowIndex = Math.max(0, table.getRowCount() - 1);
+            table.setRowSelectionInterval(rowIndex, rowIndex);
         }
 
         this.updateButtonsEnabled();
@@ -115,18 +124,18 @@ public class ManageProductsWindow
     }
 
     private void updateButtonsEnabled() {
-        boolean selectionNotEmpty = tableProducts.getSelectedRowCount() > 0;
+        boolean selectionNotEmpty = table.getSelectedRowCount() > 0;
         btnEditProduct.setEnabled(selectionNotEmpty);
         btnViewProduct.setEnabled(selectionNotEmpty);
     }
 
     private void setColorTheme() {
-        tableProducts.setSelectionBackground(Const.COLOR_HIGHLIGHT_BG);
-        tableProducts.setSelectionForeground(Const.COLOR_HIGHLIGHT_FG);
-        tableProducts.setGridColor(Const.COLOR_TABLE_GRID);
-        tableProducts.setFont(Const.FONT_DEFAULT_12);
-        tableProducts.getTableHeader().setFont(Const.FONT_DEFAULT_12);
-        tableProducts.setRowHeight(24);
+        table.setSelectionBackground(Const.COLOR_HIGHLIGHT_BG);
+        table.setSelectionForeground(Const.COLOR_HIGHLIGHT_FG);
+        table.setGridColor(Const.COLOR_TABLE_GRID);
+        table.setFont(Const.FONT_DEFAULT_12);
+        table.getTableHeader().setFont(Const.FONT_DEFAULT_12);
+        table.setRowHeight(24);
 
         tbxSearch.setSelectionColor(Const.COLOR_HIGHLIGHT_BG);
         tbxSearch.setSelectedTextColor(Const.COLOR_HIGHLIGHT_FG);
@@ -146,7 +155,7 @@ public class ManageProductsWindow
             this.productEdit();
         });
 
-        tableProducts.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
+        table.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
             this.updateButtonsEnabled();
         });
 
@@ -200,7 +209,7 @@ public class ManageProductsWindow
         javax.swing.JLabel l_filterStatus = new javax.swing.JLabel();
         cbxStatus = new javax.swing.JComboBox<>();
         tableProducts_scrollPane = new javax.swing.JScrollPane();
-        tableProducts = new javax.swing.JTable();
+        table = new javax.swing.JTable();
         btnNewProduct = new javax.swing.JButton();
         btnEditProduct = new javax.swing.JButton();
         btnViewProduct = new javax.swing.JButton();
@@ -315,8 +324,9 @@ public class ManageProductsWindow
         gridBagConstraints.insets = new java.awt.Insets(2, 8, 0, 8);
         getContentPane().add(panel_filter, gridBagConstraints);
 
-        tableProducts.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
-        tableProducts.setModel(new javax.swing.table.DefaultTableModel(
+        table.setAutoCreateRowSorter(true);
+        table.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        table.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null},
                 {null, null, null, null, null},
@@ -327,10 +337,10 @@ public class ManageProductsWindow
                 "Product ID", "Product Name", "Category ID", "Stock Quantity", "Current Price"
             }
         ));
-        tableProducts.setGridColor(new java.awt.Color(204, 204, 204));
-        tableProducts.setRowHeight(20);
-        tableProducts.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        tableProducts_scrollPane.setViewportView(tableProducts);
+        table.setGridColor(new java.awt.Color(204, 204, 204));
+        table.setRowHeight(20);
+        table.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        tableProducts_scrollPane.setViewportView(table);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -398,7 +408,7 @@ public class ManageProductsWindow
     private javax.swing.JLabel headerLabel;
     private javax.swing.JPanel panel_filter;
     private javax.swing.JPanel panel_header;
-    private javax.swing.JTable tableProducts;
+    private javax.swing.JTable table;
     private javax.swing.JScrollPane tableProducts_scrollPane;
     private javax.swing.JTextField tbxCategory;
     private javax.swing.JTextField tbxSearch;

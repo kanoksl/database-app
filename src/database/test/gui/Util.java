@@ -2,18 +2,76 @@ package database.test.gui;
 
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Frame;
 
 import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.table.DefaultTableCellRenderer;
 
 /**
  * Utility methods used by GUI classes.
  */
 public class Util {
+
+    public static DefaultTableCellRenderer TABLE_CELL_MONEY 
+            = new DefaultTableCellRenderer() {
+        @Override
+        public int getHorizontalAlignment() {
+            return JLabel.RIGHT;
+        }
+
+        @Override
+        protected void setValue(Object value) {
+            setText(String.format("%,.2f " + Const.CURRENCY + " ", (double) value));
+        }
+
+    };
+
+    public static DefaultTableCellRenderer TABLE_CELL_STOCK_QUANTITY 
+            = new DefaultTableCellRenderer() {
+        @Override
+        public int getHorizontalAlignment() {
+            return JLabel.RIGHT;
+        }
+
+        @Override
+            protected void setValue(Object value) {
+                if (((int) value) == 0) {
+                    setText("out of stock");
+                } else {
+                    setText(String.format("%,d ", (int) value));
+                }
+            }
+
+    };
+
+    public static DefaultTableCellRenderer TABLE_CELL_INTEGER 
+            = new DefaultTableCellRenderer() {
+        @Override
+        public int getHorizontalAlignment() {
+            return JLabel.RIGHT;
+        }
+
+        @Override
+        protected void setValue(Object value) {
+            setText(String.format("%,d " , (int) value));
+        }
+
+    };
     
+    public static DefaultTableCellRenderer TABLE_CELL_BOLDTEXT 
+            = new DefaultTableCellRenderer() {
+        @Override
+        public Font getFont() {
+            return Const.FONT_DEFAULT_12_BOLD;
+        }
+    };
+
     /**
      * Create and display a JDialog with specified properties. (Note: the dialog
      * is displayed at the center of the screen and is fixed-size).
+     *
      * @param owner The parent frame.
      * @param title Title of the dialog window.
      * @param content Component inside the dialog.
@@ -34,8 +92,7 @@ public class Util {
         dia.dispose();
         return dia;
     }
-    
-    
+
     public static String formatPhoneNumber(String phone) {
         if (phone == null) {
             return "";
@@ -47,5 +104,5 @@ public class Util {
             return phone;
         }
     }
-    
+
 }

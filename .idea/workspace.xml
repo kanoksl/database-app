@@ -1,7 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AnalysisUIOptions">
+    <option name="SCOPE_TYPE" value="3" />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="5748fdd5-eed0-44b6-a5dc-2e5dff837cb0" name="Default" comment="" />
+    <list default="true" id="5748fdd5-eed0-44b6-a5dc-2e5dff837cb0" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/database/test/gui/SaleHistoryWindow.form" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/database/test/gui/SaleHistoryWindow.java" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/src/database/test/DatabaseUtilities.java" afterPath="$PROJECT_DIR$/src/database/test/DatabaseUtility.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/database/test/ApplicationMain.java" afterPath="$PROJECT_DIR$/src/database/test/ApplicationMain.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/database/test/DatabaseManager.java" afterPath="$PROJECT_DIR$/src/database/test/DatabaseManager.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/database/test/SQLStrings.java" afterPath="$PROJECT_DIR$/src/database/test/SQLStrings.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/database/test/data/Customer.java" afterPath="$PROJECT_DIR$/src/database/test/data/Customer.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/database/test/data/Product.java" afterPath="$PROJECT_DIR$/src/database/test/data/Product.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/database/test/data/ShoppingList.java" afterPath="$PROJECT_DIR$/src/database/test/data/ShoppingList.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/database/test/data/Supplier.java" afterPath="$PROJECT_DIR$/src/database/test/data/Supplier.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/database/test/gui/DebugWindow.form" afterPath="$PROJECT_DIR$/src/database/test/gui/DebugWindow.form" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/database/test/gui/DebugWindow.java" afterPath="$PROJECT_DIR$/src/database/test/gui/DebugWindow.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/database/test/gui/EditCustomerInfoWindow.form" afterPath="$PROJECT_DIR$/src/database/test/gui/EditCustomerInfoWindow.form" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/database/test/gui/EditCustomerInfoWindow.java" afterPath="$PROJECT_DIR$/src/database/test/gui/EditCustomerInfoWindow.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/database/test/gui/EditProductInfoWindow.form" afterPath="$PROJECT_DIR$/src/database/test/gui/EditProductInfoWindow.form" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/database/test/gui/EditProductInfoWindow.java" afterPath="$PROJECT_DIR$/src/database/test/gui/EditProductInfoWindow.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/database/test/gui/EditSupplierInfoWindow.form" afterPath="$PROJECT_DIR$/src/database/test/gui/EditSupplierInfoWindow.form" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/database/test/gui/EditSupplierInfoWindow.java" afterPath="$PROJECT_DIR$/src/database/test/gui/EditSupplierInfoWindow.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/database/test/gui/ManageCategoriesWindow.form" afterPath="$PROJECT_DIR$/src/database/test/gui/ManageCategoriesWindow.form" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/database/test/gui/ManageCategoriesWindow.java" afterPath="$PROJECT_DIR$/src/database/test/gui/ManageCategoriesWindow.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/database/test/gui/ManageCustomersWindow.form" afterPath="$PROJECT_DIR$/src/database/test/gui/ManageCustomersWindow.form" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/database/test/gui/ManageCustomersWindow.java" afterPath="$PROJECT_DIR$/src/database/test/gui/ManageCustomersWindow.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/database/test/gui/ManageProductsWindow.form" afterPath="$PROJECT_DIR$/src/database/test/gui/ManageProductsWindow.form" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/database/test/gui/ManageProductsWindow.java" afterPath="$PROJECT_DIR$/src/database/test/gui/ManageProductsWindow.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/database/test/gui/ManageSuppliersWindow.form" afterPath="$PROJECT_DIR$/src/database/test/gui/ManageSuppliersWindow.form" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/database/test/gui/ManageSuppliersWindow.java" afterPath="$PROJECT_DIR$/src/database/test/gui/ManageSuppliersWindow.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/database/test/gui/PointOfSaleWindow.form" afterPath="$PROJECT_DIR$/src/database/test/gui/PointOfSaleWindow.form" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/database/test/gui/PointOfSaleWindow.java" afterPath="$PROJECT_DIR$/src/database/test/gui/PointOfSaleWindow.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/database/test/gui/SelectorWindow.java" afterPath="$PROJECT_DIR$/src/database/test/gui/SelectorWindow.java" />
+    </list>
     <ignored path="DatabaseTester.iws" />
     <ignored path=".idea/workspace.xml" />
     <ignored path="$PROJECT_DIR$/out/" />
@@ -16,160 +50,163 @@
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="" />
   </component>
-  <component name="DockManager">
-    <window id="3">
-      <content type="file-editors">
-        <state>
-          <leaf>
-            <file leaf-file-name="SQLStrings.java" pinned="false" current-in-tab="true">
-              <entry file="file://$PROJECT_DIR$/src/database/test/SQLStrings.java">
-                <provider selected="true" editor-type-id="text-editor">
-                  <state relative-caret-position="-225">
-                    <caret line="50" column="47" selection-start-line="50" selection-start-column="47" selection-end-line="50" selection-end-column="47" />
-                    <folding>
-                      <element signature="n#!!doc;n#SQL_CURRENT_USER#0;n#SQLStrings#0" expanded="false" />
-                    </folding>
-                  </state>
-                </provider>
-              </entry>
-            </file>
-          </leaf>
-        </state>
-      </content>
-    </window>
-  </component>
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FavoritesManager">
     <favorites_list name="DatabaseTester" />
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="ApplicationMain.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/database/test/ApplicationMain.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="701">
-              <caret line="56" column="7" selection-start-line="56" selection-start-column="7" selection-end-line="56" selection-end-column="7" />
-              <folding>
-                <element signature="n#!!doc;n#app#0;n#ApplicationMain#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="DatabaseUtilities.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/database/test/DatabaseUtilities.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="60">
-              <caret line="30" column="13" selection-start-line="30" selection-start-column="13" selection-end-line="30" selection-end-column="13" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Customer.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/database/test/data/Customer.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="840">
-              <caret line="242" column="25" selection-start-line="242" selection-start-column="25" selection-end-line="242" selection-end-column="25" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Product.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/database/test/data/Product.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="495">
-              <caret line="83" column="4" selection-start-line="83" selection-start-column="4" selection-end-line="93" selection-end-column="5" />
-              <folding>
-                <element signature="e#1064#1065#0" expanded="true" />
-                <element signature="e#1089#1090#0" expanded="true" />
-                <element signature="e#1125#1126#0" expanded="true" />
-                <element signature="e#1153#1154#0" expanded="true" />
-                <element signature="e#1184#1185#0" expanded="true" />
-                <element signature="e#1211#1212#0" expanded="true" />
-                <element signature="e#1251#1252#0" expanded="true" />
-                <element signature="e#1283#1284#0" expanded="true" />
-                <element signature="e#1321#1322#0" expanded="true" />
-                <element signature="e#1355#1356#0" expanded="true" />
-                <element signature="e#1492#1493#0" expanded="true" />
-                <element signature="e#1528#1529#0" expanded="true" />
-                <element signature="e#1680#1681#0" expanded="true" />
-                <element signature="e#1710#1711#0" expanded="true" />
-                <element signature="e#1757#1758#0" expanded="true" />
-                <element signature="e#1795#1796#0" expanded="true" />
-                <element signature="e#1832#1833#0" expanded="true" />
-                <element signature="e#1865#1866#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Supplier.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/database/test/data/Supplier.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="555">
-              <caret line="95" column="37" selection-start-line="95" selection-start-column="37" selection-end-line="95" selection-end-column="37" />
-              <folding>
-                <element signature="e#1130#1131#0" expanded="true" />
-                <element signature="e#1155#1156#0" expanded="true" />
-                <element signature="e#1191#1192#0" expanded="true" />
-                <element signature="e#1219#1220#0" expanded="true" />
-                <element signature="e#1250#1251#0" expanded="true" />
-                <element signature="e#1277#1278#0" expanded="true" />
-                <element signature="e#1317#1318#0" expanded="true" />
-                <element signature="e#1349#1350#0" expanded="true" />
-                <element signature="e#1383#1384#0" expanded="true" />
-                <element signature="e#1413#1414#0" expanded="true" />
-                <element signature="e#1459#1460#0" expanded="true" />
-                <element signature="e#1497#1498#0" expanded="true" />
-                <element signature="e#1535#1536#0" expanded="true" />
-                <element signature="e#1569#1570#0" expanded="true" />
-                <element signature="e#1708#1709#0" expanded="true" />
-                <element signature="e#1743#1744#0" expanded="true" />
-                <element signature="e#1881#1882#0" expanded="true" />
-                <element signature="e#1911#1912#0" expanded="true" />
-                <element signature="e#1957#1958#0" expanded="true" />
-                <element signature="e#1995#1996#0" expanded="true" />
-                <element signature="e#2027#2028#0" expanded="true" />
-                <element signature="e#2055#2056#0" expanded="true" />
-                <element signature="e#2097#2098#0" expanded="true" />
-                <element signature="e#2131#2132#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ShoppingList.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/database/test/data/ShoppingList.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="330">
-              <caret line="192" column="13" selection-start-line="192" selection-start-column="13" selection-end-line="192" selection-end-column="13" />
-              <folding>
-                <element signature="e#544#605#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="DatabaseManager.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/database/test/DatabaseManager.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-165">
-              <caret line="40" column="25" selection-start-line="40" selection-start-column="25" selection-end-line="40" selection-end-column="25" />
-              <folding>
-                <element signature="e#7259#7260#0" expanded="true" />
-                <element signature="e#7286#7287#0" expanded="true" />
-                <element signature="e#7333#7334#0" expanded="true" />
-                <element signature="e#7361#7362#0" expanded="true" />
-                <element signature="e#7408#7409#0" expanded="true" />
-                <element signature="e#7436#7437#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+    <splitter split-orientation="vertical" split-proportion="0.532553">
+      <split-first>
+        <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+          <file leaf-file-name="ApplicationMain.java" pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/src/database/test/ApplicationMain.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="203">
+                  <caret line="38" column="30" selection-start-line="38" selection-start-column="30" selection-end-line="38" selection-end-column="30" />
+                  <folding>
+                    <element signature="n#!!doc;n#app#0;n#ApplicationMain#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="DatabaseUtility.java" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/src/database/test/DatabaseUtility.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="0">
+                  <caret line="32" column="32" selection-start-line="32" selection-start-column="32" selection-end-line="32" selection-end-column="32" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="Customer.java" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/src/database/test/data/Customer.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="-35">
+                  <caret line="186" column="8" selection-start-line="186" selection-start-column="8" selection-end-line="186" selection-end-column="8" />
+                  <folding>
+                    <element signature="imports" expanded="true" />
+                    <element signature="method#toString#0;class#Customer#0" expanded="false" />
+                    <element signature="method#shortDescription#0;class#Customer#0" expanded="false" />
+                    <element signature="e#5453#5454#0" expanded="true" />
+                    <element signature="e#5503#5504#0" expanded="true" />
+                    <element signature="e#5568#5569#0" expanded="true" />
+                    <element signature="e#5627#5628#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="Product.java" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/src/database/test/data/Product.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="600">
+                  <caret line="146" column="8" selection-start-line="146" selection-start-column="8" selection-end-line="146" selection-end-column="8" />
+                  <folding>
+                    <element signature="e#3799#3800#0" expanded="true" />
+                    <element signature="e#3849#3850#0" expanded="true" />
+                    <element signature="e#3914#3915#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="Supplier.java" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/src/database/test/data/Supplier.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="-309">
+                  <caret line="2" column="30" selection-start-line="2" selection-start-column="30" selection-end-line="2" selection-end-column="30" />
+                  <folding>
+                    <element signature="n#!!doc;n#getID#0;n#Supplier#0" expanded="true" />
+                    <element signature="method#createTableModel#0;class#Supplier#0" expanded="false" />
+                    <element signature="e#3192#3193#0" expanded="true" />
+                    <element signature="e#3242#3243#0" expanded="true" />
+                    <element signature="e#3307#3308#0" expanded="true" />
+                    <element signature="e#3366#3367#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="ShoppingList.java" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/src/database/test/data/ShoppingList.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="-1075">
+                  <caret line="19" column="42" selection-start-line="19" selection-start-column="42" selection-end-line="19" selection-end-column="42" />
+                  <folding>
+                    <element signature="imports" expanded="true" />
+                    <element signature="e#5649#5650#0" expanded="true" />
+                    <element signature="e#5703#5704#0" expanded="true" />
+                    <element signature="e#5768#5769#0" expanded="true" />
+                    <element signature="e#5827#5828#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="SQLStrings.java" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/src/database/test/SQLStrings.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="0">
+                  <caret line="219" column="4" selection-start-line="219" selection-start-column="4" selection-end-line="219" selection-end-column="4" />
+                  <folding>
+                    <element signature="n#!!doc;n#SQL_CURRENT_USER#0;n#SQLStrings#0" expanded="false" />
+                    <element signature="n#!!doc;n#SQL_SELECT_ALL_CUSTOMER_IDS#0;n#SQLStrings#0" expanded="false" />
+                    <element signature="e#1852#1915#0" expanded="false" />
+                    <element signature="n#!!doc;n#SQL_SELECT_ALL_PRODUCT_IDS#0;n#SQLStrings#0" expanded="false" />
+                    <element signature="e#5191#5253#0" expanded="false" />
+                    <element signature="e#6531#6594#0" expanded="false" />
+                    <element signature="n#!!doc;n#SQL_SELECT_CATEGORY_OVERVIEW#0;n#SQLStrings#0" expanded="false" />
+                    <element signature="n#!!doc;n#SQL_SELECT_ALL_SUPPLIER_IDS#0;n#SQLStrings#0" expanded="false" />
+                    <element signature="e#10670#10733#0" expanded="false" />
+                    <element signature="n#!!doc;n#SQL_SELECT_SUPPLIERS_OF_A_PRODUCT#0;n#SQLStrings#0" expanded="false" />
+                    <element signature="e#11856#11925#0" expanded="false" />
+                    <element signature="n#!!doc;n#SQL_SELECT_LATEST_SALE_ID#0;n#SQLStrings#0" expanded="false" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="DatabaseManager.java" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/src/database/test/DatabaseManager.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="384">
+                  <caret line="958" column="0" selection-start-line="958" selection-start-column="0" selection-end-line="958" selection-end-column="0" />
+                  <folding>
+                    <element signature="n#!!doc;n#tryInsertCustomer#0;n#DatabaseManager#0" expanded="false" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+        </leaf>
+      </split-first>
+      <split-second>
+        <leaf>
+          <file leaf-file-name="DatabaseManager.java" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/src/database/test/DatabaseManager.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="218">
+                  <caret line="313" column="36" selection-start-line="313" selection-start-column="36" selection-end-line="313" selection-end-column="36" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="EditCustomerInfoWindow.java" pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/src/database/test/gui/EditCustomerInfoWindow.java">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="218">
+                  <caret line="1189" column="60" selection-start-line="1189" selection-start-column="60" selection-end-line="1189" selection-end-column="60" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+        </leaf>
+      </split-second>
+    </splitter>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -182,16 +219,17 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/database/test/ApplicationMain.java" />
         <option value="$PROJECT_DIR$/src/database/test/gui/LoginWindow.java" />
         <option value="$PROJECT_DIR$/src/database/test/gui/PointOfSaleWindow.java" />
-        <option value="$PROJECT_DIR$/src/database/test/data/ShoppingList.java" />
+        <option value="$PROJECT_DIR$/src/database/test/SQLStrings.java" />
+        <option value="$PROJECT_DIR$/src/database/test/DatabaseUtilities.java" />
+        <option value="$PROJECT_DIR$/src/database/test/DatabaseUtility.java" />
+        <option value="$PROJECT_DIR$/src/database/test/DatabaseManager.java" />
         <option value="$PROJECT_DIR$/src/database/test/data/Customer.java" />
         <option value="$PROJECT_DIR$/src/database/test/data/Product.java" />
         <option value="$PROJECT_DIR$/src/database/test/data/Supplier.java" />
-        <option value="$PROJECT_DIR$/src/database/test/DatabaseUtilities.java" />
-        <option value="$PROJECT_DIR$/src/database/test/DatabaseManager.java" />
-        <option value="$PROJECT_DIR$/src/database/test/SQLStrings.java" />
+        <option value="$PROJECT_DIR$/src/database/test/data/ShoppingList.java" />
+        <option value="$PROJECT_DIR$/src/database/test/ApplicationMain.java" />
       </list>
     </option>
   </component>
@@ -206,10 +244,8 @@
     <treeState />
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="21" />
-    <option name="y" value="283" />
-    <option name="width" value="1195" />
-    <option name="height" value="1139" />
+    <option name="width" value="2560" />
+    <option name="height" value="1440" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -435,6 +471,7 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="Scratches" />
       <pane id="PackagesPane">
         <subPane>
           <PATH>
@@ -519,7 +556,6 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scratches" />
       <pane id="Scope">
         <subPane subId="Project Files">
           <PATH>
@@ -536,6 +572,7 @@
     <property name="settings.editor.selected.configurable" value="reference.settingsdialog.IDE.editor.colors.Font" />
     <property name="settings.editor.splitter.proportion" value="0.2" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="FullScreen" value="true" />
   </component>
   <component name="RunManager">
     <configuration default="true" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType" factoryName="Plugin">
@@ -762,30 +799,32 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="21" y="283" width="1195" height="1139" extended-state="0" />
+    <frame x="0" y="0" width="2560" height="1440" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="false" show_stripe_button="true" weight="0.2713787" sideWeight="0.7780232" order="10" side_tool="true" content_ui="tabs" x="1225" y="815" width="797" height="610" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="false" show_stripe_button="true" weight="0.2713787" sideWeight="0.7780232" order="7" side_tool="true" content_ui="tabs" x="1225" y="815" width="797" height="610" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24777183" sideWeight="0.5044693" order="0" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.32985258" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3296131" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2279476" sideWeight="0.2219768" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32838038" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2279476" sideWeight="0.2219768" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.26778242" sideWeight="0.48659003" order="2" side_tool="false" content_ui="combo" x="199" y="372" width="373" height="742" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.26778242" sideWeight="0.51341" order="3" side_tool="true" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1546875" sideWeight="0.47110462" order="2" side_tool="false" content_ui="combo" x="199" y="372" width="373" height="742" />
+      <window_info id="Find" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3234375" sideWeight="0.493782" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1546875" sideWeight="0.5288954" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.24279477" sideWeight="0.50414133" order="9" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.24279477" sideWeight="0.50414133" order="6" side_tool="true" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Documentation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3161239" sideWeight="0.4947994" order="8" side_tool="false" content_ui="tabs" x="100" y="100" width="2360" height="1240" />
+      <window_info id="Inspection" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3234375" sideWeight="0.506218" order="7" side_tool="true" content_ui="tabs" x="1232" y="157" width="1115" height="570" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Dependency Viewer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.35901508" sideWeight="0.41753343" order="6" side_tool="false" content_ui="tabs" x="1240" y="678" width="803" height="648" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
   <component name="Vcs.Log.UiProperties">
@@ -808,6 +847,324 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/src/database/test/ApplicationMain.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="918">
+          <caret line="56" column="7" selection-start-line="56" selection-start-column="7" selection-end-line="56" selection-end-column="7" />
+          <folding>
+            <element signature="n#!!doc;n#app#0;n#ApplicationMain#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/database/test/DatabaseUtility.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="32" column="32" selection-start-line="32" selection-start-column="32" selection-end-line="32" selection-end-column="32" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/database/test/data/Customer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1836">
+          <caret line="234" column="25" selection-start-line="234" selection-start-column="25" selection-end-line="234" selection-end-column="25" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="method#toString#0;class#Customer#0" expanded="false" />
+            <element signature="method#shortDescription#0;class#Customer#0" expanded="false" />
+            <element signature="e#5453#5454#0" expanded="true" />
+            <element signature="e#5503#5504#0" expanded="true" />
+            <element signature="e#5568#5569#0" expanded="true" />
+            <element signature="e#5627#5628#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/database/test/data/Product.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1649">
+          <caret line="172" column="4" selection-start-line="181" selection-start-column="59" selection-end-line="182" selection-end-column="5" />
+          <folding>
+            <element signature="e#3799#3800#0" expanded="true" />
+            <element signature="e#3849#3850#0" expanded="true" />
+            <element signature="e#3914#3915#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/database/test/data/Supplier.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1564">
+          <caret line="158" column="6" selection-start-line="158" selection-start-column="6" selection-end-line="158" selection-end-column="6" />
+          <folding>
+            <element signature="n#!!doc;n#getID#0;n#Supplier#0" expanded="true" />
+            <element signature="method#createTableModel#0;class#Supplier#0" expanded="false" />
+            <element signature="e#3192#3193#0" expanded="true" />
+            <element signature="e#3242#3243#0" expanded="true" />
+            <element signature="e#3307#3308#0" expanded="true" />
+            <element signature="e#3366#3367#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/database/test/data/ShoppingList.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1751">
+          <caret line="221" column="13" selection-start-line="221" selection-start-column="13" selection-end-line="221" selection-end-column="13" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#5649#5650#0" expanded="true" />
+            <element signature="e#5703#5704#0" expanded="true" />
+            <element signature="e#5768#5769#0" expanded="true" />
+            <element signature="e#5827#5828#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/database/test/SQLStrings.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="323">
+          <caret line="219" column="4" selection-start-line="219" selection-start-column="4" selection-end-line="219" selection-end-column="4" />
+          <folding>
+            <element signature="n#!!doc;n#SQL_CURRENT_USER#0;n#SQLStrings#0" expanded="false" />
+            <element signature="n#!!doc;n#SQL_SELECT_ALL_CUSTOMER_IDS#0;n#SQLStrings#0" expanded="false" />
+            <element signature="e#1852#1915#0" expanded="false" />
+            <element signature="n#!!doc;n#SQL_SELECT_ALL_PRODUCT_IDS#0;n#SQLStrings#0" expanded="false" />
+            <element signature="e#5191#5253#0" expanded="false" />
+            <element signature="e#6531#6594#0" expanded="false" />
+            <element signature="n#!!doc;n#SQL_SELECT_CATEGORY_OVERVIEW#0;n#SQLStrings#0" expanded="false" />
+            <element signature="n#!!doc;n#SQL_SELECT_ALL_SUPPLIER_IDS#0;n#SQLStrings#0" expanded="false" />
+            <element signature="e#10670#10733#0" expanded="false" />
+            <element signature="n#!!doc;n#SQL_SELECT_SUPPLIERS_OF_A_PRODUCT#0;n#SQLStrings#0" expanded="false" />
+            <element signature="e#11856#11925#0" expanded="false" />
+            <element signature="n#!!doc;n#SQL_SELECT_LATEST_SALE_ID#0;n#SQLStrings#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/database/test/DatabaseManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="n#!!doc;n#tryInsertCustomer#0;n#DatabaseManager#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/database/test/ApplicationMain.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="810">
+          <caret line="56" column="7" selection-start-line="56" selection-start-column="7" selection-end-line="56" selection-end-column="7" />
+          <folding>
+            <element signature="n#!!doc;n#app#0;n#ApplicationMain#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/database/test/DatabaseUtility.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="32" column="13" selection-start-line="32" selection-start-column="13" selection-end-line="32" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/database/test/data/Customer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1620">
+          <caret line="234" column="25" selection-start-line="234" selection-start-column="25" selection-end-line="234" selection-end-column="25" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="method#toString#0;class#Customer#0" expanded="false" />
+            <element signature="method#shortDescription#0;class#Customer#0" expanded="false" />
+            <element signature="e#5453#5454#0" expanded="true" />
+            <element signature="e#5503#5504#0" expanded="true" />
+            <element signature="e#5568#5569#0" expanded="true" />
+            <element signature="e#5627#5628#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/database/test/data/Product.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1455">
+          <caret line="172" column="4" selection-start-line="181" selection-start-column="59" selection-end-line="182" selection-end-column="5" />
+          <folding>
+            <element signature="e#3799#3800#0" expanded="true" />
+            <element signature="e#3849#3850#0" expanded="true" />
+            <element signature="e#3914#3915#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/database/test/data/Supplier.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1380">
+          <caret line="158" column="6" selection-start-line="158" selection-start-column="6" selection-end-line="158" selection-end-column="6" />
+          <folding>
+            <element signature="n#!!doc;n#getID#0;n#Supplier#0" expanded="true" />
+            <element signature="method#createTableModel#0;class#Supplier#0" expanded="false" />
+            <element signature="e#3192#3193#0" expanded="true" />
+            <element signature="e#3242#3243#0" expanded="true" />
+            <element signature="e#3307#3308#0" expanded="true" />
+            <element signature="e#3366#3367#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/database/test/data/ShoppingList.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1545">
+          <caret line="221" column="13" selection-start-line="221" selection-start-column="13" selection-end-line="221" selection-end-column="13" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#5649#5650#0" expanded="true" />
+            <element signature="e#5703#5704#0" expanded="true" />
+            <element signature="e#5768#5769#0" expanded="true" />
+            <element signature="e#5827#5828#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/database/test/SQLStrings.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="n#!!doc;n#SQL_CURRENT_USER#0;n#SQLStrings#0" expanded="false" />
+            <element signature="n#!!doc;n#SQL_SELECT_ALL_CUSTOMER_IDS#0;n#SQLStrings#0" expanded="false" />
+            <element signature="e#1852#1915#0" expanded="false" />
+            <element signature="n#!!doc;n#SQL_SELECT_ALL_PRODUCT_IDS#0;n#SQLStrings#0" expanded="false" />
+            <element signature="e#5191#5253#0" expanded="false" />
+            <element signature="e#6531#6594#0" expanded="false" />
+            <element signature="n#!!doc;n#SQL_SELECT_CATEGORY_OVERVIEW#0;n#SQLStrings#0" expanded="false" />
+            <element signature="n#!!doc;n#SQL_SELECT_ALL_SUPPLIER_IDS#0;n#SQLStrings#0" expanded="false" />
+            <element signature="e#10670#10733#0" expanded="false" />
+            <element signature="n#!!doc;n#SQL_SELECT_SUPPLIERS_OF_A_PRODUCT#0;n#SQLStrings#0" expanded="false" />
+            <element signature="e#11856#11925#0" expanded="false" />
+            <element signature="n#!!doc;n#SQL_SELECT_LATEST_SALE_ID#0;n#SQLStrings#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/database/test/DatabaseManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="465">
+          <caret line="60" column="67" selection-start-line="60" selection-start-column="67" selection-end-line="60" selection-end-column="67" />
+          <folding>
+            <element signature="n#!!doc;n#tryInsertCustomer#0;n#DatabaseManager#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/database/test/ApplicationMain.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="810">
+          <caret line="56" column="7" selection-start-line="56" selection-start-column="7" selection-end-line="56" selection-end-column="7" />
+          <folding>
+            <element signature="n#!!doc;n#app#0;n#ApplicationMain#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/database/test/DatabaseUtility.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="30" column="13" selection-start-line="30" selection-start-column="13" selection-end-line="30" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/database/test/data/Customer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1560">
+          <caret line="242" column="25" selection-start-line="242" selection-start-column="25" selection-end-line="242" selection-end-column="25" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="method#toString#0;class#Customer#0" expanded="false" />
+            <element signature="method#shortDescription#0;class#Customer#0" expanded="false" />
+            <element signature="e#5453#5454#0" expanded="true" />
+            <element signature="e#5503#5504#0" expanded="true" />
+            <element signature="e#5568#5569#0" expanded="true" />
+            <element signature="e#5627#5628#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/database/test/data/Product.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="495">
+          <caret line="83" column="4" selection-start-line="83" selection-start-column="4" selection-end-line="93" selection-end-column="5" />
+          <folding>
+            <element signature="e#3799#3800#0" expanded="true" />
+            <element signature="e#3849#3850#0" expanded="true" />
+            <element signature="e#3914#3915#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/database/test/data/Supplier.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="555">
+          <caret line="95" column="37" selection-start-line="95" selection-start-column="37" selection-end-line="95" selection-end-column="37" />
+          <folding>
+            <element signature="n#!!doc;n#getID#0;n#Supplier#0" expanded="true" />
+            <element signature="method#createTableModel#0;class#Supplier#0" expanded="false" />
+            <element signature="e#3192#3193#0" expanded="true" />
+            <element signature="e#3242#3243#0" expanded="true" />
+            <element signature="e#3307#3308#0" expanded="true" />
+            <element signature="e#3366#3367#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/database/test/data/ShoppingList.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="330">
+          <caret line="192" column="13" selection-start-line="192" selection-start-column="13" selection-end-line="192" selection-end-column="13" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#5649#5650#0" expanded="true" />
+            <element signature="e#5703#5704#0" expanded="true" />
+            <element signature="e#5768#5769#0" expanded="true" />
+            <element signature="e#5827#5828#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/database/test/DatabaseManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="300">
+          <caret line="40" column="25" selection-start-line="40" selection-start-column="25" selection-end-line="40" selection-end-column="25" />
+          <folding>
+            <element signature="n#!!doc;n#tryInsertCustomer#0;n#DatabaseManager#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/database/test/SQLStrings.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="n#!!doc;n#SQL_CURRENT_USER#0;n#SQLStrings#0" expanded="false" />
+            <element signature="n#!!doc;n#SQL_SELECT_ALL_CUSTOMER_IDS#0;n#SQLStrings#0" expanded="false" />
+            <element signature="e#1852#1915#0" expanded="false" />
+            <element signature="n#!!doc;n#SQL_SELECT_ALL_PRODUCT_IDS#0;n#SQLStrings#0" expanded="false" />
+            <element signature="e#5191#5253#0" expanded="false" />
+            <element signature="e#6531#6594#0" expanded="false" />
+            <element signature="n#!!doc;n#SQL_SELECT_CATEGORY_OVERVIEW#0;n#SQLStrings#0" expanded="false" />
+            <element signature="n#!!doc;n#SQL_SELECT_ALL_SUPPLIER_IDS#0;n#SQLStrings#0" expanded="false" />
+            <element signature="e#10670#10733#0" expanded="false" />
+            <element signature="n#!!doc;n#SQL_SELECT_SUPPLIERS_OF_A_PRODUCT#0;n#SQLStrings#0" expanded="false" />
+            <element signature="e#11856#11925#0" expanded="false" />
+            <element signature="n#!!doc;n#SQL_SELECT_LATEST_SALE_ID#0;n#SQLStrings#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/database/test/ApplicationMain.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="855">
@@ -833,12 +1190,7 @@
         <state relative-caret-position="90">
           <caret line="12" column="13" selection-start-line="12" selection-start-column="13" selection-end-line="12" selection-end-column="13" />
           <folding>
-            <element signature="e#7259#7260#0" expanded="true" />
-            <element signature="e#7286#7287#0" expanded="true" />
-            <element signature="e#7333#7334#0" expanded="true" />
-            <element signature="e#7361#7362#0" expanded="true" />
-            <element signature="e#7408#7409#0" expanded="true" />
-            <element signature="e#7436#7437#0" expanded="true" />
+            <element signature="n#!!doc;n#tryInsertCustomer#0;n#DatabaseManager#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -855,7 +1207,15 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="120">
           <caret line="10" column="13" selection-start-line="10" selection-start-column="13" selection-end-line="10" selection-end-column="13" />
-          <folding />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="method#toString#0;class#Customer#0" expanded="false" />
+            <element signature="method#shortDescription#0;class#Customer#0" expanded="false" />
+            <element signature="e#5453#5454#0" expanded="true" />
+            <element signature="e#5503#5504#0" expanded="true" />
+            <element signature="e#5568#5569#0" expanded="true" />
+            <element signature="e#5627#5628#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -864,7 +1224,11 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#544#605#0" expanded="false" />
+            <element signature="imports" expanded="true" />
+            <element signature="e#5649#5650#0" expanded="true" />
+            <element signature="e#5703#5704#0" expanded="true" />
+            <element signature="e#5768#5769#0" expanded="true" />
+            <element signature="e#5827#5828#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -894,12 +1258,7 @@
         <state relative-caret-position="90">
           <caret line="12" column="13" selection-start-line="12" selection-start-column="13" selection-end-line="12" selection-end-column="13" />
           <folding>
-            <element signature="e#7259#7260#0" expanded="true" />
-            <element signature="e#7286#7287#0" expanded="true" />
-            <element signature="e#7333#7334#0" expanded="true" />
-            <element signature="e#7361#7362#0" expanded="true" />
-            <element signature="e#7408#7409#0" expanded="true" />
-            <element signature="e#7436#7437#0" expanded="true" />
+            <element signature="n#!!doc;n#tryInsertCustomer#0;n#DatabaseManager#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -930,85 +1289,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/database/test/data/ShoppingList.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="330">
-          <caret line="192" column="13" selection-start-line="192" selection-start-column="13" selection-end-line="192" selection-end-column="13" />
-          <folding>
-            <element signature="e#544#605#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/database/test/data/Customer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="840">
-          <caret line="242" column="25" selection-start-line="242" selection-start-column="25" selection-end-line="242" selection-end-column="25" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/database/test/data/Product.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="495">
-          <caret line="83" column="4" selection-start-line="83" selection-start-column="4" selection-end-line="93" selection-end-column="5" />
-          <folding>
-            <element signature="e#1064#1065#0" expanded="true" />
-            <element signature="e#1089#1090#0" expanded="true" />
-            <element signature="e#1125#1126#0" expanded="true" />
-            <element signature="e#1153#1154#0" expanded="true" />
-            <element signature="e#1184#1185#0" expanded="true" />
-            <element signature="e#1211#1212#0" expanded="true" />
-            <element signature="e#1251#1252#0" expanded="true" />
-            <element signature="e#1283#1284#0" expanded="true" />
-            <element signature="e#1321#1322#0" expanded="true" />
-            <element signature="e#1355#1356#0" expanded="true" />
-            <element signature="e#1492#1493#0" expanded="true" />
-            <element signature="e#1528#1529#0" expanded="true" />
-            <element signature="e#1680#1681#0" expanded="true" />
-            <element signature="e#1710#1711#0" expanded="true" />
-            <element signature="e#1757#1758#0" expanded="true" />
-            <element signature="e#1795#1796#0" expanded="true" />
-            <element signature="e#1832#1833#0" expanded="true" />
-            <element signature="e#1865#1866#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/database/test/data/Supplier.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="555">
-          <caret line="95" column="37" selection-start-line="95" selection-start-column="37" selection-end-line="95" selection-end-column="37" />
-          <folding>
-            <element signature="e#1130#1131#0" expanded="true" />
-            <element signature="e#1155#1156#0" expanded="true" />
-            <element signature="e#1191#1192#0" expanded="true" />
-            <element signature="e#1219#1220#0" expanded="true" />
-            <element signature="e#1250#1251#0" expanded="true" />
-            <element signature="e#1277#1278#0" expanded="true" />
-            <element signature="e#1317#1318#0" expanded="true" />
-            <element signature="e#1349#1350#0" expanded="true" />
-            <element signature="e#1383#1384#0" expanded="true" />
-            <element signature="e#1413#1414#0" expanded="true" />
-            <element signature="e#1459#1460#0" expanded="true" />
-            <element signature="e#1497#1498#0" expanded="true" />
-            <element signature="e#1535#1536#0" expanded="true" />
-            <element signature="e#1569#1570#0" expanded="true" />
-            <element signature="e#1708#1709#0" expanded="true" />
-            <element signature="e#1743#1744#0" expanded="true" />
-            <element signature="e#1881#1882#0" expanded="true" />
-            <element signature="e#1911#1912#0" expanded="true" />
-            <element signature="e#1957#1958#0" expanded="true" />
-            <element signature="e#1995#1996#0" expanded="true" />
-            <element signature="e#2027#2028#0" expanded="true" />
-            <element signature="e#2055#2056#0" expanded="true" />
-            <element signature="e#2097#2098#0" expanded="true" />
-            <element signature="e#2131#2132#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/database/test/DatabaseUtilities.java">
+    <entry file="file://$PROJECT_DIR$/src/database/test/DatabaseUtility.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="60">
           <caret line="30" column="13" selection-start-line="30" selection-start-column="13" selection-end-line="30" selection-end-column="13" />
@@ -1016,43 +1297,114 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/database/test/DatabaseUtilities.java">
+    <entry file="file://$PROJECT_DIR$/src/database/test/SQLStrings.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="30" column="13" selection-start-line="30" selection-start-column="13" selection-end-line="30" selection-end-column="13" />
+        <state relative-caret-position="0">
+          <caret line="219" column="4" selection-start-line="219" selection-start-column="4" selection-end-line="219" selection-end-column="4" />
+          <folding>
+            <element signature="n#!!doc;n#SQL_CURRENT_USER#0;n#SQLStrings#0" expanded="false" />
+            <element signature="n#!!doc;n#SQL_SELECT_ALL_CUSTOMER_IDS#0;n#SQLStrings#0" expanded="false" />
+            <element signature="e#1852#1915#0" expanded="false" />
+            <element signature="n#!!doc;n#SQL_SELECT_ALL_PRODUCT_IDS#0;n#SQLStrings#0" expanded="false" />
+            <element signature="e#5191#5253#0" expanded="false" />
+            <element signature="e#6531#6594#0" expanded="false" />
+            <element signature="n#!!doc;n#SQL_SELECT_CATEGORY_OVERVIEW#0;n#SQLStrings#0" expanded="false" />
+            <element signature="n#!!doc;n#SQL_SELECT_ALL_SUPPLIER_IDS#0;n#SQLStrings#0" expanded="false" />
+            <element signature="e#10670#10733#0" expanded="false" />
+            <element signature="n#!!doc;n#SQL_SELECT_SUPPLIERS_OF_A_PRODUCT#0;n#SQLStrings#0" expanded="false" />
+            <element signature="e#11856#11925#0" expanded="false" />
+            <element signature="n#!!doc;n#SQL_SELECT_LATEST_SALE_ID#0;n#SQLStrings#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/database/test/DatabaseUtility.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="32" column="32" selection-start-line="32" selection-start-column="32" selection-end-line="32" selection-end-column="32" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/database/test/gui/EditCustomerInfoWindow.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="218">
+          <caret line="1189" column="60" selection-start-line="1189" selection-start-column="60" selection-end-line="1189" selection-end-column="60" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/database/test/DatabaseManager.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-165">
-          <caret line="40" column="25" selection-start-line="40" selection-start-column="25" selection-end-line="40" selection-end-column="25" />
+        <state relative-caret-position="384">
+          <caret line="958" column="0" selection-start-line="958" selection-start-column="0" selection-end-line="958" selection-end-column="0" />
           <folding>
-            <element signature="e#7259#7260#0" expanded="true" />
-            <element signature="e#7286#7287#0" expanded="true" />
-            <element signature="e#7333#7334#0" expanded="true" />
-            <element signature="e#7361#7362#0" expanded="true" />
-            <element signature="e#7408#7409#0" expanded="true" />
-            <element signature="e#7436#7437#0" expanded="true" />
+            <element signature="n#!!doc;n#tryInsertCustomer#0;n#DatabaseManager#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/database/test/SQLStrings.java">
+    <entry file="file://$PROJECT_DIR$/src/database/test/data/Customer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-225">
-          <caret line="50" column="47" selection-start-line="50" selection-start-column="47" selection-end-line="50" selection-end-column="47" />
+        <state relative-caret-position="-35">
+          <caret line="186" column="8" selection-start-line="186" selection-start-column="8" selection-end-line="186" selection-end-column="8" />
           <folding>
-            <element signature="n#!!doc;n#SQL_CURRENT_USER#0;n#SQLStrings#0" expanded="false" />
+            <element signature="imports" expanded="true" />
+            <element signature="method#toString#0;class#Customer#0" expanded="false" />
+            <element signature="method#shortDescription#0;class#Customer#0" expanded="false" />
+            <element signature="e#5453#5454#0" expanded="true" />
+            <element signature="e#5503#5504#0" expanded="true" />
+            <element signature="e#5568#5569#0" expanded="true" />
+            <element signature="e#5627#5628#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/database/test/data/Product.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="600">
+          <caret line="146" column="8" selection-start-line="146" selection-start-column="8" selection-end-line="146" selection-end-column="8" />
+          <folding>
+            <element signature="e#3799#3800#0" expanded="true" />
+            <element signature="e#3849#3850#0" expanded="true" />
+            <element signature="e#3914#3915#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/database/test/data/Supplier.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-309">
+          <caret line="2" column="30" selection-start-line="2" selection-start-column="30" selection-end-line="2" selection-end-column="30" />
+          <folding>
+            <element signature="n#!!doc;n#getID#0;n#Supplier#0" expanded="true" />
+            <element signature="method#createTableModel#0;class#Supplier#0" expanded="false" />
+            <element signature="e#3192#3193#0" expanded="true" />
+            <element signature="e#3242#3243#0" expanded="true" />
+            <element signature="e#3307#3308#0" expanded="true" />
+            <element signature="e#3366#3367#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/database/test/data/ShoppingList.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1075">
+          <caret line="19" column="42" selection-start-line="19" selection-start-column="42" selection-end-line="19" selection-end-column="42" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#5649#5650#0" expanded="true" />
+            <element signature="e#5703#5704#0" expanded="true" />
+            <element signature="e#5768#5769#0" expanded="true" />
+            <element signature="e#5827#5828#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/database/test/ApplicationMain.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="701">
-          <caret line="56" column="7" selection-start-line="56" selection-start-column="7" selection-end-line="56" selection-end-column="7" />
+        <state relative-caret-position="203">
+          <caret line="38" column="30" selection-start-line="38" selection-start-column="30" selection-end-line="38" selection-end-column="30" />
           <folding>
             <element signature="n#!!doc;n#app#0;n#ApplicationMain#0" expanded="true" />
           </folding>

@@ -1,7 +1,5 @@
 package database.test.data;
 
-import database.test.data.ShoppingList.LineItem;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -20,12 +18,15 @@ public class ShoppingList {
     private double discountPercent = 0;
     private LocalDate checkoutDate = null;
     private LocalTime checkoutTime = null;
-    
     private double amountPaid = 0;
     
     private String sale_id = null;
 
-    //<editor-fold desc="List Methods (Add, Remove, Get, Clear)">
+    //<editor-fold desc="Basic List Methods (Add, Remove, Get, etc.)">
+    public List<LineItem> getList() {
+        return itemList;
+    }
+
     /**
      * Add the specified product to the shopping list. The product should be
      * queried from the database to make sure that it exists. The actual added
@@ -96,13 +97,9 @@ public class ShoppingList {
     public int size() {
         return itemList.size();
     }
-    
-    public List<LineItem> getList() {
-        return itemList;
-    }
     //</editor-fold>
 
-    //<editor-fold defaultstate="collapsed" desc="Getters/Setters: Customer, Checkout DateTime">
+    //<editor-fold defaultstate="collapsed" desc="Getters/Setters: Database-Related Fields">
     public Customer getCustomer() {
         return customer;
     }
@@ -127,6 +124,13 @@ public class ShoppingList {
         this.checkoutTime = checkoutTime;
     }
 
+    public String getSaleID() {
+        return sale_id;
+    }
+
+    public void setSaleID(String sale_id) {
+        this.sale_id = sale_id;
+    }
     //</editor-fold>
     //<editor-fold defaultstate="collapsed" desc="Getters/Setters: Price-Related Fields">
     public double getTotalPrice() {
@@ -147,24 +151,42 @@ public class ShoppingList {
 
     public double getDiscountAmount() {
         double amount = discountPercent * 0.01 * totalPrice;
-        return ((double) Math.round(amount * 4)) / 4;
+        return ((double) Math.round(amount * 4)) / 4; // round to .25
     }
 
     public double getTotalAfterDiscount() {
-        return totalPrice - getDiscountAmount();
+        return totalPrice - this.getDiscountAmount();
+    }
+
+    public double getAmountPaid() {
+        return amountPaid;
+    }
+
+    public void setAmountPaid(double amountPaid) {
+        this.amountPaid = amountPaid;
     }
     //</editor-fold>
 
+    @Override
+    public String toString() {
+        return "ShoppingList {"
+                + "\n  customer_id = " + customer.getID()
+                + ", \n  itemList = " + itemList
+                + ", \n  totalPrice = " + totalPrice
+                + ", \n  totalQuantity = " + totalQuantity
+                + ", \n  discountPercent = " + discountPercent
+                + ", \n  ! checkoutDate = " + checkoutDate
+                + ", \n  ! checkoutTime = " + checkoutTime
+                + ", \n  ! sale_id = " + sale_id
+                + "\n}";
+    }
+
     //<editor-fold defaultstate="collapsed" desc="GUI Code: Table Model">
-    /**
-     * Get a model that represent the data in the shopping list.
-     *
-     * @return A TableModel to be used by JTable.
-     */
+    public static final String[] TABLE_COLUMNS = {
+            "Product ID", "Product Name", "Quantity", "Unit Price", "Subtotal"};
+
     public TableModel getTableModel() {
-        TableModel model = new AbstractTableModel() {
-            private final String[] COLUMNS = {"Product ID", "Product Name",
-                "Quantity", "Unit Price", "Subtotal"};
+        return new AbstractTableModel() {
 
             @Override
             public int getRowCount() {
@@ -173,12 +195,12 @@ public class ShoppingList {
 
             @Override
             public int getColumnCount() {
-                return COLUMNS.length;
+                return TABLE_COLUMNS.length;
             }
 
             @Override
             public String getColumnName(int column) {
-                return COLUMNS[column];
+                return TABLE_COLUMNS[column];
             }
 
             @Override
@@ -199,36 +221,8 @@ public class ShoppingList {
                 return null;
             }
         };
-        return model;
     }
     //</editor-fold>
-
-    public String getSaleID() {
-        return sale_id;
-    }
-
-    public void setSaleID(String sale_id) {
-        this.sale_id = sale_id;
-    }
-
-    public double getAmountPaid() {
-        return amountPaid;
-    }
-
-    public void setAmountPaid(double amountPaid) {
-        this.amountPaid = amountPaid;
-    }
-    
-    @Override
-    public String toString() {
-        return "ShoppingList {"
-                + "\n  customer_id = " + customer.getID()
-                + ", \n  itemList = " + itemList
-                + ", \n  totalPrice = " + totalPrice
-                + ", \n  totalQuantity = " + totalQuantity
-                + ", \n  discountPercent = " + discountPercent
-                + "\n}";
-    }
 
     public static class LineItem {
 

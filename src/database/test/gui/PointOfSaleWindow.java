@@ -22,6 +22,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
@@ -37,11 +38,16 @@ public class PointOfSaleWindow
     private final DatabaseManager database = ApplicationMain.getDatabaseInstance();
     private LogoutListener logoutListener = null;
 
+    private Customer currentCustomer = null;
     private final ShoppingList shoppingList = new ShoppingList();
 
-    private Customer currentCustomer = null;
-
-    private JDialog checkoutDialog;
+    private JDialog dialog_checkout;
+    private DebugWindow window_debug;
+    private ManageCustomersWindow window_customers;
+    private ManageProductsWindow window_products;
+    private ManageCategoriesWindow window_categories;
+    private ManageSuppliersWindow window_suppliers;
+    private SaleHistoryWindow window_sales;
 
     /**
      * Create a new PointOfSaleWindow that is connected to the given database.
@@ -50,33 +56,30 @@ public class PointOfSaleWindow
      * @param database The retail store database.
      */
     public PointOfSaleWindow(LogoutListener logoutListener) {
+        System.out.println("Initializing new PointOfSaleWindow");
         // initializes the components
         this.initComponents();
         cbxCustomerIDTextField = (JTextField) cbxCustomerID.getEditor().getEditorComponent();
         cbxProductIDTextField = (JTextField) cbxProductID.getEditor().getEditorComponent();
         this.initListeners();
         this.initTableModel();
-        this.setLocationRelativeTo(null);
         this.setColorTheme();
 
         this.logoutListener = logoutListener;
-    }
 
-    /**
-     * Prepare the GUI components before showing the window. Some parts must be
-     * done after connecting to the database.
-     */
-    public void prepare() {
+        this.setLocationRelativeTo(null);
         this.setTitle(Const.WIN_TITLE_POINTOFSALE + " - " + Const.APP_TITLE);
         this.loadLogoImage();
-        this.clear();
-
         this.loadLoginName();
-        this.populateComboBoxData();
+
+        this.loadCustomerIDList();
+        this.loadProductIDList();
 
         btnCheckCustomerID.setVisible(false);
         chkRegisteredCustomer.setSelected(false);
         this.toggleRegisteredCustomer();
+
+        this.clear();
     }
 
     //<editor-fold defaultstate="collapsed" desc="GUI + Data Code: Customer ID Checking">
@@ -86,20 +89,15 @@ public class PointOfSaleWindow
     private void toggleRegisteredCustomer() {
         if (chkRegisteredCustomer.isSelected()) {
             // registered customer; input the ID and check
-//            cbxCustomerID.setSelectedIndex(0);
-//            lblCustomerName.setText(" ");
             lblCustomerName.setForeground(Color.BLACK);
-
             cbxCustomerID.setEnabled(true);
             btnCheckCustomerID.setEnabled(true);
-
             cbxCustomerID.requestFocus();
         } else {
             // unregistered customer; use the special ID
             cbxCustomerID.setSelectedItem(Const.UNREGISTERED_CUSTOMER_ID);
             lblCustomerName.setText(Const.UNREGISTERED_CUSTOMER_NAME);
             lblCustomerName.setForeground(Color.DARK_GRAY);
-
             cbxCustomerID.setEnabled(false);
             btnCheckCustomerID.setEnabled(false);
         }
@@ -129,12 +127,8 @@ public class PointOfSaleWindow
                 menuViewCurrentCustomer.setEnabled(true);
                 menuEditCurrentCustomer.setEnabled(true);
             }
-
-//            System.out.println("Customer ID: " + id);
-//            System.out.println("Customer Name: " + displayName);
-//            System.out.println("Registered: " + currentCustomer.getDaysSinceRegistered() + " days ago");
         } else {
-            lblCustomerName.setText("Error: invalid customer ID");
+            lblCustomerName.setText("Error: no customer found with that ID");
             lblCustomerName.setForeground(Const.COLOR_ERROR_TEXT);
             menuViewCurrentCustomer.setEnabled(false);
             menuEditCurrentCustomer.setEnabled(false);
@@ -143,6 +137,7 @@ public class PointOfSaleWindow
     }
     //</editor-fold>
 
+    //<editor-fold defaultstate="collapsed" desc="GUI + Data Code: Shopping List Manipulation">
     /**
      * Query the database and check whether the entered product ID is valid or
      * not.
@@ -170,51 +165,49 @@ public class PointOfSaleWindow
             lblListAddMessage.setForeground(Color.BLACK);
             // set the maximum to the stock quantity
             int q = (int) spnQuantity.getValue();
-            spnQuantity.setModel(new SpinnerNumberModel(Math.min(q, max), 1, max, 1)
-            );
+            spnQuantity.setModel(new SpinnerNumberModel(Math.min(q, max), 1, max, 1));
             return product;
         }
         return null;
     }
 
-    //<editor-fold defaultstate="collapsed" desc="GUI + Data Code: Shopping List Manipulation">
     /**
      * Add a new entry to the shopping list. If the product to be added already
      * exists in the list, add the quantity to the existing ProductLine.
      */
     private void shoppingListAdd() {
-        String id = cbxProductIDTextField.getText().trim();
-        int quantity = (int) spnQuantity.getValue();
-
         Product product = this.checkProductID();
-        if (product != null) {
-            int result[] = shoppingList.addItem(product, quantity);
-            if (result[0] == 0) {
-                int stock = product.getStockQuantity();
-                lblListAddMessage.setText("<html>Cannot add.<br/>Only " + stock + " unit"
-                        + (stock == 1 ? "" : "s") + " available in total.</html>");
-                lblListAddMessage.setForeground(Const.COLOR_ERROR_TEXT);
-            } else {
-                // update the GUI
-                if (result[0] != quantity) {
-                    int stock = product.getStockQuantity();
-                    lblListAddMessage.setText("<html>Added " + result[0] + " unit.<br/>Only "
-                            + stock + " unit" + (stock == 1 ? "" : "s") + " available in total.</html>");
-                    lblListAddMessage.setForeground(Color.BLACK);
-                } else {
-                    lblListAddMessage.setText("Added " + quantity + " unit.");
-                    lblListAddMessage.setForeground(Color.BLACK);
-                }
-                this.updateShoppingListGUI();
-                this.updateTableSelection(result[1]);
-            }
-
-            // clear the product input
-            cbxProductIDTextField.setSelectionStart(0);
-            cbxProductIDTextField.setSelectionEnd(Integer.MAX_VALUE);
-            spnQuantity.setValue(1);
-            cbxProductIDTextField.requestFocus();
+        if (product == null) {
+            return;
         }
+
+        int quantity = (int) spnQuantity.getValue();
+        int result[] = shoppingList.addItem(product, quantity);
+        int amountActuallyAdded = result[0];
+        if (amountActuallyAdded == 0) {
+            int stock = product.getStockQuantity();
+            lblListAddMessage.setText("<html>Cannot add.<br/>Only " + stock + " unit"
+                    + (stock == 1 ? "" : "s") + " available in total.</html>");
+            lblListAddMessage.setForeground(Const.COLOR_ERROR_TEXT);
+        } else {
+            // update the GUI
+            if (amountActuallyAdded != quantity) {
+                int stock = product.getStockQuantity();
+                lblListAddMessage.setText("<html>Added " + amountActuallyAdded + " unit.<br/>Only "
+                        + stock + " unit" + (stock == 1 ? "" : "s") + " available in total.</html>");
+                lblListAddMessage.setForeground(Color.BLACK);
+            } else {
+                lblListAddMessage.setText("Added " + quantity + " unit.");
+                lblListAddMessage.setForeground(Color.BLACK);
+            }
+            this.updateShoppingListGUI();
+            this.updateTableSelection(result[1]);
+        }
+        // clear the product input
+        spnQuantity.setValue(1);
+        cbxProductIDTextField.setSelectionStart(0);
+        cbxProductIDTextField.setSelectionEnd(Integer.MAX_VALUE);
+        cbxProductIDTextField.requestFocus();
     }
 
     private void shoppingListRemove() {
@@ -235,28 +228,25 @@ public class PointOfSaleWindow
     /**
      * Check out the shopping list.
      */
-    public void confirm() {
-        System.out.println("\n[Checkout]");
-        System.out.println(" - Customer: " + currentCustomer.getID());
-        System.out.println(" - Total: " + shoppingList.getTotalPrice());
-        System.out.println();
-
+    public void checkout() {
         shoppingList.setCustomer(currentCustomer);
 
-        checkoutDialog = new JDialog(this, "Checkout", true);
-        checkoutDialog.getContentPane().add(new ConfirmCheckoutPanel(this, shoppingList));
-        checkoutDialog.pack();
-        checkoutDialog.setResizable(false);
-        checkoutDialog.setLocationRelativeTo(btnConfirm);
-        checkoutDialog.setVisible(true);
+        System.out.println("checkout(): " + shoppingList);
+
+        dialog_checkout = new JDialog(this, "Checkout", true);
+        dialog_checkout.getContentPane().add(new ConfirmCheckoutPanel(this, shoppingList));
+        dialog_checkout.pack();
+        dialog_checkout.setResizable(false);
+        dialog_checkout.setLocationRelativeTo(btnConfirm);
+        dialog_checkout.setVisible(true);
     }
 
     @Override
     public void checkoutConfirmed() {
         System.out.println("checkoutConfirmed(): " + shoppingList);
         // TODO: show receipt and insert record to the database, notify low stock
-        checkoutDialog.setVisible(false);
-        checkoutDialog = null;
+        dialog_checkout.setVisible(false);
+        dialog_checkout = null;
 
         if (database.tryProcessSale(shoppingList, this)) {
             ReceiptWindow rew = new ReceiptWindow();
@@ -269,12 +259,12 @@ public class PointOfSaleWindow
 
     @Override
     public void checkoutCanceled() {
-        checkoutDialog.setVisible(false);
-        checkoutDialog = null;
+        dialog_checkout.setVisible(false);
+        dialog_checkout = null;
     }
 
     //<editor-fold defaultstate="collapsed" desc="GUI Code: Menu Handlers - Displaying Other Windows">
-    public void showCurrentCustomerInfoWindow(InfoWindowMode mode) {
+    private void showCurrentCustomerInfoWindow(InfoWindowMode mode) {
         if (mode == InfoWindowMode.EDIT) {
             currentCustomer = EditCustomerInfoWindow.showEditCustomerDialog(this, currentCustomer);
             if (currentCustomer == null) {
@@ -288,46 +278,62 @@ public class PointOfSaleWindow
         }
     }
 
-    public void showNewCustomerWindow() {
+    private void showNewCustomerWindow() {
         Customer c = EditCustomerInfoWindow.showNewCustomerDialog(this);
         if (c != null) {
-            this.populateComboBoxData();
+            this.loadCustomerIDList();
             chkRegisteredCustomer.setSelected(true);
             this.toggleRegisteredCustomer();
             cbxCustomerID.setSelectedItem(c.getID());
         }
     }
 
-    public void showManageCustomersWindow() {
-        ManageCustomersWindow win = new ManageCustomersWindow();
-        win.refresh();
-        win.setVisible(true);
+    private static void showDataWindow(DataDisplayWindow window) {
+        if (!window.isVisible()) {
+            window.refresh();
+            window.setVisible(true);
+        } else {
+            window.requestFocus();
+        }
+    }
+    
+    private void showManageCustomersWindow() {
+        if (window_customers == null) {
+            window_customers = new ManageCustomersWindow();
+        }
+        showDataWindow(window_customers);
     }
 
-    public void showManageProductsWindow() {
-        ManageProductsWindow win = new ManageProductsWindow();
-        win.refresh();
-        win.setVisible(true);
+    private void showManageProductsWindow() {
+        if (window_products == null) {
+            window_products = new ManageProductsWindow();
+        }
+        showDataWindow(window_products);
     }
 
-    public void showManageCategoriesWindow() {
-        ManageCategoriesWindow win = new ManageCategoriesWindow();
-        win.refresh();
-        win.setVisible(true);
+    private void showManageCategoriesWindow() {
+        if (window_categories == null) {
+            window_categories = new ManageCategoriesWindow();
+        }
+        showDataWindow(window_categories);
     }
 
-    public void showManageSuppliersWindow() {
-        ManageSuppliersWindow win = new ManageSuppliersWindow();
-        win.refresh();
-        win.setVisible(true);
+    private void showManageSuppliersWindow() {
+        if (window_suppliers == null) {
+            window_suppliers = new ManageSuppliersWindow();
+        }
+        showDataWindow(window_suppliers);
     }
 
     public void showCheckStockWindow() {
 
     }
 
-    public void showSaleRecordsWindow() {
-
+    private void showSaleRecordsWindow() {
+        if (window_sales == null) {
+            window_sales = new SaleHistoryWindow();
+        }
+        showDataWindow(window_sales);
     }
 
     public void showStatisticsReportsWindow() {
@@ -352,11 +358,6 @@ public class PointOfSaleWindow
         this.updateShoppingListGUI();
     }
 
-    public void populateComboBoxData() {
-        this.loadCustomerIDList();
-        this.loadProductIDList();
-    }
-
     private void loadCustomerIDList() {
         // customer IDs
         List<String> customerIDs = database.queryListOfCustomerIDs();
@@ -379,7 +380,7 @@ public class PointOfSaleWindow
                 Const.PATH_TO_LOGO_IMAGE)));
     }
 
-    public void loadLoginName() {
+    private void loadLoginName() {
         String user = database.queryCurrentUser();    // in "user@host" format
         user = user.substring(0, user.indexOf("@"));  // get only the username
         lblLoginName.setText("Login: " + user);
@@ -460,6 +461,12 @@ public class PointOfSaleWindow
                 System.exit(0);
             }
         });
+        menuDebug.addActionListener((ActionEvent) -> {
+            if (window_debug == null) {
+                window_debug = new DebugWindow();
+            }
+            window_debug.setVisible(true);
+        });
         menuViewCurrentCustomer.addActionListener((ActionEvent) -> {
             this.showCurrentCustomerInfoWindow(InfoWindowMode.VIEW);
         });
@@ -506,7 +513,7 @@ public class PointOfSaleWindow
                 }
             }
         });
-        cbxCustomerID.addItemListener((ItemEvent e) -> {
+        cbxCustomerID.addActionListener((ActionEvent) -> {
             if (database.isConnected()) {
                 this.checkCustomerID();
             }
@@ -528,13 +535,12 @@ public class PointOfSaleWindow
             }
         };
         cbxProductIDTextField.addKeyListener(enterKeyAdd);
-        cbxProductID.addItemListener((ItemEvent e) -> {
+        cbxProductID.addActionListener((ActionEvent) -> {
             if (database.isConnected()) {
                 this.checkProductID();
             }
         });
-        JFormattedTextField spnQuantityText
-                = (JFormattedTextField) spnQuantity.getEditor().getComponent(0);
+        JFormattedTextField spnQuantityText = (JFormattedTextField) spnQuantity.getEditor().getComponent(0);
         spnQuantityText.addKeyListener(enterKeyAdd);
         table.addKeyListener(new KeyAdapter() {
             @Override
@@ -556,7 +562,7 @@ public class PointOfSaleWindow
         //</editor-fold>
         //<editor-fold desc="Confirm and Reset Buttons">
         btnConfirm.addActionListener((ActionEvent) -> {
-            this.confirm();
+            this.checkout();
         });
         btnClear.addActionListener((ActionEvent) -> {
             int sure = 0;
@@ -687,6 +693,8 @@ public class PointOfSaleWindow
         menuFile = new javax.swing.JMenu();
         menuLogout = new javax.swing.JMenuItem();
         javax.swing.JPopupMenu.Separator jSeparator6 = new javax.swing.JPopupMenu.Separator();
+        menuDebug = new javax.swing.JMenuItem();
+        javax.swing.JPopupMenu.Separator jSeparator7 = new javax.swing.JPopupMenu.Separator();
         menuExit = new javax.swing.JMenuItem();
         menuCustomer = new javax.swing.JMenu();
         menuViewCurrentCustomer = new javax.swing.JMenuItem();
@@ -1029,6 +1037,10 @@ public class PointOfSaleWindow
         menuFile.add(menuLogout);
         menuFile.add(jSeparator6);
 
+        menuDebug.setText("SQL Editor...");
+        menuFile.add(menuDebug);
+        menuFile.add(jSeparator7);
+
         menuExit.setText("Exit");
         menuFile.add(menuExit);
 
@@ -1075,7 +1087,6 @@ public class PointOfSaleWindow
 
         menuSaleRecords.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F5, java.awt.event.InputEvent.CTRL_MASK));
         menuSaleRecords.setText("View Sale Records...");
-        menuSaleRecords.setEnabled(false);
         menuStore.add(menuSaleRecords);
         menuStore.add(jSeparator5);
 
@@ -1107,6 +1118,7 @@ public class PointOfSaleWindow
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenuItem menuCheckStock;
     private javax.swing.JMenu menuCustomer;
+    private javax.swing.JMenuItem menuDebug;
     private javax.swing.JMenuItem menuEditCurrentCustomer;
     private javax.swing.JMenuItem menuEditProduct;
     private javax.swing.JMenuItem menuExit;
@@ -1161,4 +1173,5 @@ public class PointOfSaleWindow
             }
         }
     }
+    
 }

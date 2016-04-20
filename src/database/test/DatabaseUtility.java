@@ -16,7 +16,7 @@ import java.util.List;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
-public class DatabaseUtilities {
+public class DatabaseUtility {
 
     /**
      * Suggest next string in sequence.
@@ -27,7 +27,7 @@ public class DatabaseUtilities {
      * @param length Length of the ID field.
      * @return The next ID in sequence that can be inserted into the database.
      */
-    public static String suggestNextID(Statement statement, String sql, String prefix, int length) {
+    static String suggestNextID(Statement statement, String sql, String prefix, int length) {
         try {
             ResultSet result = statement.executeQuery(sql);
             if (result.next()) {
@@ -38,11 +38,10 @@ public class DatabaseUtilities {
                 return String.format(prefix + "%0" + length + "d", 1);
             }
         } catch (SQLException | NumberFormatException ex) {
-            System.err.println(ex);
+            System.err.println("Error in DatabaseUtility.suggestNextID(): " + ex);
             System.err.flush();
             return null;
         }
-
     }
 
     /**
@@ -76,9 +75,9 @@ public class DatabaseUtilities {
             throws SQLException {
 //        System.out.println("Begin query: " + sql);
         ResultSet result = statement.executeQuery(sql);
-        GenericTableWindow gui
-                = new GenericTableWindow(buildTableModel(result));
-        gui.setTitle(sql);
+        GenericTableWindow gui = new GenericTableWindow(buildTableModel(result));
+        gui.setLocationRelativeTo(null);
+        gui.setTitle("Query Result: " + sql);
         gui.setVisible(true);
     }
 

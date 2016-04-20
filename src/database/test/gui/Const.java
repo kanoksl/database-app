@@ -20,6 +20,7 @@ public class Const {
 
     // Fonts
     public static final Font FONT_DEFAULT_12 = new Font("Segoe UI", Font.PLAIN, 12);
+    public static final Font FONT_DEFAULT_12_BOLD = new Font("Segoe UI", Font.BOLD, 12);
     public static final Font FONT_DEFAULT_24 = new Font("Segoe UI", Font.PLAIN, 24);
 
     // Strings - Window Titles

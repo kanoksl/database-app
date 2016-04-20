@@ -1,6 +1,7 @@
 package database.test.data;
 
 import database.test.gui.Util;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -159,10 +160,6 @@ public class Customer {
     }
     //</editor-fold>
 
-    public boolean isValid() {
-        return (id != null) && (firstName != null);
-    }
-
     @Override
     public String toString() {
         return "Customer {"
@@ -181,10 +178,13 @@ public class Customer {
         return String.format("%s : %s", id, this.getDisplayName());
     }
 
+    //<editor-fold defaultstate="collapsed" desc="GUI Code: Table Model">
+    public static final String[] TABLE_COLUMNS = {
+            "Customer ID", "First Name", "Last Name",
+            "Gender", "Birthday", "Registered", "Phone", "Email"};
+
     public static TableModel createTableModel(List<Customer> list) {
-        TableModel model = new AbstractTableModel() {
-            private final String[] COLUMNS = {"Customer ID", "First Name", "Last Name",
-                "Gender", "Birthday", "Registered", "Phone", "Email"};
+        return new AbstractTableModel() {
 
             @Override
             public int getRowCount() {
@@ -193,12 +193,12 @@ public class Customer {
 
             @Override
             public int getColumnCount() {
-                return COLUMNS.length;
+                return TABLE_COLUMNS.length;
             }
 
             @Override
             public String getColumnName(int column) {
-                return COLUMNS[column];
+                return TABLE_COLUMNS[column];
             }
 
             @Override
@@ -225,8 +225,8 @@ public class Customer {
                 return null;
             }
         };
-        return model;
     }
+    //</editor-fold>
 
     /**
      * Create a new Customer object without any data except the given ID and

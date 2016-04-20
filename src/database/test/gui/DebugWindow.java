@@ -1,7 +1,7 @@
 package database.test.gui;
 
 import database.test.DatabaseManager;
-import database.test.DatabaseUtilities;
+import database.test.DatabaseUtility;
 import database.test.data.Customer;
 import database.test.gui.component.TextLineNumber;
 
@@ -26,6 +26,8 @@ public class DebugWindow
     public DebugWindow() {
         this.initComponents();
         this.initListeners();
+        this.setLocationRelativeTo(null);
+        this.getContentPane().setBackground(Const.COLOR_LOGIN_WINDOW_BG);
 
         TextLineNumber lineNumber1 = new TextLineNumber(txtArea_connection);
         txtArea_connection_scrollPane.setRowHeaderView(lineNumber1);
@@ -35,13 +37,6 @@ public class DebugWindow
         txtArea_log_scrollPane.setRowHeaderView(lineNumber3);
 
         splitPane.setDividerLocation(0.5);
-
-        other_btnTestInsertCustomer.addActionListener((ActionEvent) -> {
-            Customer c = Customer.createNewCustomer(dbmanager.suggestNextCustomerID());
-            System.out.println("c.id = " + c.getID());
-            c.setFirstName("FIRSTNAME");
-//            dbmanager.insertCustomer(c);
-        });
     }
 
     //<editor-fold desc="Database Code">
@@ -72,7 +67,7 @@ public class DebugWindow
             this.log(txtArea_connection, "Error connecting to the database:\n\t" + ex.toString());
         }
 
-        this.log(txtArea_connection, "Also connecting using DatabaseManager...");
+        this.log(txtArea_connection, "Also connecting using the DatabaseManager class...");
         dbmanager = new DatabaseManager(hostport.substring(0, hostport.indexOf(":")), hostport.substring(hostport.indexOf(":") + 1), database);
         dbmanager.setUsername(username);
         dbmanager.setPassword(password);
@@ -132,7 +127,7 @@ public class DebugWindow
         String sql = txtArea_sql.getText();
 
         try {
-            DatabaseUtilities.queryToTableWindow(statement, sql);
+            DatabaseUtility.queryToTableWindow(statement, sql);
             this.log(txtArea_log, "Query to table successful for the command:"
                     + "\n--------------------\n"
                     + sql
@@ -145,8 +140,8 @@ public class DebugWindow
                     + "Error message: " + ex.toString());
         }
     }
-
     //</editor-fold>
+    
     //<editor-fold defaultstate="collapsed" desc="GUI Code: Custom Initialization and Methods">
     private void initListeners() {
         btnConnect.addActionListener((ActionEvent) -> {
@@ -203,11 +198,6 @@ public class DebugWindow
         txtArea_log = new javax.swing.JTextArea();
         btnExecute = new javax.swing.JButton();
         btnQueryToTable = new javax.swing.JButton();
-        tab3_others = new javax.swing.JPanel();
-        other_btnTestInsertCustomer = new javax.swing.JButton();
-        menuBar = new javax.swing.JMenuBar();
-        jMenu1 = new javax.swing.JMenu();
-        jMenu2 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Debug");
@@ -408,13 +398,6 @@ public class DebugWindow
 
         tabbedPane.addTab("Execute Commands", tab2_execute);
 
-        tab3_others.setLayout(new java.awt.GridBagLayout());
-
-        other_btnTestInsertCustomer.setText("Test DatabaseManager.insertCustomer()");
-        tab3_others.add(other_btnTestInsertCustomer, new java.awt.GridBagConstraints());
-
-        tabbedPane.addTab("Other Specific Functions", tab3_others);
-
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -422,14 +405,6 @@ public class DebugWindow
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         getContentPane().add(tabbedPane, gridBagConstraints);
-
-        jMenu1.setText("File");
-        menuBar.add(jMenu1);
-
-        jMenu2.setText("Edit");
-        menuBar.add(jMenu2);
-
-        setJMenuBar(menuBar);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -439,14 +414,9 @@ public class DebugWindow
     private javax.swing.JButton btnDisconnect;
     private javax.swing.JButton btnExecute;
     private javax.swing.JButton btnQueryToTable;
-    private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
-    private javax.swing.JMenuBar menuBar;
-    private javax.swing.JButton other_btnTestInsertCustomer;
     private javax.swing.JSplitPane splitPane;
     private javax.swing.JPanel tab1_connection;
     private javax.swing.JPanel tab2_execute;
-    private javax.swing.JPanel tab3_others;
     private javax.swing.JTabbedPane tabbedPane;
     private javax.swing.JTextField tbxDatabase;
     private javax.swing.JTextField tbxHostPort;

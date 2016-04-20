@@ -4,12 +4,13 @@ import database.test.gui.DebugWindow;
 import database.test.gui.LoginWindow;
 import database.test.gui.PointOfSaleWindow;
 
+import java.awt.*;
+
 public class ApplicationMain
         implements LoginWindow.LoginListener, PointOfSaleWindow.LogoutListener {
 
     private static DatabaseManager database; // singleton
 
-    private DebugWindow window_debug;
     private LoginWindow window_login;
     private PointOfSaleWindow window_pos;
 
@@ -18,15 +19,9 @@ public class ApplicationMain
     }
 
     public void start() {
-        // initializes the windows
-        window_debug = new DebugWindow();
+        // initializes the window
         window_login = new LoginWindow(this, database);
-        window_pos = new PointOfSaleWindow(this);
-
-        // displays the login window first
-        window_debug.setVisible(true);
         window_login.setVisible(true);
-
         // automate login
         window_login.submit();
     }
@@ -35,7 +30,7 @@ public class ApplicationMain
     public void login() {
         // when the user logged in successfully
         window_login.setVisible(false);
-        window_pos.prepare();
+        window_pos = new PointOfSaleWindow(this);
         window_pos.setVisible(true);
     }
 
@@ -43,8 +38,13 @@ public class ApplicationMain
     public void logout() {
         // when the user log out
         database.disconnect();
-        window_pos.setVisible(false);
-        // TODO: hide other windows too if exists
+        System.gc();
+        for (Window window : Window.getWindows()) {
+            System.out.println("Disposing: " + window.getClass().getName());
+            window.dispose(); // destroy all the windows
+        }
+
+        window_login = new LoginWindow(this, database);
         window_login.setVisible(true);
     }
 

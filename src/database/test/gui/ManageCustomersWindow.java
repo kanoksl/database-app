@@ -10,11 +10,12 @@ import java.util.List;
 
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
+import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 
 public class ManageCustomersWindow
-        extends javax.swing.JFrame {
+        extends DataDisplayWindow {
 
     private static DatabaseManager database = ApplicationMain.getDatabaseInstance();
     private List<Customer> customerList;
@@ -33,42 +34,51 @@ public class ManageCustomersWindow
         Customer c = EditCustomerInfoWindow.showNewCustomerDialog(this);
         if (c != null) {
             customerList.add(c);
-            tableCustomers.updateUI();
-            tableCustomers.setRowSelectionInterval(customerList.size() - 1, customerList.size() - 1);
+            ((AbstractTableModel) table.getModel()).fireTableDataChanged();
+            int viewRow = table.convertRowIndexToView(customerList.size() - 1);
+            table.setRowSelectionInterval(viewRow, viewRow);
         }
+    }
+
+    private Customer getSelection() {
+        int viewRow = table.getSelectedRow();
+        int modelRow = table.convertRowIndexToModel(viewRow);
+        return customerList.get(modelRow);
     }
 
     private void customerView() {
-        if (tableCustomers.getSelectedRowCount() == 0) {
+        if (table.getSelectedRowCount() == 0 || customerList.isEmpty()) {
             return;
         }
-        EditCustomerInfoWindow.showViewCustomerDialog(this,
-                customerList.get(tableCustomers.getSelectedRow()));
+        EditCustomerInfoWindow.showViewCustomerDialog(this, this.getSelection());
     }
 
     private void customerEdit() {
-        if (tableCustomers.getSelectedRowCount() == 0) {
+        if (table.getSelectedRowCount() == 0 || customerList.isEmpty()) {
             return;
         }
-        int row = tableCustomers.getSelectedRow();
-        Customer selected = customerList.get(row);
+        int viewRow = table.getSelectedRow();
+        int modelRow = table.convertRowIndexToModel(viewRow);
+        Customer selected = customerList.get(modelRow);
         Customer copy = database.queryCustomer(selected.getID());
         copy = EditCustomerInfoWindow.showEditCustomerDialog(this, copy);
         if (copy != null) {
-            customerList.set(row, copy);
-            tableCustomers.updateUI();
+            customerList.set(modelRow, copy);
+            ((AbstractTableModel) table.getModel()).fireTableDataChanged();
+            viewRow = table.convertRowIndexToView(modelRow);
+            table.setRowSelectionInterval(viewRow, viewRow);
         }
     }
 
     private void customerDelete() {
-        if (tableCustomers.getSelectedRowCount() == 0) {
+        if (table.getSelectedRowCount() == 0 || customerList.isEmpty()) {
             return;
         }
-        int row = tableCustomers.getSelectedRow();
-        boolean deleted = database.tryDeleteCustomer(customerList.get(row), this);
+        Customer c = this.getSelection();
+        boolean deleted = database.tryDeleteCustomer(c, this);
         if (deleted) {
-            customerList.remove(row);
-            tableCustomers.updateUI();
+            customerList.remove(c);
+            ((AbstractTableModel) table.getModel()).fireTableDataChanged();
         }
     }
 
@@ -77,6 +87,7 @@ public class ManageCustomersWindow
      * Query the category list from the database, and update the table model and
      * also its UI.
      */
+    @Override
     public void refresh() {
         String searchString = tbxSearch.getText().trim();
         if (searchString.isEmpty()) {
@@ -87,12 +98,12 @@ public class ManageCustomersWindow
             System.out.println("ManageCustomersWindow.refresh(): search for '" + searchString + "'");
         }
         TableModel model = Customer.createTableModel(customerList);
-        tableCustomers.setModel(model);
+        table.setModel(model);
 
         // setting column headers and sizes
-        tableCustomers.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
         final int width_id = 80, width_gender = 50, width_date = 80, width_phone = 90;
-        TableColumnModel colm = tableCustomers.getColumnModel();
+        TableColumnModel colm = table.getColumnModel();
 
         colm.getColumn(0).setMinWidth(width_id);
         colm.getColumn(0).setMaxWidth(width_id);
@@ -113,20 +124,20 @@ public class ManageCustomersWindow
         colm.getColumn(6).setMaxWidth(width_phone);
         colm.getColumn(6).setResizable(false);
 
-        tableCustomers.updateUI();
+        table.updateUI();
 
         // select the last row
         if (!customerList.isEmpty()) {
-            int rowIndex = Math.max(0, tableCustomers.getRowCount() - 1);
-            tableCustomers.setRowSelectionInterval(rowIndex, rowIndex);
+            int rowIndex = Math.max(0, table.getRowCount() - 1);
+            table.setRowSelectionInterval(rowIndex, rowIndex);
         }
 
         this.updateButtonsEnabled();
     }
 
     private void updateButtonsEnabled() {
-        if (tableCustomers.getSelectedRowCount() > 0) {
-            Customer selected = customerList.get(tableCustomers.getSelectedRow());
+        if (table.getSelectedRowCount() > 0) {
+            Customer selected = this.getSelection();
             if (selected.getID().equals(Const.UNREGISTERED_CUSTOMER_ID)
                     || selected.getID().equals(Const.DELETED_CUSTOMER_ID)) {
                 btnEditCustomer.setEnabled(false);
@@ -144,12 +155,12 @@ public class ManageCustomersWindow
     }
 
     private void setColorTheme() {
-        tableCustomers.setSelectionBackground(Const.COLOR_HIGHLIGHT_BG);
-        tableCustomers.setSelectionForeground(Const.COLOR_HIGHLIGHT_FG);
-        tableCustomers.setGridColor(Const.COLOR_TABLE_GRID);
-        tableCustomers.setFont(Const.FONT_DEFAULT_12);
-        tableCustomers.getTableHeader().setFont(Const.FONT_DEFAULT_12);
-        tableCustomers.setRowHeight(24);
+        table.setSelectionBackground(Const.COLOR_HIGHLIGHT_BG);
+        table.setSelectionForeground(Const.COLOR_HIGHLIGHT_FG);
+        table.setGridColor(Const.COLOR_TABLE_GRID);
+        table.setFont(Const.FONT_DEFAULT_12);
+        table.getTableHeader().setFont(Const.FONT_DEFAULT_12);
+        table.setRowHeight(24);
 
         tbxSearch.setSelectionColor(Const.COLOR_HIGHLIGHT_BG);
         tbxSearch.setSelectedTextColor(Const.COLOR_HIGHLIGHT_FG);
@@ -172,10 +183,10 @@ public class ManageCustomersWindow
             this.customerDelete();
         });
 
-        tableCustomers.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
+        table.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
             this.updateButtonsEnabled();
         });
-        
+
         tbxSearch.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
@@ -203,7 +214,7 @@ public class ManageCustomersWindow
         tbxSearch = new javax.swing.JTextField();
         btnRefresh = new javax.swing.JButton();
         tableCustomers_scrollPane = new javax.swing.JScrollPane();
-        tableCustomers = new javax.swing.JTable();
+        table = new javax.swing.JTable();
         btnNewCustomer = new javax.swing.JButton();
         btnEditCustomer = new javax.swing.JButton();
         btnDeleteCustomer = new javax.swing.JButton();
@@ -261,8 +272,9 @@ public class ManageCustomersWindow
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 4, 0);
         getContentPane().add(panel_header, gridBagConstraints);
 
-        tableCustomers.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
-        tableCustomers.setModel(new javax.swing.table.DefaultTableModel(
+        table.setAutoCreateRowSorter(true);
+        table.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
+        table.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null, null},
@@ -273,10 +285,10 @@ public class ManageCustomersWindow
                 "Customer ID", "First Name", "Last Name", "Gender", "Birthday", "Registered", "Phone", "Email"
             }
         ));
-        tableCustomers.setGridColor(new java.awt.Color(204, 204, 204));
-        tableCustomers.setRowHeight(20);
-        tableCustomers.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        tableCustomers_scrollPane.setViewportView(tableCustomers);
+        table.setGridColor(new java.awt.Color(204, 204, 204));
+        table.setRowHeight(20);
+        table.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        tableCustomers_scrollPane.setViewportView(table);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -356,7 +368,7 @@ public class ManageCustomersWindow
     private javax.swing.JButton btnViewCustomer;
     private javax.swing.JLabel headerLabel;
     private javax.swing.JPanel panel_header;
-    private javax.swing.JTable tableCustomers;
+    private javax.swing.JTable table;
     private javax.swing.JScrollPane tableCustomers_scrollPane;
     private javax.swing.JTextField tbxSearch;
     // End of variables declaration//GEN-END:variables
