@@ -120,7 +120,8 @@ public class ManageCategoriesWindow
     }
 
     private void updateButtonsEnabled() {
-        boolean selectionNotEmpty = table.getSelectedRowCount() > 0;
+        boolean selectionNotEmpty = table.getSelectedRowCount() > 0
+                && (table.getValueAt(table.getSelectedRow(), 0) != null);
         btnRenameCategory.setEnabled(selectionNotEmpty);
         btnDeleteCategory.setEnabled(selectionNotEmpty);
     }

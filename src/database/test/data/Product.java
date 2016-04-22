@@ -175,8 +175,6 @@ public class Product {
                 if (columnIndex == 4) return Double.class;
                 else return String.class;
             }
-
-            
         };
     }
     //</editor-fold>

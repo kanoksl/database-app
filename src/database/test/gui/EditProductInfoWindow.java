@@ -13,11 +13,9 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.ArrayList;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumnModel;
 
 public class EditProductInfoWindow
@@ -81,8 +79,10 @@ public class EditProductInfoWindow
         cbxCategory.setSelectedItem(product.getCategoryID());
         txtDescription.setText(product.getDescription());
 
-        lblCurrentPrice.setText(trueProduct.getCurrentPriceString());
-        lblCurrentStock.setText(String.format("%,d", trueProduct.getStockQuantity()));
+        if (trueProduct != null) {
+            lblCurrentPrice.setText(trueProduct.getCurrentPriceString());
+            lblCurrentStock.setText(String.format("%,d", trueProduct.getStockQuantity()));
+        }
         spnPrice.setValue(product.getCurrentPrice());
         spnStock.setValue(product.getStockQuantity());
 
@@ -107,7 +107,8 @@ public class EditProductInfoWindow
         product.setStockQuantity((int) spnStock.getValue());
 
         double newPrice = (Double) spnPrice.getValue();
-        if (newPrice != trueProduct.getCurrentPrice()) {
+        double oldPrice = (trueProduct == null) ? -1 : trueProduct.getCurrentPrice();
+        if (newPrice != oldPrice) {
             System.out.println("--product price changed");
             product.setPriceChanged(true);
             product.setCurrentPrice(newPrice);
@@ -137,7 +138,8 @@ public class EditProductInfoWindow
     }
 
     private void productSupplierRemove() {
-        if (tableSuppliers.getSelectedRowCount() == 0 || suppliers.isEmpty()) {
+        if (tableSuppliers.getSelectedRowCount() == 0 || suppliers.isEmpty()
+                || tableSuppliers.getSelectedRow() >= suppliers.size()) {
             return;
         }
         suppliers.remove(tableSuppliers.getSelectedRow());
@@ -146,7 +148,8 @@ public class EditProductInfoWindow
     }
 
     private void productSupplierView() {
-        if (tableSuppliers.getSelectedRowCount() == 0 || suppliers.isEmpty()) {
+        if (tableSuppliers.getSelectedRowCount() == 0 || suppliers.isEmpty()
+                || tableSuppliers.getSelectedRow() >= suppliers.size()) {
             return;
         }
         EditSupplierInfoWindow.showViewSupplierDialog(this,
@@ -270,6 +273,9 @@ public class EditProductInfoWindow
 
     private void loadPricingHistory() {
         List<Object[]> pricingList = database.queryProductPricingHistory(product.getID());
+        if (pricingList.isEmpty()) {
+            return;
+        }
 
         Object[] lastRow = pricingList.get(pricingList.size() - 1);
         if (lastRow[0].equals(LocalDate.now().plusDays(1).toString())) {

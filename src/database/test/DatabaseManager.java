@@ -546,6 +546,7 @@ public class DatabaseManager {
             PreparedStatement p2 = connection.prepareStatement(SQLStrings.SQL_INSERT_NEW_PRODUCT_PRICE);
             p2.setString(1, p.getID());
             p2.setDouble(2, p.getCurrentPrice());
+            p2.executeUpdate();
 
             connection.commit();
         } catch (SQLException ex) {
@@ -1009,6 +1010,35 @@ public class DatabaseManager {
         }
         p.executeBatch();
     }
+    
+    public List<Object[]> querySaleHistory(LocalDate dateFrom, LocalDate dateTo) {
+        List<Object[]> list = new ArrayList<>();
+        try {
+            // prepare a statement
+            PreparedStatement p = connection.prepareStatement(SQLStrings.SQL_QUERY_SALE_HISTORY);
+            // set the parameters
+            p.setDate(1, nullable(dateFrom));
+            p.setDate(2, nullable(dateTo));
+            // execute the statement
+            ResultSet result = p.executeQuery();
+            while (result.next()) {
+                Object[] row = new Object[7];
+                row[0] = result.getString("sale_id");
+                row[1] = toLocalDate(result.getDate("sale_date"));
+                row[2] = toLocalTime(result.getTime("sale_time"));
+                row[3] = result.getString("customer_id");
+                row[4] = result.getInt("item_count");
+                row[5] = result.getDouble("special_discount");
+                row[6] = result.getDouble("discounted_total");
+                list.add(row);
+            }
+            return list;
+        } catch (SQLException ex) {
+            System.err.println(ex);
+            System.err.flush();
+            return new ArrayList<>();
+        }
+    }
 
     public String suggestNextSaleID() {
         return DatabaseUtility.suggestNextID(statement,
@@ -1016,6 +1046,20 @@ public class DatabaseManager {
     }
     //</editor-fold>
 
+    public List<Object[]> query(String sql, int columnCount) 
+            throws SQLException {
+        List<Object[]> list = new LinkedList<>();
+        PreparedStatement p = connection.prepareStatement(sql);
+        ResultSet r = p.executeQuery();
+        while (r.next()) {
+            Object[] row = new Object[columnCount];
+            for (int i = 0; i < columnCount; i++) {
+                row[i] = r.getObject(i + 1);
+            }
+            list.add(row);
+        }
+        return list;
+    }
 
     //<editor-fold desc="Database Operations with Message Dialogs">
     public boolean tryInsertCustomer(Customer customer, Component caller) {

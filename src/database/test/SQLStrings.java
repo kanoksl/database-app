@@ -270,6 +270,34 @@ public class SQLStrings {
             = "INSERT INTO sale_detail (sale_id, product_id, sale_quantity) "
             + "VALUES (?, ?, ?);";
     //</editor-fold>
+    
+    public static final String SQL_QUERY_SALE_HISTORY
+            = "SELECT sale_id, sale_date, sale_time, customer_id, item_count, special_discount, discounted_total "
+            + "FROM sale_overview "
+            + "WHERE (sale_date BETWEEN ? AND ?);";
+
+    //<editor-fold desc="SQL Commands: Statistics">
+    public static final String SQL_STATS_CUSTOMER_COUNT_BY_GENDER
+            = "SELECT (CASE gender WHEN 'M' THEN 'Male' WHEN 'F' THEN 'Female' "
+            + "    ELSE 'Unknown' END) AS Gender, COUNT(customer_id) AS Count "
+            + "FROM customer WHERE (customer_id != 'C0000000') AND (customer_id != 'CDELETED') "
+            + "GROUP BY Gender "
+            + "ORDER BY (CASE gender WHEN 'M' THEN 1 WHEN 'F' THEN 2 ELSE 3 END);";
+
+    public static final String SQL_STATS_CATEGORY_PRODUCT_COUNTS
+            = "SELECT category_name AS Category, product_count AS Count "
+            + "FROM category_overview;";
+
+    public static final String SQL_STATS_CUSTOMER_COUNT_BY_AGE
+            = "SELECT 'Under 20' AS 'Age Range', COUNT(customer_id) AS 'Count' FROM customer_age WHERE age BETWEEN 0 AND 19 UNION \n"
+            + "SELECT '20 - 29', COUNT(customer_id) FROM customer_age WHERE age BETWEEN 20 AND 29 UNION \n"
+            + "SELECT '30 - 39', COUNT(customer_id) FROM customer_age WHERE age BETWEEN 30 AND 39 UNION \n"
+            + "SELECT '40 - 49', COUNT(customer_id) FROM customer_age WHERE age BETWEEN 40 AND 49 UNION \n"
+            + "SELECT '50 - 59', COUNT(customer_id) FROM customer_age WHERE age BETWEEN 50 AND 59 UNION \n"
+            + "SELECT '60 - 69', COUNT(customer_id) FROM customer_age WHERE age BETWEEN 60 AND 69 UNION \n"
+            + "SELECT '70 - 79', COUNT(customer_id) FROM customer_age WHERE age BETWEEN 70 AND 79 UNION \n"
+            + "SELECT 'Above 79', COUNT(customer_id) FROM customer_age WHERE age >= 80;";
+    //</editor-fold>
 
     public static final java.sql.Date SQL_MINDATE = java.sql.Date.valueOf("1000-01-01");
     public static final java.sql.Date SQL_MAXDATE = java.sql.Date.valueOf("9999-12-31");

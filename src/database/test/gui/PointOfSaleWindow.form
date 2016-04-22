@@ -165,7 +165,6 @@
             <MenuItem class="javax.swing.JMenuItem" name="menuReports">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Sale Statistics and Reports..."/>
-                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
             </MenuItem>
           </SubComponents>

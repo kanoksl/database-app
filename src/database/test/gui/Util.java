@@ -4,6 +4,8 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -24,6 +26,30 @@ public class Util {
         @Override
         protected void setValue(Object value) {
             setText(String.format("%,.2f " + Const.CURRENCY + " ", (double) value));
+        }
+
+    };
+    
+    public static DefaultTableCellRenderer TABLE_CELL_PERCENT 
+            = new DefaultTableCellRenderer() {
+        @Override
+        public int getHorizontalAlignment() {
+            return JLabel.RIGHT;
+        }
+
+        @Override
+        protected void setValue(Object value) {
+            setText(String.format("%,.2f %% ", (double) value));
+        }
+
+    };
+    
+    public static DefaultTableCellRenderer TABLE_CELL_TIME 
+            = new DefaultTableCellRenderer() {
+
+        @Override
+        protected void setValue(Object value) {
+            setText(((LocalTime) value).format(DateTimeFormatter.ofPattern("HH:mm")));
         }
 
     };
@@ -79,13 +105,17 @@ public class Util {
      * @return The created (displayed, and disposed) JDialog.
      */
     public static JDialog createAndShowDialog(Frame owner, String title, Component content, Dimension size) {
+        return createAndShowDialog(owner, title, content, size, false);
+    }
+    
+    public static JDialog createAndShowDialog(Frame owner, String title, Component content, Dimension size, boolean resizable) {
         JDialog dia = new JDialog(owner, title, true);
         dia.getContentPane().add(content);
         dia.setSize(size);
         dia.setMaximumSize(size);
         dia.setMinimumSize(size);
         dia.setPreferredSize(size);
-        dia.setResizable(false);
+        dia.setResizable(resizable);
         dia.setLocationRelativeTo(null);
         dia.pack();
         dia.setVisible(true);

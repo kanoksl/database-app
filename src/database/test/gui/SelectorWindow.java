@@ -208,8 +208,8 @@ public class SelectorWindow
     private javax.swing.JScrollPane table_scrollPane;
     private javax.swing.JTextField tbxSearch;
     // End of variables declaration//GEN-END:variables
-
     //</editor-fold>
+    
     public static List<String> showProductSelectorDialog(Frame owner) {
         SelectorWindow win = new SelectorWindow();
         win.sql = SQLStrings.SQL_SEARCH_ID_AND_NAME_PRODUCTS;

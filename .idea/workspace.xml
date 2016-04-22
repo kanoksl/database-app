@@ -4,38 +4,7 @@
     <option name="SCOPE_TYPE" value="3" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5748fdd5-eed0-44b6-a5dc-2e5dff837cb0" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/database/test/gui/SaleHistoryWindow.form" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/database/test/gui/SaleHistoryWindow.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/database/test/DatabaseUtilities.java" afterPath="$PROJECT_DIR$/src/database/test/DatabaseUtility.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/database/test/ApplicationMain.java" afterPath="$PROJECT_DIR$/src/database/test/ApplicationMain.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/database/test/DatabaseManager.java" afterPath="$PROJECT_DIR$/src/database/test/DatabaseManager.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/database/test/SQLStrings.java" afterPath="$PROJECT_DIR$/src/database/test/SQLStrings.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/database/test/data/Customer.java" afterPath="$PROJECT_DIR$/src/database/test/data/Customer.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/database/test/data/Product.java" afterPath="$PROJECT_DIR$/src/database/test/data/Product.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/database/test/data/ShoppingList.java" afterPath="$PROJECT_DIR$/src/database/test/data/ShoppingList.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/database/test/data/Supplier.java" afterPath="$PROJECT_DIR$/src/database/test/data/Supplier.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/database/test/gui/DebugWindow.form" afterPath="$PROJECT_DIR$/src/database/test/gui/DebugWindow.form" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/database/test/gui/DebugWindow.java" afterPath="$PROJECT_DIR$/src/database/test/gui/DebugWindow.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/database/test/gui/EditCustomerInfoWindow.form" afterPath="$PROJECT_DIR$/src/database/test/gui/EditCustomerInfoWindow.form" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/database/test/gui/EditCustomerInfoWindow.java" afterPath="$PROJECT_DIR$/src/database/test/gui/EditCustomerInfoWindow.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/database/test/gui/EditProductInfoWindow.form" afterPath="$PROJECT_DIR$/src/database/test/gui/EditProductInfoWindow.form" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/database/test/gui/EditProductInfoWindow.java" afterPath="$PROJECT_DIR$/src/database/test/gui/EditProductInfoWindow.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/database/test/gui/EditSupplierInfoWindow.form" afterPath="$PROJECT_DIR$/src/database/test/gui/EditSupplierInfoWindow.form" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/database/test/gui/EditSupplierInfoWindow.java" afterPath="$PROJECT_DIR$/src/database/test/gui/EditSupplierInfoWindow.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/database/test/gui/ManageCategoriesWindow.form" afterPath="$PROJECT_DIR$/src/database/test/gui/ManageCategoriesWindow.form" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/database/test/gui/ManageCategoriesWindow.java" afterPath="$PROJECT_DIR$/src/database/test/gui/ManageCategoriesWindow.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/database/test/gui/ManageCustomersWindow.form" afterPath="$PROJECT_DIR$/src/database/test/gui/ManageCustomersWindow.form" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/database/test/gui/ManageCustomersWindow.java" afterPath="$PROJECT_DIR$/src/database/test/gui/ManageCustomersWindow.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/database/test/gui/ManageProductsWindow.form" afterPath="$PROJECT_DIR$/src/database/test/gui/ManageProductsWindow.form" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/database/test/gui/ManageProductsWindow.java" afterPath="$PROJECT_DIR$/src/database/test/gui/ManageProductsWindow.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/database/test/gui/ManageSuppliersWindow.form" afterPath="$PROJECT_DIR$/src/database/test/gui/ManageSuppliersWindow.form" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/database/test/gui/ManageSuppliersWindow.java" afterPath="$PROJECT_DIR$/src/database/test/gui/ManageSuppliersWindow.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/database/test/gui/PointOfSaleWindow.form" afterPath="$PROJECT_DIR$/src/database/test/gui/PointOfSaleWindow.form" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/database/test/gui/PointOfSaleWindow.java" afterPath="$PROJECT_DIR$/src/database/test/gui/PointOfSaleWindow.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/database/test/gui/SelectorWindow.java" afterPath="$PROJECT_DIR$/src/database/test/gui/SelectorWindow.java" />
-    </list>
+    <list default="true" id="5748fdd5-eed0-44b6-a5dc-2e5dff837cb0" name="Default" comment="" />
     <ignored path="DatabaseTester.iws" />
     <ignored path=".idea/workspace.xml" />
     <ignored path="$PROJECT_DIR$/out/" />
@@ -148,21 +117,14 @@
           <file leaf-file-name="SQLStrings.java" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/src/database/test/SQLStrings.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="0">
-                  <caret line="219" column="4" selection-start-line="219" selection-start-column="4" selection-end-line="219" selection-end-column="4" />
+                <state relative-caret-position="1776">
+                  <caret line="229" column="0" selection-start-line="229" selection-start-column="0" selection-end-line="229" selection-end-column="0" />
                   <folding>
                     <element signature="n#!!doc;n#SQL_CURRENT_USER#0;n#SQLStrings#0" expanded="false" />
                     <element signature="n#!!doc;n#SQL_SELECT_ALL_CUSTOMER_IDS#0;n#SQLStrings#0" expanded="false" />
                     <element signature="e#1852#1915#0" expanded="false" />
                     <element signature="n#!!doc;n#SQL_SELECT_ALL_PRODUCT_IDS#0;n#SQLStrings#0" expanded="false" />
                     <element signature="e#5191#5253#0" expanded="false" />
-                    <element signature="e#6531#6594#0" expanded="false" />
-                    <element signature="n#!!doc;n#SQL_SELECT_CATEGORY_OVERVIEW#0;n#SQLStrings#0" expanded="false" />
-                    <element signature="n#!!doc;n#SQL_SELECT_ALL_SUPPLIER_IDS#0;n#SQLStrings#0" expanded="false" />
-                    <element signature="e#10670#10733#0" expanded="false" />
-                    <element signature="n#!!doc;n#SQL_SELECT_SUPPLIERS_OF_A_PRODUCT#0;n#SQLStrings#0" expanded="false" />
-                    <element signature="e#11856#11925#0" expanded="false" />
-                    <element signature="n#!!doc;n#SQL_SELECT_LATEST_SALE_ID#0;n#SQLStrings#0" expanded="false" />
                   </folding>
                 </state>
               </provider>
@@ -172,7 +134,7 @@
             <entry file="file://$PROJECT_DIR$/src/database/test/DatabaseManager.java">
               <provider selected="true" editor-type-id="text-editor">
                 <state relative-caret-position="384">
-                  <caret line="958" column="0" selection-start-line="958" selection-start-column="0" selection-end-line="958" selection-end-column="0" />
+                  <caret line="991" column="0" selection-start-line="991" selection-start-column="0" selection-end-line="991" selection-end-column="0" />
                   <folding>
                     <element signature="n#!!doc;n#tryInsertCustomer#0;n#DatabaseManager#0" expanded="false" />
                   </folding>
@@ -187,8 +149,8 @@
           <file leaf-file-name="DatabaseManager.java" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/src/database/test/DatabaseManager.java">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="218">
-                  <caret line="313" column="36" selection-start-line="313" selection-start-column="36" selection-end-line="313" selection-end-column="36" />
+                <state relative-caret-position="746">
+                  <caret line="346" column="36" selection-start-line="346" selection-start-column="36" selection-end-line="346" selection-end-column="36" />
                   <folding />
                 </state>
               </provider>
@@ -800,7 +762,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="2560" height="1440" extended-state="0" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="false" show_stripe_button="true" weight="0.2713787" sideWeight="0.7780232" order="7" side_tool="true" content_ui="tabs" x="1225" y="815" width="797" height="610" />
@@ -811,7 +773,7 @@
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2279476" sideWeight="0.2219768" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1546875" sideWeight="0.47110462" order="2" side_tool="false" content_ui="combo" x="199" y="372" width="373" height="742" />
-      <window_info id="Find" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3234375" sideWeight="0.493782" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="true" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3234375" sideWeight="0.493782" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1546875" sideWeight="0.5288954" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -932,13 +894,6 @@
             <element signature="e#1852#1915#0" expanded="false" />
             <element signature="n#!!doc;n#SQL_SELECT_ALL_PRODUCT_IDS#0;n#SQLStrings#0" expanded="false" />
             <element signature="e#5191#5253#0" expanded="false" />
-            <element signature="e#6531#6594#0" expanded="false" />
-            <element signature="n#!!doc;n#SQL_SELECT_CATEGORY_OVERVIEW#0;n#SQLStrings#0" expanded="false" />
-            <element signature="n#!!doc;n#SQL_SELECT_ALL_SUPPLIER_IDS#0;n#SQLStrings#0" expanded="false" />
-            <element signature="e#10670#10733#0" expanded="false" />
-            <element signature="n#!!doc;n#SQL_SELECT_SUPPLIERS_OF_A_PRODUCT#0;n#SQLStrings#0" expanded="false" />
-            <element signature="e#11856#11925#0" expanded="false" />
-            <element signature="n#!!doc;n#SQL_SELECT_LATEST_SALE_ID#0;n#SQLStrings#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1038,13 +993,6 @@
             <element signature="e#1852#1915#0" expanded="false" />
             <element signature="n#!!doc;n#SQL_SELECT_ALL_PRODUCT_IDS#0;n#SQLStrings#0" expanded="false" />
             <element signature="e#5191#5253#0" expanded="false" />
-            <element signature="e#6531#6594#0" expanded="false" />
-            <element signature="n#!!doc;n#SQL_SELECT_CATEGORY_OVERVIEW#0;n#SQLStrings#0" expanded="false" />
-            <element signature="n#!!doc;n#SQL_SELECT_ALL_SUPPLIER_IDS#0;n#SQLStrings#0" expanded="false" />
-            <element signature="e#10670#10733#0" expanded="false" />
-            <element signature="n#!!doc;n#SQL_SELECT_SUPPLIERS_OF_A_PRODUCT#0;n#SQLStrings#0" expanded="false" />
-            <element signature="e#11856#11925#0" expanded="false" />
-            <element signature="n#!!doc;n#SQL_SELECT_LATEST_SALE_ID#0;n#SQLStrings#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1154,13 +1102,6 @@
             <element signature="e#1852#1915#0" expanded="false" />
             <element signature="n#!!doc;n#SQL_SELECT_ALL_PRODUCT_IDS#0;n#SQLStrings#0" expanded="false" />
             <element signature="e#5191#5253#0" expanded="false" />
-            <element signature="e#6531#6594#0" expanded="false" />
-            <element signature="n#!!doc;n#SQL_SELECT_CATEGORY_OVERVIEW#0;n#SQLStrings#0" expanded="false" />
-            <element signature="n#!!doc;n#SQL_SELECT_ALL_SUPPLIER_IDS#0;n#SQLStrings#0" expanded="false" />
-            <element signature="e#10670#10733#0" expanded="false" />
-            <element signature="n#!!doc;n#SQL_SELECT_SUPPLIERS_OF_A_PRODUCT#0;n#SQLStrings#0" expanded="false" />
-            <element signature="e#11856#11925#0" expanded="false" />
-            <element signature="n#!!doc;n#SQL_SELECT_LATEST_SALE_ID#0;n#SQLStrings#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1299,21 +1240,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/database/test/SQLStrings.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="219" column="4" selection-start-line="219" selection-start-column="4" selection-end-line="219" selection-end-column="4" />
+        <state relative-caret-position="1776">
+          <caret line="229" column="0" selection-start-line="229" selection-start-column="0" selection-end-line="229" selection-end-column="0" />
           <folding>
             <element signature="n#!!doc;n#SQL_CURRENT_USER#0;n#SQLStrings#0" expanded="false" />
             <element signature="n#!!doc;n#SQL_SELECT_ALL_CUSTOMER_IDS#0;n#SQLStrings#0" expanded="false" />
             <element signature="e#1852#1915#0" expanded="false" />
             <element signature="n#!!doc;n#SQL_SELECT_ALL_PRODUCT_IDS#0;n#SQLStrings#0" expanded="false" />
             <element signature="e#5191#5253#0" expanded="false" />
-            <element signature="e#6531#6594#0" expanded="false" />
-            <element signature="n#!!doc;n#SQL_SELECT_CATEGORY_OVERVIEW#0;n#SQLStrings#0" expanded="false" />
-            <element signature="n#!!doc;n#SQL_SELECT_ALL_SUPPLIER_IDS#0;n#SQLStrings#0" expanded="false" />
-            <element signature="e#10670#10733#0" expanded="false" />
-            <element signature="n#!!doc;n#SQL_SELECT_SUPPLIERS_OF_A_PRODUCT#0;n#SQLStrings#0" expanded="false" />
-            <element signature="e#11856#11925#0" expanded="false" />
-            <element signature="n#!!doc;n#SQL_SELECT_LATEST_SALE_ID#0;n#SQLStrings#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1337,7 +1271,7 @@
     <entry file="file://$PROJECT_DIR$/src/database/test/DatabaseManager.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="384">
-          <caret line="958" column="0" selection-start-line="958" selection-start-column="0" selection-end-line="958" selection-end-column="0" />
+          <caret line="991" column="0" selection-start-line="991" selection-start-column="0" selection-end-line="991" selection-end-column="0" />
           <folding>
             <element signature="n#!!doc;n#tryInsertCustomer#0;n#DatabaseManager#0" expanded="false" />
           </folding>

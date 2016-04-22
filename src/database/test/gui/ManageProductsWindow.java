@@ -3,17 +3,14 @@ package database.test.gui;
 import database.test.ApplicationMain;
 import database.test.DatabaseManager;
 import database.test.data.Product;
-import java.awt.Color;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.List;
 
-import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 
@@ -276,7 +273,7 @@ public class ManageProductsWindow
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(4, 0, 4, 8);
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 8);
         panel_filter.add(chkFiltering, gridBagConstraints);
 
         l_filterCat.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
@@ -285,7 +282,7 @@ public class ManageProductsWindow
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.insets = new java.awt.Insets(4, 8, 4, 4);
+        gridBagConstraints.insets = new java.awt.Insets(0, 8, 0, 4);
         panel_filter.add(l_filterCat, gridBagConstraints);
 
         tbxCategory.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
@@ -295,7 +292,6 @@ public class ManageProductsWindow
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(4, 0, 4, 0);
         panel_filter.add(tbxCategory, gridBagConstraints);
 
         l_filterStatus.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
@@ -304,7 +300,7 @@ public class ManageProductsWindow
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.insets = new java.awt.Insets(4, 16, 4, 4);
+        gridBagConstraints.insets = new java.awt.Insets(0, 16, 0, 4);
         panel_filter.add(l_filterStatus, gridBagConstraints);
 
         cbxStatus.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N

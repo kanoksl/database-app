@@ -17,10 +17,12 @@ public class Const {
     public static final Color COLOR_TABLE_GRID = Color.decode("#CCCCCC");
     public static final Color COLOR_CHECKOUT_WINDOW_BG = Color.decode("#FFFFFF");
     public static final Color COLOR_CHECKOUT_WINDOW_ACCENT = Color.decode("#F0F0F0");
+    public static final Color COLOR_BG_LIGHTGRAY = Color.decode("#F5F5F5");
 
     // Fonts
     public static final Font FONT_DEFAULT_12 = new Font("Segoe UI", Font.PLAIN, 12);
     public static final Font FONT_DEFAULT_12_BOLD = new Font("Segoe UI", Font.BOLD, 12);
+    public static final Font FONT_DEFAULT_16 = new Font("Segoe UI", Font.PLAIN, 16);
     public static final Font FONT_DEFAULT_24 = new Font("Segoe UI", Font.PLAIN, 24);
 
     // Strings - Window Titles

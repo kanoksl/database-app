@@ -10,7 +10,6 @@ import database.test.gui.Const.InfoWindowMode;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Rectangle;
-import java.awt.event.ItemEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -22,7 +21,6 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
@@ -48,6 +46,7 @@ public class PointOfSaleWindow
     private ManageCategoriesWindow window_categories;
     private ManageSuppliersWindow window_suppliers;
     private SaleHistoryWindow window_sales;
+    private StatisticSelectWindow window_stats;
 
     /**
      * Create a new PointOfSaleWindow that is connected to the given database.
@@ -337,7 +336,14 @@ public class PointOfSaleWindow
     }
 
     public void showStatisticsReportsWindow() {
-
+        if (window_stats == null) {
+            window_stats = new StatisticSelectWindow();
+        }
+        if (!window_stats.isVisible()) {
+            window_stats.setVisible(true);
+        } else {
+            window_stats.requestFocus();
+        }
     }
 
     //</editor-fold>
@@ -1091,7 +1097,6 @@ public class PointOfSaleWindow
         menuStore.add(jSeparator5);
 
         menuReports.setText("Sale Statistics and Reports...");
-        menuReports.setEnabled(false);
         menuStore.add(menuReports);
 
         menuBar.add(menuStore);
