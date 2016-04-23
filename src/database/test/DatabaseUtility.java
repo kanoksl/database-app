@@ -35,7 +35,7 @@ public class DatabaseUtility {
                 int numNextID = Integer.parseInt(latestID.substring(prefix.length())) + 1;
                 return String.format(prefix + "%0" + (length - prefix.length()) + "d", numNextID);
             } else {
-                return String.format(prefix + "%0" + length + "d", 1);
+                return String.format(prefix + "%0" + (length - prefix.length()) + "d", 1);
             }
         } catch (SQLException | NumberFormatException ex) {
             System.err.println("Error in DatabaseUtility.suggestNextID(): " + ex);
@@ -97,7 +97,7 @@ public class DatabaseUtility {
         DefaultTableModel model = new DefaultTableModel() {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false; //all cells are uneditable
+                return false; //all cells are not editable
             }
         };
 

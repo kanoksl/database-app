@@ -304,7 +304,7 @@ public class ManageProductsWindow
         panel_filter.add(l_filterStatus, gridBagConstraints);
 
         cbxStatus.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
-        cbxStatus.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Available for Sale", "Out of Stock", "--------", "Still Selling", "Discontinued", "--------", "Any" }));
+        cbxStatus.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Available for Sale", "Low on Stock", "Out of Stock", "--------", "Still Selling", "Discontinued", "--------", "Any" }));
         cbxStatus.setMinimumSize(new java.awt.Dimension(128, 22));
         cbxStatus.setPreferredSize(new java.awt.Dimension(128, 22));
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -412,10 +412,11 @@ public class ManageProductsWindow
     //</editor-fold>
 
     private static final int FILTER_STATUS_AVAILABLE = 0;
-    private static final int FILTER_STATUS_OUT_OF_STOCK = 1;
-    private static final int FILTER_STATUS_SELLING = 3;
-    private static final int FILTER_STATUS_DISCONTINUED = 4;
-    private static final int NO_FILTER_STATUS = 6;
+    private static final int FILTER_STATUS_LOW_ON_STOCK = 1;
+    private static final int FILTER_STATUS_OUT_OF_STOCK = 2;
+    private static final int FILTER_STATUS_SELLING = 4;
+    private static final int FILTER_STATUS_DISCONTINUED = 5;
+    private static final int NO_FILTER_STATUS = 7;
 
     /**
      * Translate GUI search options into SQL query.
@@ -446,6 +447,10 @@ public class ManageProductsWindow
         switch (cbxStatus.getSelectedIndex()) {
             case FILTER_STATUS_AVAILABLE:
                 sql.append(" AND (selling_status = 1) AND (stock_quantity > 0)");
+                break;
+            case FILTER_STATUS_LOW_ON_STOCK:
+                sql.append(" AND (selling_status = 1) AND (stock_quantity <= ")
+                        .append(Const.LOW_STOCK_TRESHOLD).append(")");
                 break;
             case FILTER_STATUS_OUT_OF_STOCK:
                 sql.append(" AND (selling_status = 1) AND (stock_quantity <= 0)");

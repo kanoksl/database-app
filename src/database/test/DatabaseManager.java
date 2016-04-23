@@ -23,6 +23,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
 import javax.swing.table.TableModel;
@@ -456,11 +458,12 @@ public class DatabaseManager {
             return new ArrayList<>();
         }
     }
-    
+
     /**
      *
      * @param productID
-     * @return [sale_id, date_time, customer_id, first_name, quantity, unit_price, subtotal]
+     * @return [sale_id, date_time, customer_id, first_name, quantity,
+     * unit_price, subtotal]
      */
     public List<Object[]> queryProductSellingHistory(String productID) {
         List<Object[]> list = new ArrayList<>();
@@ -561,10 +564,10 @@ public class DatabaseManager {
             throws SQLException {
         String message = null;
         connection.setAutoCommit(false);
-        
+
         String productID = p.getID();
         double newPrice = p.getCurrentPrice();
-        
+
         try {
             PreparedStatement p1 = connection.prepareStatement(SQLStrings.SQL_UPDATE_PRODUCT);
             p1.setString(1, productID);
@@ -664,7 +667,7 @@ public class DatabaseManager {
                             p8.setDate(1, SQLStrings.SQL_MAXDATE);
                             p8.setString(2, productID);
                             p8.executeUpdate();
-                            
+
                             message = "The product's price change has been reverted.";
                         } else {
                             message = "The product's price has been updated (again).";
@@ -1010,7 +1013,7 @@ public class DatabaseManager {
         }
         p.executeBatch();
     }
-    
+
     public List<Object[]> querySaleHistory(LocalDate dateFrom, LocalDate dateTo) {
         List<Object[]> list = new ArrayList<>();
         try {
@@ -1040,13 +1043,23 @@ public class DatabaseManager {
         }
     }
 
+    public int deleteSaleRecord(String saleID)
+            throws SQLException {
+        // prepare a statement
+        PreparedStatement p = connection.prepareStatement(SQLStrings.SQL_DELETE_SALE);
+        // set the parameters
+        p.setString(1, saleID);
+        // execute the statement
+        return p.executeUpdate();
+    }
+
     public String suggestNextSaleID() {
         return DatabaseUtility.suggestNextID(statement,
                 SQLStrings.SQL_SELECT_LATEST_SALE_ID, "SL", 12);
     }
     //</editor-fold>
 
-    public List<Object[]> query(String sql, int columnCount) 
+    public List<Object[]> query(String sql, int columnCount)
             throws SQLException {
         List<Object[]> list = new LinkedList<>();
         PreparedStatement p = connection.prepareStatement(sql);
@@ -1329,5 +1342,84 @@ public class DatabaseManager {
             return false;
         }
     }
+
+    public boolean tryDeleteSaleRecord(String saleID, Component caller) {
+        boolean result = false;
+        int proceed = JOptionPane.showConfirmDialog(caller,
+                "Are you sure you want to delete the following sale record?\n>> "
+                + saleID,
+                "Sale Records",
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.QUESTION_MESSAGE, null);
+        if (proceed == JOptionPane.OK_OPTION) {
+            try {
+                this.deleteSaleRecord(saleID); // actual delete operation
+                JOptionPane.showMessageDialog(caller,
+                        "The sale record was successfully deleted.",
+                        "Sale Records",
+                        JOptionPane.INFORMATION_MESSAGE);
+                result = true;
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(caller,
+                        "Error deleting the sale record:\n>>" + ex.getMessage(),
+                        "Sale Records",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        return result;
+    }
     //</editor-fold>
+
+    public String checkStock(ShoppingList list, int treshold) {
+        List<Product> outOfStock = new ArrayList<>();
+        List<Product> lowOnStock = new ArrayList<>();
+
+        for (LineItem item : list.getList()) {
+            try {
+                PreparedStatement p = connection.prepareStatement(SQLStrings.SQL_SELECT_PRODUCT_NAME_AND_STOCK);
+                p.setString(1, item.getProductID());
+                ResultSet r = p.executeQuery();
+                r.next();
+                int stock = r.getInt("stock_quantity");
+                if (stock <= 0) {
+                    outOfStock.add(this.queryProduct(item.getProductID()));
+                } else if (stock <= treshold) {
+                    lowOnStock.add(this.queryProduct(item.getProductID()));
+                }
+            } catch (SQLException ex) {
+                System.err.println("Error checking stock: " + ex);
+            }
+        }
+
+        System.out.println("Result from checkStock():");
+        System.out.println("Low on Stock: " + lowOnStock.size() + " product(s)");
+        for (Product product : lowOnStock) {
+            System.out.println(product);
+        }
+        System.out.println("Out of Stock: " + outOfStock.size() + " product(s)");
+        for (Product product : outOfStock) {
+            System.out.println(product);
+        }
+
+        StringBuilder sb = new StringBuilder();
+        if (!lowOnStock.isEmpty()) {
+            sb.append("The following products are now almost out of stock:\n");
+            for (Product product : lowOnStock) {
+                sb.append(">> ").append(product.getStockQuantity())
+                        .append(" remaining: ")
+                        .append(product.shortDescription()).append("\n");
+            }
+        }
+        if (!outOfStock.isEmpty()) {
+            sb.append("\n");
+            sb.append("The following products are now out of stock:\n");
+            for (Product product : outOfStock) {
+                sb.append(">> ").append(product.shortDescription()).append("\n");
+            }
+        }
+        if (!lowOnStock.isEmpty() || !outOfStock.isEmpty()) {
+            sb.append("\nFor more details, go to 'Store Management > Manage Products...'");
+        }
+        return sb.toString();
+    }
 }

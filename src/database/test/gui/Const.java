@@ -9,6 +9,8 @@ import java.time.LocalDate;
  */
 public class Const {
 
+    public static final int LOW_STOCK_TRESHOLD = 5;
+    
     // Colors
     public static final Color COLOR_HIGHLIGHT_BG = Color.decode("#333333");
     public static final Color COLOR_HIGHLIGHT_FG = Color.decode("#FFFFFF");

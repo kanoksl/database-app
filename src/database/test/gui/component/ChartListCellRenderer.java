@@ -65,14 +65,12 @@ public class ChartListCellRenderer extends JPanel implements ListCellRenderer {
             // if this cell is selected, set bg and fg
             this.adjustColors(Const.COLOR_HIGHLIGHT_BG, Const.COLOR_HIGHLIGHT_FG,
                     this, textPanel, titleLabel, infoLabel);
-            imageLabel.setIcon(new ImageIcon(getClass().getResource(
-                    "/database/resource/chart-pie-48inv.png")));
+            imageLabel.setIcon(chart.getIconSelected());
         } else {
             // if not selected, set to default colors
             this.adjustColors(list.getBackground(), list.getForeground(),
                     this, textPanel, titleLabel, infoLabel);
-            imageLabel.setIcon(new ImageIcon(getClass().getResource(
-                    "/database/resource/chart-pie-48.png")));
+            imageLabel.setIcon(chart.getIcon());
             // set the info text color
             infoLabel.setForeground(Color.GRAY);
         }

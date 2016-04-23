@@ -213,7 +213,7 @@ public class EditCustomerInfoWindow
             sum += (Double) row[4];
         }
 
-        lblStats.setText(String.format("%,d Records Found, Total amount %,.2f ฿, "
+        lblStats.setText(String.format("%,d records found. Total amount %,.2f ฿. "
                 + "Select a sale record on the left side to see more detail on the right.",
                 shoppingHistory.size(), sum));
 
@@ -223,7 +223,6 @@ public class EditCustomerInfoWindow
     }
 
     private void showSaleDetail() {
-        // TODO: show sale detail
         int row = tableSale.getSelectedRow();
         if (row < 0 || row > shoppingHistory.size()) {
             tableDetails.setModel(new DefaultTableModel(new String[]{
@@ -249,32 +248,42 @@ public class EditCustomerInfoWindow
             @Override
             public Object getValueAt(int rowIndex, int columnIndex) {
                 Object[] row = details.get(rowIndex);
-                if (columnIndex <= 1) {
-                    return row[columnIndex];
-                } else if (columnIndex == 2) {
-                    return String.format("%,d ", (Integer) row[2]);
-                } else if (columnIndex <= 4) {
-                    return String.format("%,.2f " + Const.CURRENCY + " ", (Double) row[columnIndex]);
-                } else {
-                    return null;
-                }
+                return row[columnIndex];
             }
 
             @Override
             public String getColumnName(int column) {
                 return COLUMNS[column];
             }
+            
+            @Override
+            public Class<?> getColumnClass(int columnIndex) {
+                if (columnIndex == 2) {
+                    return Integer.class;
+                }
+                if (columnIndex == 3 || columnIndex == 4) {
+                    return Double.class;
+                } else {
+                    return String.class;
+                }
+            }
         });
         tableDetails.updateUI();
 
         tableDetails.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         TableColumnModel colm = tableDetails.getColumnModel();
-        // set alignments
-        DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
-        rightRenderer.setHorizontalAlignment(JLabel.RIGHT);
-        colm.getColumn(2).setCellRenderer(rightRenderer);
-        colm.getColumn(3).setCellRenderer(rightRenderer);
-        colm.getColumn(4).setCellRenderer(rightRenderer);
+        
+        colm.getColumn(0).setMinWidth(80);
+        colm.getColumn(0).setMaxWidth(80);
+        colm.getColumn(0).setResizable(false);
+
+        colm.getColumn(2).setMinWidth(50);
+        colm.getColumn(2).setMaxWidth(50);
+        colm.getColumn(2).setResizable(false);
+        
+        colm.getColumn(2).setCellRenderer(Util.TABLE_CELL_INTEGER);
+        colm.getColumn(3).setCellRenderer(Util.TABLE_CELL_MONEY);
+        colm.getColumn(4).setCellRenderer(Util.TABLE_CELL_MONEY);
     }
 
     //<editor-fold defaultstate="collapsed" desc="GUI Code: Date ComboBoxes">

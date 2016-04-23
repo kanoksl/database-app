@@ -8,6 +8,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.table.DefaultTableCellRenderer;
 
@@ -121,6 +122,17 @@ public class Util {
         dia.setVisible(true);
         dia.dispose();
         return dia;
+    }
+    
+    public static JFrame createAndShowWindow(String title, Component content, Dimension size) {
+        JFrame frame = new JFrame(title);
+        frame.getContentPane().add(content);
+        frame.setSize(size);
+        frame.setPreferredSize(size);
+        frame.setLocationRelativeTo(null);
+        frame.pack();
+        frame.setVisible(true);
+        return frame;
     }
 
     public static String formatPhoneNumber(String phone) {

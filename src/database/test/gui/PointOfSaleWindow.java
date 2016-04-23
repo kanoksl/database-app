@@ -250,9 +250,18 @@ public class PointOfSaleWindow
         if (database.tryProcessSale(shoppingList, this)) {
             ReceiptWindow rew = new ReceiptWindow();
             rew.setReceipt(ReceiptWindow.generateReceipt(shoppingList));
+            rew.setLocationRelativeTo(logoLabel);
             rew.setVisible(true);
+            
+            String checkResult = database.checkStock(shoppingList, Const.LOW_STOCK_TRESHOLD);
+            JOptionPane.showMessageDialog(this,
+                        checkResult, "Check Stock",
+                        JOptionPane.INFORMATION_MESSAGE);
+            
             this.clear();
             this.loadProductIDList();
+            
+            rew.requestFocus();
         }
     }
 

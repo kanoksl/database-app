@@ -6,6 +6,7 @@ import java.awt.Color;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.List;
+import javax.swing.ImageIcon;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
@@ -77,5 +78,17 @@ public class NewPieChart extends AbstractChart {
         legend.setLegendItemGraphicPadding(new RectangleInsets(2, 4, 2, 0));
         
         super.setChart(chart);
+    }
+
+    @Override
+    public ImageIcon getIcon() {
+        return new ImageIcon(getClass().getResource(
+                    "/database/resource/chart-pie-48.png"));
+    }
+
+    @Override
+    public ImageIcon getIconSelected() {
+        return new ImageIcon(getClass().getResource(
+                    "/database/resource/chart-pie-48inv.png"));
     }
 }

@@ -184,14 +184,15 @@
               <Font name="Segoe UI" size="11" style="0"/>
             </Property>
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-              <StringArray count="7">
+              <StringArray count="8">
                 <StringItem index="0" value="Available for Sale"/>
-                <StringItem index="1" value="Out of Stock"/>
-                <StringItem index="2" value="--------"/>
-                <StringItem index="3" value="Still Selling"/>
-                <StringItem index="4" value="Discontinued"/>
-                <StringItem index="5" value="--------"/>
-                <StringItem index="6" value="Any"/>
+                <StringItem index="1" value="Low on Stock"/>
+                <StringItem index="2" value="Out of Stock"/>
+                <StringItem index="3" value="--------"/>
+                <StringItem index="4" value="Still Selling"/>
+                <StringItem index="5" value="Discontinued"/>
+                <StringItem index="6" value="--------"/>
+                <StringItem index="7" value="Any"/>
               </StringArray>
             </Property>
             <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">

@@ -19,7 +19,7 @@ public class ShoppingList {
     private LocalDate checkoutDate = null;
     private LocalTime checkoutTime = null;
     private double amountPaid = 0;
-    
+
     private String sale_id = null;
 
     //<editor-fold desc="Basic List Methods (Add, Remove, Get, etc.)">
@@ -93,7 +93,7 @@ public class ShoppingList {
         totalPrice = 0;
         totalQuantity = 0;
     }
-    
+
     public int size() {
         return itemList.size();
     }
@@ -131,6 +131,7 @@ public class ShoppingList {
     public void setSaleID(String sale_id) {
         this.sale_id = sale_id;
     }
+
     //</editor-fold>
     //<editor-fold defaultstate="collapsed" desc="Getters/Setters: Price-Related Fields">
     public double getTotalPrice() {
@@ -183,7 +184,7 @@ public class ShoppingList {
 
     //<editor-fold defaultstate="collapsed" desc="GUI Code: Table Model">
     public static final String[] TABLE_COLUMNS = {
-            "Product ID", "Product Name", "Quantity", "Unit Price", "Subtotal"};
+        "Product ID", "Product Name", "Quantity", "Unit Price", "Subtotal"};
 
     public TableModel getTableModel() {
         return new AbstractTableModel() {
@@ -254,7 +255,7 @@ public class ShoppingList {
         public int getQuantity() {
             return quantity;
         }
-        
+
         public String getQuantityString() {
             return String.format("%,d ", quantity);
         }
@@ -274,4 +275,18 @@ public class ShoppingList {
 
     }
 
+    /**
+     * For testing only.
+     *
+     * @param productID
+     * @param quantity
+     */
+    protected void forceAdd(String productID, int quantity) {
+        for (LineItem lineItem : itemList) {
+            if (lineItem.getProductID().equals(productID)) {
+                return;
+            }
+        }
+        itemList.add(new LineItem(productID, null, quantity, 0));
+    }
 }

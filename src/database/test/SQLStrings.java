@@ -82,7 +82,11 @@ public class SQLStrings {
             = "SELECT pd.*, pr.product_price FROM product pd, product_price pr "
             + "WHERE (pd.product_id = pr.product_id) "
             + "    AND (CURDATE() BETWEEN pr.start_date AND pr.end_date);";
-
+    
+    public static final String SQL_SELECT_PRODUCT_NAME_AND_STOCK
+            = "SELECT product_name, stock_quantity FROM product "
+            + "WHERE (product_id = ?);";
+    
     public static final String SQL_INSERT_PRODUCT
             = "INSERT INTO product (product_id, product_name, product_description, "
             + "    stock_quantity, selling_status, category_id) "
@@ -269,6 +273,10 @@ public class SQLStrings {
     public static final String SQL_INSERT_SALE_DETAIL
             = "INSERT INTO sale_detail (sale_id, product_id, sale_quantity) "
             + "VALUES (?, ?, ?);";
+    
+    public static final String SQL_DELETE_SALE
+            = "DELETE FROM sale "
+            + "WHERE sale_id = ?;";
     //</editor-fold>
     
     public static final String SQL_QUERY_SALE_HISTORY
@@ -284,10 +292,6 @@ public class SQLStrings {
             + "GROUP BY Gender "
             + "ORDER BY (CASE gender WHEN 'M' THEN 1 WHEN 'F' THEN 2 ELSE 3 END);";
 
-    public static final String SQL_STATS_CATEGORY_PRODUCT_COUNTS
-            = "SELECT category_name AS Category, product_count AS Count "
-            + "FROM category_overview;";
-
     public static final String SQL_STATS_CUSTOMER_COUNT_BY_AGE
             = "SELECT 'Under 20' AS 'Age Range', COUNT(customer_id) AS 'Count' FROM customer_age WHERE age BETWEEN 0 AND 19 UNION \n"
             + "SELECT '20 - 29', COUNT(customer_id) FROM customer_age WHERE age BETWEEN 20 AND 29 UNION \n"
@@ -297,6 +301,20 @@ public class SQLStrings {
             + "SELECT '60 - 69', COUNT(customer_id) FROM customer_age WHERE age BETWEEN 60 AND 69 UNION \n"
             + "SELECT '70 - 79', COUNT(customer_id) FROM customer_age WHERE age BETWEEN 70 AND 79 UNION \n"
             + "SELECT 'Above 79', COUNT(customer_id) FROM customer_age WHERE age >= 80;";
+    
+    public static final String SQL_STATS_CATEGORY_PRODUCT_COUNTS
+            = "SELECT category_name AS Category, product_count AS ProductCount "
+            + "FROM category_overview;";
+    public static final String SQL_STATS_CATEGORY_STOCK_AMOUNTS
+            = "SELECT category_name AS Category, total_quantity AS Amount "
+            + "FROM category_overview;";
+    
+    public static final String SQL_STATS_SUPPLIER_PRODUCT_COUNTS
+            = "SELECT CONCAT(s.supplier_id, ' : ', s.supplier_name) AS Supplier, COUNT(ps.product_id) AS ProductCount "
+            + "FROM supplier s, product_supplier ps "
+            + "WHERE s.supplier_id = ps.supplier_id "
+            + "GROUP BY s.supplier_id "
+            + "ORDER BY ProductCount DESC;";
     //</editor-fold>
 
     public static final java.sql.Date SQL_MINDATE = java.sql.Date.valueOf("1000-01-01");

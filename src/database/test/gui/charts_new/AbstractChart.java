@@ -5,6 +5,7 @@ import database.test.gui.Util;
 import java.awt.Dimension;
 import java.sql.SQLException;
 import java.util.List;
+import javax.swing.ImageIcon;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 
@@ -44,6 +45,9 @@ public abstract class AbstractChart {
         return ApplicationMain.getDatabaseInstance().query(sql, columnCount);
     }
     
+    public abstract ImageIcon getIcon();
+    public abstract ImageIcon getIconSelected();
+    
     public abstract void build();
     
     public void show() {
@@ -54,8 +58,8 @@ public abstract class AbstractChart {
         chartPanel.setMaximumDrawWidth(1920);
         chartPanel.setMaximumDrawHeight(1200);
 
-        Util.createAndShowDialog(null, "Chart: " + title,
-                chartPanel, new Dimension(1000, 600), true);
+//        Util.createAndShowDialog(null, "Statistic Report", chartPanel, new Dimension(1000, 600), true);
+        Util.createAndShowWindow("Statistic Report", chartPanel, new Dimension(1000, 600));
     }
     
 }
