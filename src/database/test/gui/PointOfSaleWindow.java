@@ -46,6 +46,7 @@ public class PointOfSaleWindow
     private ManageCategoriesWindow window_categories;
     private ManageSuppliersWindow window_suppliers;
     private SaleHistoryWindow window_sales;
+    private SaleStatisticWindow window_saleStat;
     private StatisticSelectWindow window_stats;
 
     /**
@@ -333,18 +334,22 @@ public class PointOfSaleWindow
         showDataWindow(window_suppliers);
     }
 
-    public void showCheckStockWindow() {
-
-    }
-
     private void showSaleRecordsWindow() {
         if (window_sales == null) {
             window_sales = new SaleHistoryWindow();
         }
         showDataWindow(window_sales);
     }
+    
+    private void showSaleStatsWindow() {
+        if (window_saleStat == null) {
+            window_saleStat = new SaleStatisticWindow();
+        }
+        window_saleStat.statRefresh();
+        showDataWindow(window_saleStat);
+    }
 
-    public void showStatisticsReportsWindow() {
+    public void showStatisticSelectWindow() {
         if (window_stats == null) {
             window_stats = new StatisticSelectWindow();
         }
@@ -494,9 +499,6 @@ public class PointOfSaleWindow
         menuManageCustomers.addActionListener((ActionEvent) -> {
             this.showManageCustomersWindow();
         });
-        menuCheckStock.addActionListener((ActionEvent) -> {
-            this.showCheckStockWindow();
-        });
         menuManageProducts.addActionListener((ActionEvent) -> {
             this.showManageProductsWindow();
         });
@@ -509,8 +511,11 @@ public class PointOfSaleWindow
         menuSaleRecords.addActionListener((ActionEvent) -> {
             this.showSaleRecordsWindow();
         });
-        menuReports.addActionListener((ActionEvent) -> {
-            this.showStatisticsReportsWindow();
+        menuSaleStats.addActionListener((ActionEvent) -> {
+            this.showSaleStatsWindow();
+        });
+        menuOtherStats.addActionListener((ActionEvent) -> {
+            this.showStatisticSelectWindow();
         });
         //</editor-fold>
         //<editor-fold desc="Customer ID Components">
@@ -719,15 +724,14 @@ public class PointOfSaleWindow
         javax.swing.JPopupMenu.Separator jSeparator1 = new javax.swing.JPopupMenu.Separator();
         menuManageCustomers = new javax.swing.JMenuItem();
         menuStore = new javax.swing.JMenu();
-        menuCheckStock = new javax.swing.JMenuItem();
-        javax.swing.JPopupMenu.Separator jSeparator3 = new javax.swing.JPopupMenu.Separator();
         menuManageProducts = new javax.swing.JMenuItem();
         menuManageCategories = new javax.swing.JMenuItem();
         menuManageSuppliers = new javax.swing.JMenuItem();
         javax.swing.JPopupMenu.Separator jSeparator4 = new javax.swing.JPopupMenu.Separator();
         menuSaleRecords = new javax.swing.JMenuItem();
         javax.swing.JPopupMenu.Separator jSeparator5 = new javax.swing.JPopupMenu.Separator();
-        menuReports = new javax.swing.JMenuItem();
+        menuSaleStats = new javax.swing.JMenuItem();
+        menuOtherStats = new javax.swing.JMenuItem();
 
         menuViewProduct.setText("View Product Info...");
         popupProduct.add(menuViewProduct);
@@ -1082,11 +1086,6 @@ public class PointOfSaleWindow
 
         menuStore.setText("Store Management");
 
-        menuCheckStock.setText("Check Stock...");
-        menuCheckStock.setEnabled(false);
-        menuStore.add(menuCheckStock);
-        menuStore.add(jSeparator3);
-
         menuManageProducts.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F2, java.awt.event.InputEvent.CTRL_MASK));
         menuManageProducts.setText("Manage Products...");
         menuStore.add(menuManageProducts);
@@ -1105,8 +1104,11 @@ public class PointOfSaleWindow
         menuStore.add(menuSaleRecords);
         menuStore.add(jSeparator5);
 
-        menuReports.setText("Sale Statistics and Reports...");
-        menuStore.add(menuReports);
+        menuSaleStats.setText("Sale Statistics...");
+        menuStore.add(menuSaleStats);
+
+        menuOtherStats.setText("Other Statistics...");
+        menuStore.add(menuOtherStats);
 
         menuBar.add(menuStore);
 
@@ -1130,7 +1132,6 @@ public class PointOfSaleWindow
     private javax.swing.JLabel lblTotal;
     private javax.swing.JLabel logoLabel;
     private javax.swing.JMenuBar menuBar;
-    private javax.swing.JMenuItem menuCheckStock;
     private javax.swing.JMenu menuCustomer;
     private javax.swing.JMenuItem menuDebug;
     private javax.swing.JMenuItem menuEditCurrentCustomer;
@@ -1143,8 +1144,9 @@ public class PointOfSaleWindow
     private javax.swing.JMenuItem menuManageProducts;
     private javax.swing.JMenuItem menuManageSuppliers;
     private javax.swing.JMenuItem menuNewCustomer;
-    private javax.swing.JMenuItem menuReports;
+    private javax.swing.JMenuItem menuOtherStats;
     private javax.swing.JMenuItem menuSaleRecords;
+    private javax.swing.JMenuItem menuSaleStats;
     private javax.swing.JMenu menuStore;
     private javax.swing.JMenuItem menuViewCurrentCustomer;
     private javax.swing.JMenuItem menuViewProduct;

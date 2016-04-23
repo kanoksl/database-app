@@ -1,52 +1,49 @@
 package database.test.gui.charts_new;
 
 import database.test.gui.Const;
+import database.test.gui.Util;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
 import java.sql.SQLException;
 import java.util.List;
-import javax.swing.ImageIcon;
 import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.CategoryAxis;
+import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.renderer.category.AbstractCategoryItemRenderer;
+import org.jfree.chart.renderer.category.BarRenderer;
+import org.jfree.chart.renderer.category.CategoryItemRendererState;
 import org.jfree.chart.title.LegendTitle;
+import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.ui.RectangleInsets;
 
-public class NewBarChart extends AbstractChart {
+public class BarChart {
     
     private DefaultCategoryDataset dataset;
 
+    private String title;
     private String categoryLabel;
     private String valueLabel;
 
-    public NewBarChart(String title, String sql, 
+    public BarChart(String title,  
             String categoryLabel, String valueLabel) {
-        super.setTitle(title);
-        super.setSQL(sql);
-        this.dataset = new DefaultCategoryDataset();
+        this.title = title;
         this.categoryLabel = categoryLabel;
         this.valueLabel = valueLabel;
+        this.dataset = new DefaultCategoryDataset();
     }
 
     public void addData(Number value, Comparable rowKey, Comparable colKey) {
         dataset.addValue(value, rowKey, colKey);
     }
 
-    @Override
-    public void build() {
-        try {
-            List<Object[]> data = super.queryData(2);
-            for (Object[] row : data) {
-                String key = (String) row[0];
-                Number val = (Number) row[1];
-                this.addData(val, "Customer", key);
-            }
-        } catch (SQLException ex) {
-            System.err.println(ex);
-            this.addData(0, "ERROR", "ERROR");
-        }
-        
-        JFreeChart chart = ChartFactory.createBarChart3D(super.getTitle(), categoryLabel, valueLabel,
+    public void createAndShow() {
+        JFreeChart chart = ChartFactory.createBarChart3D(title, categoryLabel, valueLabel,
                 dataset, PlotOrientation.VERTICAL, false, true, false);
 
         // chart appearance
@@ -63,7 +60,8 @@ public class NewBarChart extends AbstractChart {
         plot.getRangeAxis().setTickLabelFont(Const.FONT_DEFAULT_12);
         plot.setBackgroundPaint(Const.COLOR_BG_LIGHTGRAY);
         plot.setOutlineVisible(false);
-
+        ((BarRenderer) plot.getRenderer()).setSeriesPaint(0, java.awt.Color.gray);
+        
         // legend appearance
 //        LegendTitle legend = chart.getLegend();
 //        legend.setItemFont(Const.FONT_DEFAULT_12);
@@ -71,19 +69,13 @@ public class NewBarChart extends AbstractChart {
 //        legend.setItemLabelPadding(new RectangleInsets(2, 4, 2, 4));
 //        legend.setLegendItemGraphicPadding(new RectangleInsets(2, 4, 2, 0));
         
-        super.setChart(chart);
+        ChartPanel chartPanel = new ChartPanel(chart);
+        chartPanel.setMouseWheelEnabled(true);
+        chartPanel.setMinimumDrawWidth(0);
+        chartPanel.setMinimumDrawHeight(0);
+        chartPanel.setMaximumDrawWidth(1920);
+        chartPanel.setMaximumDrawHeight(1200);
+        
+        Util.createAndShowWindow("Statistic Report", chartPanel, new Dimension(1000, 600));
     }
-    
-    @Override
-    public ImageIcon getIcon() {
-        return new ImageIcon(getClass().getResource(
-                    "/database/resource/chart-bar-48.png"));
-    }
-
-    @Override
-    public ImageIcon getIconSelected() {
-        return new ImageIcon(getClass().getResource(
-                    "/database/resource/chart-bar-48inv.png"));
-    }
-    
 }

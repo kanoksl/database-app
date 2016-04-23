@@ -27,7 +27,71 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
+import static database.test.DatabaseUtility.nullable;
+import static database.test.DatabaseUtility.nullable;
+import static database.test.DatabaseUtility.nullable;
+import static database.test.DatabaseUtility.nullable;
+import static database.test.DatabaseUtility.nullable;
+import static database.test.DatabaseUtility.nullable;
+import static database.test.DatabaseUtility.nullable;
+import static database.test.DatabaseUtility.nullable;
+import static database.test.DatabaseUtility.nullable;
+import static database.test.DatabaseUtility.nullable;
+import static database.test.DatabaseUtility.nullable;
+import static database.test.DatabaseUtility.nullable;
+import static database.test.DatabaseUtility.nullable;
+import static database.test.DatabaseUtility.nullable;
+import static database.test.DatabaseUtility.nullable;
+import static database.test.DatabaseUtility.nullable;
+import static database.test.DatabaseUtility.nullable;
+import static database.test.DatabaseUtility.nullable;
+import static database.test.DatabaseUtility.nullable;
+import static database.test.DatabaseUtility.nullable;
+import static database.test.DatabaseUtility.nullable;
+import static database.test.DatabaseUtility.nullable;
+import static database.test.DatabaseUtility.nullable;
+import static database.test.DatabaseUtility.nullable;
+import static database.test.DatabaseUtility.nullable;
+import static database.test.DatabaseUtility.nullable;
+import static database.test.DatabaseUtility.nullable;
+import static database.test.DatabaseUtility.nullable;
+import static database.test.DatabaseUtility.nullable;
+import static database.test.DatabaseUtility.nullable;
+import static database.test.DatabaseUtility.nullable;
+import static database.test.DatabaseUtility.nullable;
+import static database.test.DatabaseUtility.nullable;
+import static database.test.DatabaseUtility.nullable;
+import static database.test.DatabaseUtility.nullable;
+import static database.test.DatabaseUtility.nullable;
+import static database.test.DatabaseUtility.nullable;
+import static database.test.DatabaseUtility.nullable;
+import static database.test.DatabaseUtility.nullable;
+import static database.test.DatabaseUtility.nullable;
+import static database.test.DatabaseUtility.nullable;
+import static database.test.DatabaseUtility.nullable;
+import static database.test.DatabaseUtility.nullable;
+import static database.test.DatabaseUtility.nullable;
+import static database.test.DatabaseUtility.nullable;
+import static database.test.DatabaseUtility.nullable;
+import static database.test.DatabaseUtility.nullable;
+import static database.test.DatabaseUtility.nullable;
+import static database.test.DatabaseUtility.nullable;
+import static database.test.DatabaseUtility.nullable;
+import static database.test.DatabaseUtility.nullable;
+import static database.test.DatabaseUtility.nullable;
+import static database.test.DatabaseUtility.nullable;
+import static database.test.DatabaseUtility.nullable;
+import static database.test.DatabaseUtility.nullable;
+import static database.test.DatabaseUtility.nullable;
+import static database.test.DatabaseUtility.nullable;
+import static database.test.DatabaseUtility.nullable;
+import static database.test.DatabaseUtility.nullable;
+import static database.test.DatabaseUtility.nullable;
+import static database.test.DatabaseUtility.nullable;
+import static database.test.DatabaseUtility.nullable;
+import static database.test.DatabaseUtility.nullable;
 
 public class DatabaseManager {
 
@@ -1059,6 +1123,97 @@ public class DatabaseManager {
     }
     //</editor-fold>
 
+    public List<Object[]> queryUnitSoldByProducts(LocalDate dateFrom, LocalDate dateTo,
+            boolean groupIntoCategories) {
+        List<Object[]> list = new ArrayList<>();
+        try {
+            PreparedStatement p = connection.prepareStatement(
+                    groupIntoCategories ? SQLStrings.SQL_STATS_UNIT_SOLD_BY_CATEGORY
+                            : SQLStrings.SQL_STATS_UNIT_SOLD_BY_PRODUCT);
+            p.setDate(1, nullable(dateFrom));
+            p.setDate(2, nullable(dateTo));
+            ResultSet result = p.executeQuery();
+            while (result.next()) {
+                Object[] row = new Object[3];
+                row[0] = result.getString(1);
+                row[1] = result.getString(2);
+                row[2] = result.getInt(3);
+                list.add(row);
+            }
+            return list;
+        } catch (SQLException ex) {
+            System.err.println(ex);
+            return new ArrayList<>();
+        }
+    }
+
+    public List<Object[]> querySaleStatByMonthOrWeek(boolean isWeek, LocalDate dateFrom, LocalDate dateTo, String additionalPredicate) {
+        List<Object[]> list = new ArrayList<>();
+        String sql = (isWeek ? SQLStrings.SQL_STATS_SALES_BY_PERIOD_PART1_WEEK : SQLStrings.SQL_STATS_SALES_BY_PERIOD_PART1_MONTH)
+                + SQLStrings.SQL_STATS_SALES_BY_PERIOD_PART2 + additionalPredicate
+                + SQLStrings.SQL_STATS_SALES_BY_PERIOD_PART3;
+        try {
+            PreparedStatement p = connection.prepareStatement(sql);
+            p.setDate(1, nullable(dateFrom));
+            p.setDate(2, nullable(dateTo));
+            ResultSet result = p.executeQuery();
+            while (result.next()) {
+                Object[] row = new Object[5];
+                row[0] = result.getString(1);
+                row[1] = result.getInt(2);
+                row[2] = result.getDouble(3);
+                row[3] = result.getDouble(4);
+                row[4] = result.getDouble(5);
+                list.add(row);
+            }
+            return list;
+        } catch (SQLException ex) {
+            System.err.println(ex);
+            return new ArrayList<>();
+        }
+    }
+
+    public List<Object[]> querySaleStatByDay(LocalDate dateFrom, LocalDate dateTo, String additionalPredicate) {
+        List<Object[]> list = new LinkedList<>();
+        String sql = SQLStrings.SQL_STATS_SALES_BY_PERIOD_PART1_DAY
+                + SQLStrings.SQL_STATS_SALES_BY_PERIOD_PART2 + additionalPredicate
+                + SQLStrings.SQL_STATS_SALES_BY_PERIOD_PART3;
+        try {
+            PreparedStatement p = connection.prepareStatement(sql);
+            p.setDate(1, nullable(dateFrom));
+            p.setDate(2, nullable(dateTo));
+            ResultSet result = p.executeQuery();
+            while (result.next()) {
+                Object[] row = new Object[3];
+                row[0] = toLocalDate(result.getDate(1));
+                row[1] = result.getInt(2);
+                row[2] = result.getDouble(3);
+                list.add(row);
+            }
+            return list;
+        } catch (SQLException ex) {
+            System.err.println(ex);
+            return new ArrayList<>();
+        }
+    }
+    
+    public String selectYearWeek(LocalDate date) {
+        try {
+            PreparedStatement p = connection.prepareStatement(SQLStrings.SQL_SELECT_YEARWEEK);
+            p.setDate(1, nullable(date));
+            ResultSet r = p.executeQuery();
+            r.next();
+            return r.getString(1);
+        } catch (SQLException ex) {
+            return "2016 W01";
+        }
+    }
+
+    public ResultSet query(String sql)
+            throws SQLException {
+        return statement.executeQuery(sql);
+    }
+
     public List<Object[]> query(String sql, int columnCount)
             throws SQLException {
         List<Object[]> list = new LinkedList<>();
@@ -1072,6 +1227,23 @@ public class DatabaseManager {
             list.add(row);
         }
         return list;
+    }
+
+    public void fillCalendarTable(LocalDate dateFrom, LocalDate dateTo) {
+        try {
+//            statement.executeUpdate(SQLStrings.SQL_CREATE_CALENDAR_TABLE);
+            LocalDate date = dateFrom;
+            PreparedStatement p = connection.prepareStatement(SQLStrings.SQL_INSERT_CALENDAR_DATE);
+            while (date.compareTo(dateTo) <= 0) {
+                p.setDate(1, nullable(date));
+                p.addBatch();
+                date = date.plusDays(1);
+            }
+            p.executeBatch();
+        } catch (SQLException ex) {
+            System.err.println("Error in fillCalendarTable(): " + ex);
+        }
+        System.out.println("Finished fillCalendarTable()");
     }
 
     //<editor-fold desc="Database Operations with Message Dialogs">

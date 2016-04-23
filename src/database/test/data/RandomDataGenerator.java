@@ -4,13 +4,9 @@ import database.test.DatabaseManager;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
-import java.util.function.Predicate;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class RandomDataGenerator {
 
@@ -32,7 +28,6 @@ public class RandomDataGenerator {
         Random r = new Random();
 
         List<Customer> cusList = database.queryAllCustomers();
-//        cusList.removeIf((Customer t) -> t.getID().equals("C0000000") || t.getID().equals("CDELETED"));
 
         List<Product> proList = database.queryAllProducts();
         int proCount = proList.size();

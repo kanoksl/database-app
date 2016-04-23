@@ -17,7 +17,7 @@ import javax.swing.table.DefaultTableCellRenderer;
  */
 public class Util {
 
-    public static DefaultTableCellRenderer TABLE_CELL_MONEY 
+    public static DefaultTableCellRenderer TABLE_CELL_MONEY
             = new DefaultTableCellRenderer() {
         @Override
         public int getHorizontalAlignment() {
@@ -28,10 +28,9 @@ public class Util {
         protected void setValue(Object value) {
             setText(String.format("%,.2f " + Const.CURRENCY + " ", (double) value));
         }
-
     };
-    
-    public static DefaultTableCellRenderer TABLE_CELL_PERCENT 
+
+    public static DefaultTableCellRenderer TABLE_CELL_PERCENT
             = new DefaultTableCellRenderer() {
         @Override
         public int getHorizontalAlignment() {
@@ -42,38 +41,17 @@ public class Util {
         protected void setValue(Object value) {
             setText(String.format("%,.2f %% ", (double) value));
         }
-
     };
-    
-    public static DefaultTableCellRenderer TABLE_CELL_TIME 
-            = new DefaultTableCellRenderer() {
 
+    public static DefaultTableCellRenderer TABLE_CELL_TIME
+            = new DefaultTableCellRenderer() {
         @Override
         protected void setValue(Object value) {
             setText(((LocalTime) value).format(DateTimeFormatter.ofPattern("HH:mm")));
         }
-
     };
 
-    public static DefaultTableCellRenderer TABLE_CELL_STOCK_QUANTITY 
-            = new DefaultTableCellRenderer() {
-        @Override
-        public int getHorizontalAlignment() {
-            return JLabel.RIGHT;
-        }
-
-        @Override
-            protected void setValue(Object value) {
-                if (((int) value) == 0) {
-                    setText("out of stock");
-                } else {
-                    setText(String.format("%,d ", (int) value));
-                }
-            }
-
-    };
-
-    public static DefaultTableCellRenderer TABLE_CELL_INTEGER 
+    public static DefaultTableCellRenderer TABLE_CELL_STOCK_QUANTITY
             = new DefaultTableCellRenderer() {
         @Override
         public int getHorizontalAlignment() {
@@ -82,12 +60,58 @@ public class Util {
 
         @Override
         protected void setValue(Object value) {
-            setText(String.format("%,d " , (int) value));
+            if (((int) value) == 0) {
+                setText("out of stock");
+            } else {
+                setText(String.format("%,d ", (int) value));
+            }
+        }
+    };
+
+    public static DefaultTableCellRenderer TABLE_CELL_INTEGER
+            = new DefaultTableCellRenderer() {
+        @Override
+        public int getHorizontalAlignment() {
+            return JLabel.RIGHT;
         }
 
+        @Override
+        protected void setValue(Object value) {
+            setText(String.format("%,d ", (int) value));
+        }
     };
-    
-    public static DefaultTableCellRenderer TABLE_CELL_BOLDTEXT 
+
+    public static DefaultTableCellRenderer TABLE_CELL_INTEGER_ZERO_NONE
+            = new DefaultTableCellRenderer() {
+        @Override
+        public int getHorizontalAlignment() {
+            return JLabel.RIGHT;
+        }
+
+        @Override
+        protected void setValue(Object value) {
+            if ((int) value == 0) {
+                setText("none");
+            } else {
+                setText(String.format("%,d ", (int) value));
+            }
+        }
+    };
+
+    public static DefaultTableCellRenderer TABLE_CELL_DOUBLE
+            = new DefaultTableCellRenderer() {
+        @Override
+        public int getHorizontalAlignment() {
+            return JLabel.RIGHT;
+        }
+
+        @Override
+        protected void setValue(Object value) {
+            setText(String.format("%,.2f ", (double) value));
+        }
+    };
+
+    public static DefaultTableCellRenderer TABLE_CELL_BOLDTEXT
             = new DefaultTableCellRenderer() {
         @Override
         public Font getFont() {
@@ -108,7 +132,7 @@ public class Util {
     public static JDialog createAndShowDialog(Frame owner, String title, Component content, Dimension size) {
         return createAndShowDialog(owner, title, content, size, false);
     }
-    
+
     public static JDialog createAndShowDialog(Frame owner, String title, Component content, Dimension size, boolean resizable) {
         JDialog dia = new JDialog(owner, title, true);
         dia.getContentPane().add(content);
@@ -123,7 +147,7 @@ public class Util {
         dia.dispose();
         return dia;
     }
-    
+
     public static JFrame createAndShowWindow(String title, Component content, Dimension size) {
         JFrame frame = new JFrame(title);
         frame.getContentPane().add(content);

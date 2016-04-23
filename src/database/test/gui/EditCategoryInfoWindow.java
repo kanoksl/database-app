@@ -116,7 +116,6 @@ public class EditCategoryInfoWindow
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
-        genderButtonGroup = new javax.swing.ButtonGroup();
         panel_header = new javax.swing.JPanel();
         headerLabel = new javax.swing.JLabel();
         javax.swing.JLabel l_id = new javax.swing.JLabel();
@@ -266,7 +265,6 @@ public class EditCategoryInfoWindow
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancel;
     private javax.swing.JButton btnSave;
-    private javax.swing.ButtonGroup genderButtonGroup;
     private javax.swing.JLabel headerLabel;
     private javax.swing.JPanel panel_commandButtons;
     private javax.swing.JPanel panel_header;

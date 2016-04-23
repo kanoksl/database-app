@@ -12,6 +12,8 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
@@ -117,6 +119,17 @@ public class DatabaseUtility {
         }
 
         return model;
+    }
+    
+    public static TableModel queryAndBuildTableModel(DatabaseManager database, String sql) {
+        ResultSet r = null;
+        try {
+            r = database.query(sql);
+            return buildTableModel(r);
+        } catch (SQLException ex) {
+            System.err.println(ex);
+            return new DefaultTableModel();
+        }
     }
 
     //<editor-fold desc="Data Conversion: Database Query Result --> Program">

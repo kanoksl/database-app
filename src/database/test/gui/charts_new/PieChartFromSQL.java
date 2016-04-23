@@ -17,11 +17,11 @@ import org.jfree.chart.title.LegendTitle;
 import org.jfree.data.general.DefaultPieDataset;
 import org.jfree.ui.RectangleInsets;
 
-public class NewPieChart extends AbstractChart {
+public class PieChartFromSQL extends AbstractSQLChart {
 
     private DefaultPieDataset dataset;
 
-    public NewPieChart(String title, String sql) {
+    public PieChartFromSQL(String title, String sql) {
         super.setTitle(title);
         super.setSQL(sql);
         this.dataset = new DefaultPieDataset();

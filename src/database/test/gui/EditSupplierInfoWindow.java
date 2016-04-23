@@ -293,7 +293,6 @@ public class EditSupplierInfoWindow
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
-        genderButtonGroup = new javax.swing.ButtonGroup();
         panel_header = new javax.swing.JPanel();
         headerLabel = new javax.swing.JLabel();
         cbxSupplierID = new javax.swing.JComboBox<>();
@@ -751,7 +750,6 @@ public class EditSupplierInfoWindow
     private javax.swing.JButton btnProductView;
     private javax.swing.JButton btnSave;
     private javax.swing.JComboBox<String> cbxSupplierID;
-    private javax.swing.ButtonGroup genderButtonGroup;
     private javax.swing.JLabel headerLabel;
     private javax.swing.JLabel lblWarnID;
     private javax.swing.JLabel lblWarnName;

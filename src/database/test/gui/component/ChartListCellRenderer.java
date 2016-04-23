@@ -1,8 +1,7 @@
 package database.test.gui.component;
 
 import database.test.gui.Const;
-import database.test.gui.charts.Chart;
-import database.test.gui.charts_new.AbstractChart;
+import database.test.gui.charts_new.AbstractSQLChart;
 import javax.swing.*;
 import java.awt.*;
 
@@ -57,7 +56,7 @@ public class ChartListCellRenderer extends JPanel implements ListCellRenderer {
             int index, boolean isSelected,
             boolean cellHasFocus) {
         
-        AbstractChart chart = (AbstractChart) value;
+        AbstractSQLChart chart = (AbstractSQLChart) value;
         titleLabel.setText(chart.getTitle());
         infoLabel.setText(chart.getSQL());
 

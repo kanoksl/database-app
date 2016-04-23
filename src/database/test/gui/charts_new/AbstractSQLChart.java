@@ -9,7 +9,7 @@ import javax.swing.ImageIcon;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 
-public abstract class AbstractChart {
+public abstract class AbstractSQLChart {
     
     private JFreeChart chart;
     

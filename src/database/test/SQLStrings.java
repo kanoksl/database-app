@@ -82,11 +82,11 @@ public class SQLStrings {
             = "SELECT pd.*, pr.product_price FROM product pd, product_price pr "
             + "WHERE (pd.product_id = pr.product_id) "
             + "    AND (CURDATE() BETWEEN pr.start_date AND pr.end_date);";
-    
+
     public static final String SQL_SELECT_PRODUCT_NAME_AND_STOCK
             = "SELECT product_name, stock_quantity FROM product "
             + "WHERE (product_id = ?);";
-    
+
     public static final String SQL_INSERT_PRODUCT
             = "INSERT INTO product (product_id, product_name, product_description, "
             + "    stock_quantity, selling_status, category_id) "
@@ -273,12 +273,12 @@ public class SQLStrings {
     public static final String SQL_INSERT_SALE_DETAIL
             = "INSERT INTO sale_detail (sale_id, product_id, sale_quantity) "
             + "VALUES (?, ?, ?);";
-    
+
     public static final String SQL_DELETE_SALE
             = "DELETE FROM sale "
             + "WHERE sale_id = ?;";
     //</editor-fold>
-    
+
     public static final String SQL_QUERY_SALE_HISTORY
             = "SELECT sale_id, sale_date, sale_time, customer_id, item_count, special_discount, discounted_total "
             + "FROM sale_overview "
@@ -301,14 +301,14 @@ public class SQLStrings {
             + "SELECT '60 - 69', COUNT(customer_id) FROM customer_age WHERE age BETWEEN 60 AND 69 UNION \n"
             + "SELECT '70 - 79', COUNT(customer_id) FROM customer_age WHERE age BETWEEN 70 AND 79 UNION \n"
             + "SELECT 'Above 79', COUNT(customer_id) FROM customer_age WHERE age >= 80;";
-    
+
     public static final String SQL_STATS_CATEGORY_PRODUCT_COUNTS
             = "SELECT category_name AS Category, product_count AS ProductCount "
             + "FROM category_overview;";
     public static final String SQL_STATS_CATEGORY_STOCK_AMOUNTS
             = "SELECT category_name AS Category, total_quantity AS Amount "
             + "FROM category_overview;";
-    
+
     public static final String SQL_STATS_SUPPLIER_PRODUCT_COUNTS
             = "SELECT CONCAT(s.supplier_id, ' : ', s.supplier_name) AS Supplier, COUNT(ps.product_id) AS ProductCount "
             + "FROM supplier s, product_supplier ps "
@@ -316,6 +316,43 @@ public class SQLStrings {
             + "GROUP BY s.supplier_id "
             + "ORDER BY ProductCount DESC;";
     //</editor-fold>
+
+    public static final String SQL_CREATE_CALENDAR_TABLE
+            = "CREATE TABLE IF NOT EXISTS calendar (calendar_date DATE NOT NULL UNIQUE);";
+    public static final String SQL_INSERT_CALENDAR_DATE
+            = "INSERT INTO calendar (calendar_date) VALUES (?);";
+
+    public static final String SQL_STATS_UNIT_SOLD_BY_PRODUCT
+            = "SELECT p.product_id, p.product_name, IFNULL(SUM(sd.sale_quantity), 0) "
+            + "FROM product p, sale s, sale_detail sd "
+            + "WHERE (p.product_id = sd.product_id) AND (s.sale_id = sd.sale_id) AND (s.sale_date BETWEEN ? AND ?) "
+            + "GROUP BY p.product_id "
+            + "ORDER BY p.product_id;";
+    public static final String SQL_STATS_UNIT_SOLD_BY_CATEGORY
+            = "SELECT c.category_id, c.category_name, IFNULL(SUM(sd.sale_quantity), 0) "
+            + "FROM category c, product p, sale s, sale_detail sd "
+            + "WHERE (c.category_id = p.category_id) AND (p.product_id = sd.product_id) AND (s.sale_id = sd.sale_id) AND (s.sale_date BETWEEN ? AND ?) "
+            + "GROUP BY c.category_id "
+            + "ORDER BY c.category_id;";
+
+    public static final String SQL_STATS_SALES_BY_PERIOD_PART1_MONTH
+            = "SELECT DATE_FORMAT(so.sale_date, '%Y-%m') AS Period, \n"
+            + "	   SUM(sd.sale_quantity) AS TotalUnitSold, ROUND(SUM(sd.sale_quantity) / DAY(LAST_DAY(so.sale_date)), 2) AS AvgUnitSold, \n"
+            + "    SUM(so.discounted_total) AS TotalIncome, ROUND(SUM(so.discounted_total) / DAY(LAST_DAY(so.sale_date)), 2) AS AvgIncome \n";
+    public static final String SQL_STATS_SALES_BY_PERIOD_PART1_WEEK
+            = "SELECT INSERT(YEARWEEK(so.sale_date), 5, 0, '-W') AS Period, \n"
+            + "	   SUM(sd.sale_quantity) AS TotalUnitSold, ROUND(SUM(sd.sale_quantity) / 7, 2) AS AvgUnitSold, \n"
+            + "    SUM(so.discounted_total) AS TotalIncome, ROUND(SUM(so.discounted_total) / 7, 2) AS AvgIncome \n";
+    public static final String SQL_STATS_SALES_BY_PERIOD_PART1_DAY 
+            = "SELECT so.sale_date AS Period, SUM(sd.sale_quantity) AS TotalUnitSold, SUM(so.discounted_total) AS TotalIncome \n";
+    public static final String SQL_STATS_SALES_BY_PERIOD_PART2
+            = "FROM sale_overview so, sale_detail sd, product p \n"
+            + "WHERE (so.sale_id = sd.sale_id) AND (sd.product_id = p.product_id) \n"
+            + "    AND (so.sale_date BETWEEN ? AND ?) ";
+    public static final String SQL_STATS_SALES_BY_PERIOD_PART3 = "GROUP BY Period ORDER BY Period;";
+    
+    public static final String SQL_SELECT_YEARWEEK = "SELECT YEARWEEK(?);";
+
 
     public static final java.sql.Date SQL_MINDATE = java.sql.Date.valueOf("1000-01-01");
     public static final java.sql.Date SQL_MAXDATE = java.sql.Date.valueOf("9999-12-31");

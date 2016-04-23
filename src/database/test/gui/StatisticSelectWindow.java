@@ -3,7 +3,6 @@ package database.test.gui;
 import database.test.ApplicationMain;
 import database.test.DatabaseManager;
 import database.test.SQLStrings;
-import database.test.gui.charts.Chart;
 import database.test.gui.charts_new.*;
 import database.test.gui.component.ChartListCellRenderer;
 import java.util.ArrayList;
@@ -15,7 +14,7 @@ public class StatisticSelectWindow
 
     private static DatabaseManager database = ApplicationMain.getDatabaseInstance();
     
-    private final List<AbstractChart> chartList = new ArrayList<>();
+    private final List<AbstractSQLChart> chartList = new ArrayList<>();
 
     public StatisticSelectWindow() {
         initComponents();
@@ -25,21 +24,21 @@ public class StatisticSelectWindow
         this.loadCharts();
 
         list.setCellRenderer(new ChartListCellRenderer());
-        list.setModel(new AbstractListModel<AbstractChart>() {
+        list.setModel(new AbstractListModel<AbstractSQLChart>() {
             @Override
             public int getSize() {
                 return chartList.size();
             }
 
             @Override
-            public AbstractChart getElementAt(int index) {
+            public AbstractSQLChart getElementAt(int index) {
                 return chartList.get(index);
             }
         });
         list.updateUI();
 
         btnShowChart.addActionListener((ActionEvent) -> {
-            AbstractChart c = (AbstractChart) list.getSelectedValue();
+            AbstractSQLChart c = (AbstractSQLChart) list.getSelectedValue();
             if (c != null) {
                 c.build();
                 c.show();
@@ -49,18 +48,18 @@ public class StatisticSelectWindow
 
     public void loadCharts() {
         // TODO: add more charts
-        chartList.add(new NewPieChart("Numbers of Registered Customers by Genders",
+        chartList.add(new PieChartFromSQL("Numbers of Registered Customers by Genders",
                 SQLStrings.SQL_STATS_CUSTOMER_COUNT_BY_GENDER));
-        chartList.add(new NewBarChart("Numbers of Registered Customers by Age Range", 
+        chartList.add(new BarChartFromSQL("Numbers of Registered Customers by Age Range", 
                 SQLStrings.SQL_STATS_CUSTOMER_COUNT_BY_AGE, "Age Ranges", "Number of Customers"));
         
-        chartList.add(new NewPieChart("Numbers of Currently Selling Products by Categories",
+        chartList.add(new PieChartFromSQL("Numbers of Currently Selling Products by Categories",
                 SQLStrings.SQL_STATS_CATEGORY_PRODUCT_COUNTS));
-        chartList.add(new NewPieChart("Stock Item Counts by Product Categories",
+        chartList.add(new PieChartFromSQL("Stock Item Counts by Product Categories",
                 SQLStrings.SQL_STATS_CATEGORY_STOCK_AMOUNTS));
         
         
-        chartList.add(new NewPieChart("Numbers of Products From Each Suppliers",
+        chartList.add(new PieChartFromSQL("Numbers of Products From Each Suppliers",
                 SQLStrings.SQL_STATS_SUPPLIER_PRODUCT_COUNTS));
     }
 
@@ -81,8 +80,8 @@ public class StatisticSelectWindow
         btnShowChart = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setMinimumSize(new java.awt.Dimension(480, 600));
-        setPreferredSize(new java.awt.Dimension(480, 600));
+        setMinimumSize(new java.awt.Dimension(480, 480));
+        setPreferredSize(new java.awt.Dimension(480, 480));
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         list_scrollPane.setViewportView(list);
