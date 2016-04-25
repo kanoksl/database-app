@@ -2,7 +2,6 @@ package database.test.gui;
 
 import database.test.ApplicationMain;
 import database.test.DatabaseManager;
-
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;

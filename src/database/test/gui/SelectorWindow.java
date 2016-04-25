@@ -3,13 +3,11 @@ package database.test.gui;
 import database.test.ApplicationMain;
 import database.test.DatabaseManager;
 import database.test.SQLStrings;
-
 import java.awt.Frame;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.AbstractTableModel;
@@ -55,7 +53,7 @@ public class SelectorWindow
             public String getColumnName(int column) {
                 return (column == 0) ? "ID" : "Name";
             }
-            
+
             @Override
             public int getRowCount() {
                 return data.size();
@@ -209,7 +207,7 @@ public class SelectorWindow
     private javax.swing.JTextField tbxSearch;
     // End of variables declaration//GEN-END:variables
     //</editor-fold>
-    
+
     public static List<String> showProductSelectorDialog(Frame owner) {
         SelectorWindow win = new SelectorWindow();
         win.sql = SQLStrings.SQL_SEARCH_ID_AND_NAME_PRODUCTS;

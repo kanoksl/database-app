@@ -3,8 +3,6 @@ package database.test.gui;
 import database.test.ApplicationMain;
 import database.test.DatabaseManager;
 import database.test.data.Customer;
-import database.test.data.ShoppingList;
-
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.time.LocalDate;
@@ -13,16 +11,12 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JLabel;
-
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
-import javax.swing.table.TableModel;
 
 public class SaleHistoryWindow
         extends DataDisplayWindow {
@@ -80,7 +74,7 @@ public class SaleHistoryWindow
         shoppingHistory = database.querySaleHistory(dateFrom, dateTo);
         tableSale.setModel(new AbstractTableModel() {
             final String[] COLUMNS = {"Sale ID", "Date", "Time", "Customer ID",
-                "Items", "Discount", "Total"};
+                "Items", "Disc.", "Total"};
 
             @Override
             public int getRowCount() {
@@ -480,9 +474,9 @@ public class SaleHistoryWindow
         gridBagConstraints.insets = new java.awt.Insets(4, 0, 4, 0);
         panel_shoppingHistory.add(panel_bottom, gridBagConstraints);
 
-        tableSale_scrollPane.setMaximumSize(new java.awt.Dimension(550, 32767));
-        tableSale_scrollPane.setMinimumSize(new java.awt.Dimension(450, 23));
-        tableSale_scrollPane.setPreferredSize(new java.awt.Dimension(450, 402));
+        tableSale_scrollPane.setMaximumSize(new java.awt.Dimension(600, 32767));
+        tableSale_scrollPane.setMinimumSize(new java.awt.Dimension(500, 23));
+        tableSale_scrollPane.setPreferredSize(new java.awt.Dimension(500, 402));
 
         tableSale.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
         tableSale.setModel(new javax.swing.table.DefaultTableModel(
@@ -497,7 +491,7 @@ public class SaleHistoryWindow
             }
         ));
         tableSale.setGridColor(new java.awt.Color(204, 204, 204));
-        tableSale.setMinimumSize(new java.awt.Dimension(405, 80));
+        tableSale.setMinimumSize(new java.awt.Dimension(450, 80));
         tableSale.setRowHeight(20);
         tableSale.getTableHeader().setReorderingAllowed(false);
         tableSale_scrollPane.setViewportView(tableSale);

@@ -152,11 +152,17 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="menuSaleStats">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Sale Statistics..."/>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="Ctrl+F11"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Sale-Related Statistics..."/>
               </Properties>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="menuOtherStats">
               <Properties>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="Ctrl+F12"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="Other Statistics..."/>
               </Properties>
             </MenuItem>

@@ -104,10 +104,8 @@ public class Product {
     public void setPriceChanged(boolean priceChanged) {
         this.priceChanged = priceChanged;
     }
-    
-    
-    //</editor-fold>
 
+    //</editor-fold>
     public String getCurrentPriceString() {
         return String.format("%,.2f " + Const.CURRENCY, currentPrice);
     }
@@ -132,7 +130,7 @@ public class Product {
 
     //<editor-fold defaultstate="collapsed" desc="GUI Code: Table Model">
     public static final String[] TABLE_COLUMNS = {
-            "Product ID", "Product Name", "Category ID", "Stock Quantity", "Current Price"};
+        "Product ID", "Product Name", "Category ID", "Stock Quantity", "Current Price"};
 
     public static TableModel createTableModel(List<Product> list) {
         return new AbstractTableModel() {
@@ -171,9 +169,14 @@ public class Product {
 
             @Override
             public Class<?> getColumnClass(int columnIndex) {
-                if (columnIndex == 3) return Integer.class;
-                if (columnIndex == 4) return Double.class;
-                else return String.class;
+                if (columnIndex == 3) {
+                    return Integer.class;
+                }
+                if (columnIndex == 4) {
+                    return Double.class;
+                } else {
+                    return String.class;
+                }
             }
         };
     }

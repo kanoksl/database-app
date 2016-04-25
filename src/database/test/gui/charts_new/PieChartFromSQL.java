@@ -1,13 +1,11 @@
 package database.test.gui.charts_new;
 
 import database.test.gui.Const;
-
 import java.awt.Color;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.List;
 import javax.swing.ImageIcon;
-
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.labels.StandardPieSectionLabelGenerator;
@@ -44,8 +42,8 @@ public class PieChartFromSQL extends AbstractSQLChart {
             System.err.println(ex);
             this.addData("ERROR", 0);
         }
-        
-        JFreeChart chart = ChartFactory.createPieChart3D(super.getTitle(), 
+
+        JFreeChart chart = ChartFactory.createPieChart3D(super.getTitle(),
                 dataset, true, true, false);
 
         // chart appearance
@@ -76,19 +74,19 @@ public class PieChartFromSQL extends AbstractSQLChart {
         legend.setBorder(0, 0, 0, 0);
         legend.setItemLabelPadding(new RectangleInsets(2, 4, 2, 4));
         legend.setLegendItemGraphicPadding(new RectangleInsets(2, 4, 2, 0));
-        
+
         super.setChart(chart);
     }
 
     @Override
     public ImageIcon getIcon() {
         return new ImageIcon(getClass().getResource(
-                    "/database/resource/chart-pie-48.png"));
+                "/database/resource/chart-pie-48.png"));
     }
 
     @Override
     public ImageIcon getIconSelected() {
         return new ImageIcon(getClass().getResource(
-                    "/database/resource/chart-pie-48inv.png"));
+                "/database/resource/chart-pie-48inv.png"));
     }
 }

@@ -3,11 +3,9 @@ package database.test.gui;
 import database.test.ApplicationMain;
 import database.test.DatabaseManager;
 import database.test.data.Supplier;
-
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.List;
-
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.AbstractTableModel;

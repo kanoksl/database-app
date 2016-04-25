@@ -2,15 +2,12 @@ package database.test.gui;
 
 import database.test.DatabaseManager;
 import database.test.DatabaseUtility;
-import database.test.data.Customer;
 import database.test.gui.component.TextLineNumber;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-
 import javax.swing.JTextArea;
 
 public class DebugWindow
@@ -141,7 +138,7 @@ public class DebugWindow
         }
     }
     //</editor-fold>
-    
+
     //<editor-fold defaultstate="collapsed" desc="GUI Code: Custom Initialization and Methods">
     private void initListeners() {
         btnConnect.addActionListener((ActionEvent) -> {
@@ -261,7 +258,6 @@ public class DebugWindow
         tab1_connection.add(l_user, gridBagConstraints);
 
         tbxUsername.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
-        tbxUsername.setText("root");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 1;
@@ -281,7 +277,7 @@ public class DebugWindow
         tab1_connection.add(l_pass, gridBagConstraints);
 
         tbxPassword.setFont(new java.awt.Font("Segoe UI", 0, 11)); // NOI18N
-        tbxPassword.setText("admin");
+        tbxPassword.setPreferredSize(new java.awt.Dimension(66, 21));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 2;

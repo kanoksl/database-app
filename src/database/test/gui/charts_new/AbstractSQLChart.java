@@ -10,9 +10,9 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 
 public abstract class AbstractSQLChart {
-    
+
     private JFreeChart chart;
-    
+
     private String title;
     private String sql;
 
@@ -39,17 +39,18 @@ public abstract class AbstractSQLChart {
     public void setChart(JFreeChart chart) {
         this.chart = chart;
     }
-    
-    public List<Object[]> queryData(int columnCount) 
+
+    public List<Object[]> queryData(int columnCount)
             throws SQLException {
         return ApplicationMain.getDatabaseInstance().query(sql, columnCount);
     }
-    
+
     public abstract ImageIcon getIcon();
+
     public abstract ImageIcon getIconSelected();
-    
+
     public abstract void build();
-    
+
     public void show() {
         ChartPanel chartPanel = new ChartPanel(chart);
         chartPanel.setMouseWheelEnabled(true);
@@ -61,5 +62,5 @@ public abstract class AbstractSQLChart {
 //        Util.createAndShowDialog(null, "Statistic Report", chartPanel, new Dimension(1000, 600), true);
         Util.createAndShowWindow("Statistic Report", chartPanel, new Dimension(1000, 600));
     }
-    
+
 }

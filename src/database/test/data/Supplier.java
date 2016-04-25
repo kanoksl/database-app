@@ -107,14 +107,14 @@ public class Supplier {
                 + ", \n  notes = " + notes
                 + "\n}";
     }
-    
+
     public String shortDescription() {
         return String.format("%s : %s", id, name);
     }
 
     //<editor-fold defaultstate="collapsed" desc="GUI Code: Table Model">
     public static final String[] TABLE_COLUMNS = {
-            "Supplier ID", "Name", "Address", "Phone", "Email", "Website"};
+        "Supplier ID", "Name", "Address", "Phone", "Email", "Website"};
 
     public static TableModel createTableModel(List<Supplier> list) {
         return new AbstractTableModel() {

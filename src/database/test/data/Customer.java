@@ -1,12 +1,10 @@
 package database.test.data;
 
 import database.test.gui.Util;
-
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
@@ -173,15 +171,15 @@ public class Customer {
                 + ", \n  emailAddress = " + emailAddress
                 + "\n}";
     }
-    
+
     public String shortDescription() {
         return String.format("%s : %s", id, this.getDisplayName());
     }
 
     //<editor-fold defaultstate="collapsed" desc="GUI Code: Table Model">
     public static final String[] TABLE_COLUMNS = {
-            "Customer ID", "First Name", "Last Name",
-            "Gender", "Birthday", "Registered", "Phone", "Email"};
+        "Customer ID", "First Name", "Last Name",
+        "Gender", "Birthday", "Registered", "Phone", "Email"};
 
     public static TableModel createTableModel(List<Customer> list) {
         return new AbstractTableModel() {

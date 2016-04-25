@@ -1,6 +1,5 @@
 package database.test.gui;
 
-import java.awt.Font;
 import javax.swing.table.TableModel;
 
 public class GenericTableWindow

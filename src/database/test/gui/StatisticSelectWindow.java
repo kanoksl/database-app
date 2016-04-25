@@ -13,7 +13,7 @@ public class StatisticSelectWindow
         extends javax.swing.JFrame {
 
     private static DatabaseManager database = ApplicationMain.getDatabaseInstance();
-    
+
     private final List<AbstractSQLChart> chartList = new ArrayList<>();
 
     public StatisticSelectWindow() {
@@ -50,15 +50,14 @@ public class StatisticSelectWindow
         // TODO: add more charts
         chartList.add(new PieChartFromSQL("Numbers of Registered Customers by Genders",
                 SQLStrings.SQL_STATS_CUSTOMER_COUNT_BY_GENDER));
-        chartList.add(new BarChartFromSQL("Numbers of Registered Customers by Age Range", 
+        chartList.add(new BarChartFromSQL("Numbers of Registered Customers by Age Range",
                 SQLStrings.SQL_STATS_CUSTOMER_COUNT_BY_AGE, "Age Ranges", "Number of Customers"));
-        
+
         chartList.add(new PieChartFromSQL("Numbers of Currently Selling Products by Categories",
                 SQLStrings.SQL_STATS_CATEGORY_PRODUCT_COUNTS));
         chartList.add(new PieChartFromSQL("Stock Item Counts by Product Categories",
                 SQLStrings.SQL_STATS_CATEGORY_STOCK_AMOUNTS));
-        
-        
+
         chartList.add(new PieChartFromSQL("Numbers of Products From Each Suppliers",
                 SQLStrings.SQL_STATS_SUPPLIER_PRODUCT_COUNTS));
     }

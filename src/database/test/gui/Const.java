@@ -10,7 +10,7 @@ import java.time.LocalDate;
 public class Const {
 
     public static final int LOW_STOCK_TRESHOLD = 5;
-    
+
     // Colors
     public static final Color COLOR_HIGHLIGHT_BG = Color.decode("#333333");
     public static final Color COLOR_HIGHLIGHT_FG = Color.decode("#FFFFFF");
@@ -30,7 +30,7 @@ public class Const {
     // Strings - Window Titles
     public static final String APP_TITLE = "Retail Store Database System";
     public static final String STORE_NAME = "printf Clothing Shop";
-    
+
     public static final String WIN_TITLE_LOGIN = "Login";
     public static final String WIN_TITLE_POINTOFSALE = "Point of Sale";
 
@@ -50,7 +50,7 @@ public class Const {
     public static final String ECIW_HEADER_ADD = "Register New Customer";
     public static final String ECIW_HEADER_EDIT = "Edit Customer Information";
     public static final String ECIW_HEADER_VIEW = "View Customer Information";
-    
+
     // EditCategoryInfoWindow (ECATIW)
     public static final String ECATIW_HEADER_ADD = "New Category";
     public static final String ECATIW_HEADER_EDIT = "Edit Category";
@@ -59,12 +59,12 @@ public class Const {
     public static final String EPIW_HEADER_ADD = "Add New Product";
     public static final String EPIW_HEADER_EDIT = "Edit Product Information";
     public static final String EPIW_HEADER_VIEW = "View Product Information";
-    
+
     // EditSupplierInfoWindow (ESIW)
     public static final String ESIW_HEADER_ADD = "Add New Supplier";
     public static final String ESIW_HEADER_EDIT = "Edit Supplier Information";
     public static final String ESIW_HEADER_VIEW = "View Supplier Information";
-    
+
     // JOptionPane Messages
     public static final String MESSAGE_POS_CONFIRM_LOGOUT
             = "The current shopping list is not checked out yet.\nAre you sure you want to logout?";

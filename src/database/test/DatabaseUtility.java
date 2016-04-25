@@ -1,7 +1,6 @@
 package database.test;
 
 import database.test.gui.GenericTableWindow;
-
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -12,9 +11,6 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 

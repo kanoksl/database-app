@@ -1,6 +1,5 @@
 package database.test.gui.charts_new;
 
-import database.test.DatabaseManager;
 import database.test.gui.Const;
 import database.test.gui.Util;
 import java.awt.BasicStroke;
@@ -11,12 +10,9 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.plot.CategoryPlot;
-import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
 import org.jfree.chart.title.LegendTitle;
-import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.time.Day;
 import org.jfree.data.time.RegularTimePeriod;
 import org.jfree.data.time.TimeSeries;
@@ -24,7 +20,7 @@ import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.ui.RectangleInsets;
 
 public class SalesLineChart {
-    
+
     private JFreeChart chart;
     private TimeSeries series1;
     private TimeSeries series2;
@@ -32,24 +28,27 @@ public class SalesLineChart {
     private String title;
     private String timeLabel;
     private String valueLabel;
+    
+    private String axis2label;
 
-    public SalesLineChart(String title, String series1Title, String series2Title, 
-            String timeLabel, String valueLabel) {
+    public SalesLineChart(String title, String series1Title, String series2Title,
+            String timeLabel, String valueLabel, String axis2label) {
         this.series1 = new TimeSeries(series1Title);
         this.series2 = new TimeSeries(series2Title);
         this.title = title;
         this.timeLabel = timeLabel;
         this.valueLabel = valueLabel;
+        this.axis2label = axis2label;
     }
 
     public void addData1(LocalDate date, Number value) {
-        RegularTimePeriod period = new Day(date.getDayOfMonth(), 
+        RegularTimePeriod period = new Day(date.getDayOfMonth(),
                 date.getMonthValue(), date.getYear());
         series1.add(period, value);
     }
-    
+
     public void addData2(LocalDate date, Number value) {
-        RegularTimePeriod period = new Day(date.getDayOfMonth(), 
+        RegularTimePeriod period = new Day(date.getDayOfMonth(),
                 date.getMonthValue(), date.getYear());
         series2.add(period, value);
     }
@@ -57,7 +56,7 @@ public class SalesLineChart {
     public void createAndShow() {
         TimeSeriesCollection dataset1 = new TimeSeriesCollection(series1);
         TimeSeriesCollection dataset2 = new TimeSeriesCollection(series2);
-        
+
         chart = ChartFactory.createTimeSeriesChart(title, timeLabel, valueLabel,
                 dataset1, true, true, false);
 
@@ -75,35 +74,34 @@ public class SalesLineChart {
         plot.getDomainAxis().setTickLabelFont(Const.FONT_DEFAULT_12);
         plot.getRangeAxis().setLabelFont(Const.FONT_DEFAULT_16);
         plot.getRangeAxis().setTickLabelFont(Const.FONT_DEFAULT_12);
-        
 
-        NumberAxis axis2 = new NumberAxis("Income");
+        NumberAxis axis2 = new NumberAxis(axis2label);
         axis2.setLabelFont(Const.FONT_DEFAULT_16);
         axis2.setTickLabelFont(Const.FONT_DEFAULT_12);
         axis2.setAutoRangeIncludesZero(false);
         plot.setRangeAxis(1, axis2);
         plot.setDataset(1, dataset2);
         plot.mapDatasetToRangeAxis(1, 1);
-        
+
         StandardXYItemRenderer renderer1 = new StandardXYItemRenderer();
         renderer1.setSeriesPaint(0, Color.BLUE);
         renderer1.setBaseStroke(new BasicStroke(4));
         renderer1.setBaseShapesVisible(true);
         plot.setRenderer(0, renderer1);
-        
+
         StandardXYItemRenderer renderer2 = new StandardXYItemRenderer();
         renderer2.setSeriesPaint(0, Color.RED);
         renderer2.setBaseStroke(new BasicStroke(6));
         renderer2.setBaseShapesVisible(true);
         plot.setRenderer(1, renderer2);
-        
+
         // legend appearance
         LegendTitle legend = chart.getLegend();
         legend.setItemFont(Const.FONT_DEFAULT_12);
         legend.setBorder(0, 0, 0, 0);
         legend.setItemLabelPadding(new RectangleInsets(2, 4, 2, 4));
         legend.setLegendItemGraphicPadding(new RectangleInsets(2, 4, 2, 0));
-        
+
         ChartPanel chartPanel = new ChartPanel(chart);
         chartPanel.setMouseWheelEnabled(true);
         chartPanel.setMinimumDrawWidth(0);

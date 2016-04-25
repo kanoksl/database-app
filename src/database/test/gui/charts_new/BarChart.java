@@ -3,34 +3,24 @@ package database.test.gui.charts_new;
 import database.test.gui.Const;
 import database.test.gui.Util;
 import java.awt.Dimension;
-import java.awt.Graphics2D;
-import java.awt.geom.Rectangle2D;
-import java.sql.SQLException;
-import java.util.List;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.CategoryAxis;
-import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.renderer.category.AbstractCategoryItemRenderer;
 import org.jfree.chart.renderer.category.BarRenderer;
-import org.jfree.chart.renderer.category.CategoryItemRendererState;
-import org.jfree.chart.title.LegendTitle;
-import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.ui.RectangleInsets;
 
 public class BarChart {
-    
+
     private DefaultCategoryDataset dataset;
 
     private String title;
     private String categoryLabel;
     private String valueLabel;
 
-    public BarChart(String title,  
+    public BarChart(String title,
             String categoryLabel, String valueLabel) {
         this.title = title;
         this.categoryLabel = categoryLabel;
@@ -61,21 +51,20 @@ public class BarChart {
         plot.setBackgroundPaint(Const.COLOR_BG_LIGHTGRAY);
         plot.setOutlineVisible(false);
         ((BarRenderer) plot.getRenderer()).setSeriesPaint(0, java.awt.Color.gray);
-        
+
         // legend appearance
 //        LegendTitle legend = chart.getLegend();
 //        legend.setItemFont(Const.FONT_DEFAULT_12);
 //        legend.setBorder(0, 0, 0, 0);
 //        legend.setItemLabelPadding(new RectangleInsets(2, 4, 2, 4));
 //        legend.setLegendItemGraphicPadding(new RectangleInsets(2, 4, 2, 0));
-        
         ChartPanel chartPanel = new ChartPanel(chart);
         chartPanel.setMouseWheelEnabled(true);
         chartPanel.setMinimumDrawWidth(0);
         chartPanel.setMinimumDrawHeight(0);
         chartPanel.setMaximumDrawWidth(1920);
         chartPanel.setMaximumDrawHeight(1200);
-        
+
         Util.createAndShowWindow("Statistic Report", chartPanel, new Dimension(1000, 600));
     }
 }

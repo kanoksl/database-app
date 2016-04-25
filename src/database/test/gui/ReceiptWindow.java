@@ -9,7 +9,7 @@ public class ReceiptWindow
 
     public ReceiptWindow() {
         this.initComponents();
-        
+
         this.setTitle("Receipt");
 
         txtReceipt.setSelectionColor(Const.COLOR_HIGHLIGHT_BG);
@@ -94,18 +94,18 @@ public class ReceiptWindow
 
         String date = shoppingList.getCheckoutDate().toString();
         String time = shoppingList.getCheckoutTime().format(DateTimeFormatter.ofPattern("HH:mm"));
-        
+
         final int nameLen = Const.STORE_NAME.length();
         final int namePos = (width + nameLen) / 2;
         final int nameTrail = width - namePos;
-        
+
         sb.append(String.format("\n%" + namePos + "s%" + nameTrail + "s", Const.STORE_NAME, "")).append("\n\n");
 //        sb.append("                   Sale Receipt                   \n\n");
         sb.append("             Receipt ID: ").append(shoppingList.getSaleID()).append("             \n");
         sb.append(String.format("%33s%17s", date + " " + time, "")).append("\n\n");
         sb.append("==================================================\n\n");
-        
-        for(int i = 0; i < shoppingList.size(); i++) {
+
+        for (int i = 0; i < shoppingList.size(); i++) {
             LineItem item = shoppingList.getItemAt(i);
             String qty = item.getQuantityString();
             String name = item.getProductName();
@@ -113,33 +113,33 @@ public class ReceiptWindow
             String subtt = String.format("%,.2f", item.subtotal());
             sb.append(String.format("%3s%-36s%10s \n", qty, name, subtt));
         }
-        
+
         sb.append("\n");
         sb.append("--------------------------------------------------\n\n");
-        
+
         String totalQty = String.format("%,d", shoppingList.getTotalQuantity());
         String total = String.format("%,.2f", shoppingList.getTotalPrice());
         String dscPer = String.format("%.2f", shoppingList.getDiscountPercent());
         String dscAmt = String.format("%,.2f", shoppingList.getDiscountAmount());
         String totalDsc = String.format("%,.2f", shoppingList.getTotalAfterDiscount());
-        
+
         sb.append("   Total Item Sold : ").append(String.format("%28s ", totalQty)).append("\n");
         sb.append("   Total : ").append(String.format("%38s ", total)).append("\n");
         sb.append("   Discount Percent : ").append(String.format("%27s ", dscPer)).append("\n");
         sb.append("   Discount Amount : ").append(String.format("%28s ", dscAmt)).append("\n");
         sb.append("   Total After Discount : ").append(String.format("%23s ", totalDsc)).append("\n");
         sb.append("\n");
-        
+
         String payment = String.format("%,.2f", shoppingList.getAmountPaid());
         String change = String.format("%,.2f", shoppingList.getAmountPaid() - shoppingList.getTotalAfterDiscount());
-        
+
         sb.append("   Payment : ").append(String.format("%36s ", payment)).append("\n");
         sb.append("   Change : ").append(String.format("%37s ", change)).append("\n");
-        
+
         sb.append("\n");
         sb.append("==================================================\n\n");
         sb.append("                     Thank You                    \n");
-        
+
         return sb.toString();
     }
 

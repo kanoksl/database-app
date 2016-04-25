@@ -5,13 +5,11 @@ import database.test.DatabaseManager;
 import database.test.data.Product;
 import database.test.data.Supplier;
 import database.test.gui.Const.InfoWindowMode;
-
 import java.awt.Frame;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;

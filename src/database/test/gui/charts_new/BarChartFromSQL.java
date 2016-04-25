@@ -8,18 +8,17 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.title.LegendTitle;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.ui.RectangleInsets;
 
 public class BarChartFromSQL extends AbstractSQLChart {
-    
+
     private DefaultCategoryDataset dataset;
 
     private String categoryLabel;
     private String valueLabel;
 
-    public BarChartFromSQL(String title, String sql, 
+    public BarChartFromSQL(String title, String sql,
             String categoryLabel, String valueLabel) {
         super.setTitle(title);
         super.setSQL(sql);
@@ -45,7 +44,7 @@ public class BarChartFromSQL extends AbstractSQLChart {
             System.err.println(ex);
             this.addData(0, "ERROR", "ERROR");
         }
-        
+
         JFreeChart chart = ChartFactory.createBarChart3D(super.getTitle(), categoryLabel, valueLabel,
                 dataset, PlotOrientation.VERTICAL, false, true, false);
 
@@ -70,20 +69,19 @@ public class BarChartFromSQL extends AbstractSQLChart {
 //        legend.setBorder(0, 0, 0, 0);
 //        legend.setItemLabelPadding(new RectangleInsets(2, 4, 2, 4));
 //        legend.setLegendItemGraphicPadding(new RectangleInsets(2, 4, 2, 0));
-        
         super.setChart(chart);
     }
-    
+
     @Override
     public ImageIcon getIcon() {
         return new ImageIcon(getClass().getResource(
-                    "/database/resource/chart-bar-48.png"));
+                "/database/resource/chart-bar-48.png"));
     }
 
     @Override
     public ImageIcon getIconSelected() {
         return new ImageIcon(getClass().getResource(
-                    "/database/resource/chart-bar-48inv.png"));
+                "/database/resource/chart-bar-48inv.png"));
     }
-    
+
 }

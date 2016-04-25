@@ -315,12 +315,6 @@ public class SQLStrings {
             + "WHERE s.supplier_id = ps.supplier_id "
             + "GROUP BY s.supplier_id "
             + "ORDER BY ProductCount DESC;";
-    //</editor-fold>
-
-    public static final String SQL_CREATE_CALENDAR_TABLE
-            = "CREATE TABLE IF NOT EXISTS calendar (calendar_date DATE NOT NULL UNIQUE);";
-    public static final String SQL_INSERT_CALENDAR_DATE
-            = "INSERT INTO calendar (calendar_date) VALUES (?);";
 
     public static final String SQL_STATS_UNIT_SOLD_BY_PRODUCT
             = "SELECT p.product_id, p.product_name, IFNULL(SUM(sd.sale_quantity), 0) "
@@ -352,6 +346,7 @@ public class SQLStrings {
     public static final String SQL_STATS_SALES_BY_PERIOD_PART3 = "GROUP BY Period ORDER BY Period;";
     
     public static final String SQL_SELECT_YEARWEEK = "SELECT YEARWEEK(?);";
+    //</editor-fold>
 
 
     public static final java.sql.Date SQL_MINDATE = java.sql.Date.valueOf("1000-01-01");

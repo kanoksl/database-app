@@ -1,14 +1,8 @@
 package database.test.gui;
 
 import database.test.data.ShoppingList;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
-
 import javax.swing.JFormattedTextField;
 import javax.swing.event.ChangeEvent;
 

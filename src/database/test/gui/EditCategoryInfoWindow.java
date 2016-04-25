@@ -3,17 +3,10 @@ package database.test.gui;
 import database.test.ApplicationMain;
 import database.test.DatabaseManager;
 import database.test.gui.Const.InfoWindowMode;
-
 import java.awt.Frame;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.sql.SQLException;
-
-import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
-import javax.swing.text.PlainDocument;
 
 public class EditCategoryInfoWindow
         extends javax.swing.JFrame {

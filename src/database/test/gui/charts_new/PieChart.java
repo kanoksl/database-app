@@ -2,14 +2,9 @@ package database.test.gui.charts_new;
 
 import database.test.gui.Const;
 import database.test.gui.Util;
-
 import java.awt.Color;
 import java.awt.Dimension;
-import java.sql.SQLException;
 import java.text.DecimalFormat;
-import java.util.List;
-import javax.swing.ImageIcon;
-
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -35,7 +30,7 @@ public class PieChart {
     }
 
     public void createAndShow() {
-        JFreeChart chart = ChartFactory.createPieChart3D(title, 
+        JFreeChart chart = ChartFactory.createPieChart3D(title,
                 dataset, true, true, false);
 
         // chart appearance
@@ -66,14 +61,14 @@ public class PieChart {
         legend.setBorder(0, 0, 0, 0);
         legend.setItemLabelPadding(new RectangleInsets(2, 4, 2, 4));
         legend.setLegendItemGraphicPadding(new RectangleInsets(2, 4, 2, 0));
-        
+
         ChartPanel chartPanel = new ChartPanel(chart);
         chartPanel.setMouseWheelEnabled(true);
         chartPanel.setMinimumDrawWidth(0);
         chartPanel.setMinimumDrawHeight(0);
         chartPanel.setMaximumDrawWidth(1920);
         chartPanel.setMaximumDrawHeight(1200);
-        
+
         Util.createAndShowWindow("Statistic Report", chartPanel, new Dimension(1000, 600));
     }
 }

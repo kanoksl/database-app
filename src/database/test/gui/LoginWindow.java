@@ -1,7 +1,6 @@
 package database.test.gui;
 
 import database.test.DatabaseManager;
-
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 

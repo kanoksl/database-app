@@ -6,7 +6,6 @@ import database.test.data.Customer;
 import database.test.data.Product;
 import database.test.data.ShoppingList;
 import database.test.gui.Const.InfoWindowMode;
-
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Rectangle;
@@ -16,7 +15,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.List;
-
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
@@ -160,7 +158,13 @@ public class PointOfSaleWindow
             lblListAddMessage.setForeground(Const.COLOR_ERROR_TEXT);
         } else {
             int max = product.getStockQuantity();
-            lblListAddMessage.setText("<html>Product: " + product.getName() + "<br/>"
+            String shortName;
+            if (product.getName().length() > 26) {
+                shortName = product.getName().substring(0, 26) + "...";
+            } else {
+                shortName = product.getName();
+            }
+            lblListAddMessage.setText("<html>>> " + shortName + "<br/>"
                     + "Stock Quantity: " + max + "</html>");
             lblListAddMessage.setForeground(Color.BLACK);
             // set the maximum to the stock quantity
@@ -253,15 +257,15 @@ public class PointOfSaleWindow
             rew.setReceipt(ReceiptWindow.generateReceipt(shoppingList));
             rew.setLocationRelativeTo(logoLabel);
             rew.setVisible(true);
-            
+
             String checkResult = database.checkStock(shoppingList, Const.LOW_STOCK_TRESHOLD);
             JOptionPane.showMessageDialog(this,
-                        checkResult, "Check Stock",
-                        JOptionPane.INFORMATION_MESSAGE);
-            
+                    checkResult, "Check Stock",
+                    JOptionPane.INFORMATION_MESSAGE);
+
             this.clear();
             this.loadProductIDList();
-            
+
             rew.requestFocus();
         }
     }
@@ -305,7 +309,7 @@ public class PointOfSaleWindow
             window.requestFocus();
         }
     }
-    
+
     private void showManageCustomersWindow() {
         if (window_customers == null) {
             window_customers = new ManageCustomersWindow();
@@ -340,7 +344,7 @@ public class PointOfSaleWindow
         }
         showDataWindow(window_sales);
     }
-    
+
     private void showSaleStatsWindow() {
         if (window_saleStat == null) {
             window_saleStat = new SaleStatisticWindow();
@@ -1104,9 +1108,11 @@ public class PointOfSaleWindow
         menuStore.add(menuSaleRecords);
         menuStore.add(jSeparator5);
 
-        menuSaleStats.setText("Sale Statistics...");
+        menuSaleStats.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F11, java.awt.event.InputEvent.CTRL_MASK));
+        menuSaleStats.setText("Sale-Related Statistics...");
         menuStore.add(menuSaleStats);
 
+        menuOtherStats.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F12, java.awt.event.InputEvent.CTRL_MASK));
         menuOtherStats.setText("Other Statistics...");
         menuStore.add(menuOtherStats);
 
@@ -1189,5 +1195,5 @@ public class PointOfSaleWindow
             }
         }
     }
-    
+
 }

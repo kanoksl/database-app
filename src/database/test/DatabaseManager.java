@@ -4,14 +4,12 @@ import static database.test.DatabaseUtility.nullable;
 import static database.test.DatabaseUtility.toChar;
 import static database.test.DatabaseUtility.toLocalDate;
 import static database.test.DatabaseUtility.toLocalTime;
-
 import database.test.data.Customer;
 import database.test.data.Product;
 import database.test.data.ShoppingList;
 import database.test.data.ShoppingList.LineItem;
 import database.test.data.Supplier;
 import database.test.gui.Const;
-
 import java.awt.Component;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -23,75 +21,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import javax.swing.JOptionPane;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
-import static database.test.DatabaseUtility.nullable;
-import static database.test.DatabaseUtility.nullable;
-import static database.test.DatabaseUtility.nullable;
-import static database.test.DatabaseUtility.nullable;
-import static database.test.DatabaseUtility.nullable;
-import static database.test.DatabaseUtility.nullable;
-import static database.test.DatabaseUtility.nullable;
-import static database.test.DatabaseUtility.nullable;
-import static database.test.DatabaseUtility.nullable;
-import static database.test.DatabaseUtility.nullable;
-import static database.test.DatabaseUtility.nullable;
-import static database.test.DatabaseUtility.nullable;
-import static database.test.DatabaseUtility.nullable;
-import static database.test.DatabaseUtility.nullable;
-import static database.test.DatabaseUtility.nullable;
-import static database.test.DatabaseUtility.nullable;
-import static database.test.DatabaseUtility.nullable;
-import static database.test.DatabaseUtility.nullable;
-import static database.test.DatabaseUtility.nullable;
-import static database.test.DatabaseUtility.nullable;
-import static database.test.DatabaseUtility.nullable;
-import static database.test.DatabaseUtility.nullable;
-import static database.test.DatabaseUtility.nullable;
-import static database.test.DatabaseUtility.nullable;
-import static database.test.DatabaseUtility.nullable;
-import static database.test.DatabaseUtility.nullable;
-import static database.test.DatabaseUtility.nullable;
-import static database.test.DatabaseUtility.nullable;
-import static database.test.DatabaseUtility.nullable;
-import static database.test.DatabaseUtility.nullable;
-import static database.test.DatabaseUtility.nullable;
-import static database.test.DatabaseUtility.nullable;
-import static database.test.DatabaseUtility.nullable;
-import static database.test.DatabaseUtility.nullable;
-import static database.test.DatabaseUtility.nullable;
-import static database.test.DatabaseUtility.nullable;
-import static database.test.DatabaseUtility.nullable;
-import static database.test.DatabaseUtility.nullable;
-import static database.test.DatabaseUtility.nullable;
-import static database.test.DatabaseUtility.nullable;
-import static database.test.DatabaseUtility.nullable;
-import static database.test.DatabaseUtility.nullable;
-import static database.test.DatabaseUtility.nullable;
-import static database.test.DatabaseUtility.nullable;
-import static database.test.DatabaseUtility.nullable;
-import static database.test.DatabaseUtility.nullable;
-import static database.test.DatabaseUtility.nullable;
-import static database.test.DatabaseUtility.nullable;
-import static database.test.DatabaseUtility.nullable;
-import static database.test.DatabaseUtility.nullable;
-import static database.test.DatabaseUtility.nullable;
-import static database.test.DatabaseUtility.nullable;
-import static database.test.DatabaseUtility.nullable;
-import static database.test.DatabaseUtility.nullable;
-import static database.test.DatabaseUtility.nullable;
-import static database.test.DatabaseUtility.nullable;
-import static database.test.DatabaseUtility.nullable;
-import static database.test.DatabaseUtility.nullable;
-import static database.test.DatabaseUtility.nullable;
-import static database.test.DatabaseUtility.nullable;
-import static database.test.DatabaseUtility.nullable;
-import static database.test.DatabaseUtility.nullable;
-import static database.test.DatabaseUtility.nullable;
 
 public class DatabaseManager {
 
@@ -1227,23 +1158,6 @@ public class DatabaseManager {
             list.add(row);
         }
         return list;
-    }
-
-    public void fillCalendarTable(LocalDate dateFrom, LocalDate dateTo) {
-        try {
-//            statement.executeUpdate(SQLStrings.SQL_CREATE_CALENDAR_TABLE);
-            LocalDate date = dateFrom;
-            PreparedStatement p = connection.prepareStatement(SQLStrings.SQL_INSERT_CALENDAR_DATE);
-            while (date.compareTo(dateTo) <= 0) {
-                p.setDate(1, nullable(date));
-                p.addBatch();
-                date = date.plusDays(1);
-            }
-            p.executeBatch();
-        } catch (SQLException ex) {
-            System.err.println("Error in fillCalendarTable(): " + ex);
-        }
-        System.out.println("Finished fillCalendarTable()");
     }
 
     //<editor-fold desc="Database Operations with Message Dialogs">

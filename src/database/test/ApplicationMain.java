@@ -1,10 +1,8 @@
 package database.test;
 
-import database.test.gui.DebugWindow;
 import database.test.gui.LoginWindow;
 import database.test.gui.PointOfSaleWindow;
-
-import java.awt.*;
+import java.awt.Window;
 
 public class ApplicationMain
         implements LoginWindow.LoginListener, PointOfSaleWindow.LogoutListener {
@@ -23,7 +21,7 @@ public class ApplicationMain
         window_login = new LoginWindow(this, database);
         window_login.setVisible(true);
         // automate login
-        window_login.submit();
+//        window_login.submit();
     }
 
     @Override

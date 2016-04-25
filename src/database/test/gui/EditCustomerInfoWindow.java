@@ -4,7 +4,6 @@ import database.test.ApplicationMain;
 import database.test.DatabaseManager;
 import database.test.data.Customer;
 import database.test.gui.Const.InfoWindowMode;
-
 import java.awt.Frame;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -13,7 +12,6 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
-
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JLabel;
 import javax.swing.JTable;
@@ -255,7 +253,7 @@ public class EditCustomerInfoWindow
             public String getColumnName(int column) {
                 return COLUMNS[column];
             }
-            
+
             @Override
             public Class<?> getColumnClass(int columnIndex) {
                 if (columnIndex == 2) {
@@ -272,7 +270,7 @@ public class EditCustomerInfoWindow
 
         tableDetails.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         TableColumnModel colm = tableDetails.getColumnModel();
-        
+
         colm.getColumn(0).setMinWidth(80);
         colm.getColumn(0).setMaxWidth(80);
         colm.getColumn(0).setResizable(false);
@@ -280,7 +278,7 @@ public class EditCustomerInfoWindow
         colm.getColumn(2).setMinWidth(50);
         colm.getColumn(2).setMaxWidth(50);
         colm.getColumn(2).setResizable(false);
-        
+
         colm.getColumn(2).setCellRenderer(Util.TABLE_CELL_INTEGER);
         colm.getColumn(3).setCellRenderer(Util.TABLE_CELL_MONEY);
         colm.getColumn(4).setCellRenderer(Util.TABLE_CELL_MONEY);

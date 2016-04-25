@@ -7,12 +7,10 @@ import database.test.gui.charts_new.PieChart;
 import database.test.gui.charts_new.SalesLineChart;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
-
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
@@ -540,6 +538,8 @@ public class SaleStatisticWindow
         }
 
         String title = "Total Unit Sold and Income";
+        String axis1 = "Unit Sold";
+        String axis2 = "Income";
         if (periodMode == PERIOD_MODE_DAYS) {
             title += " (Daily)";
         } else if (periodMode == PERIOD_MODE_WEEKS) {
@@ -555,7 +555,7 @@ public class SaleStatisticWindow
             title += " - Between " + dateFrom + " and " + dateTo;
         }
 
-        SalesLineChart chart = new SalesLineChart(title, "Unit Sold", "Income", "Time Period", "Unit Sold");
+        SalesLineChart chart = new SalesLineChart(title, axis1, axis2, "Time Period", axis1, axis2);
 
         if (periodMode == PERIOD_MODE_DAYS) {
             for (int i = 0; i < tableStats.getRowCount(); i++) {
@@ -591,6 +591,8 @@ public class SaleStatisticWindow
         }
 
         String title = "Average Unit Sold and Income";
+        String axis1 = "Average Unit Sold / Day";
+        String axis2 = "Average Income / Day";
         if (periodMode == PERIOD_MODE_WEEKS) {
             title += " (Weekly)";
         } else if (periodMode == PERIOD_MODE_MONTHS) {
@@ -604,7 +606,7 @@ public class SaleStatisticWindow
             title += " - Between " + dateFrom + " and " + dateTo;
         }
 
-        SalesLineChart chart = new SalesLineChart(title, "Unit Sold", "Income", "Time Period", "Unit Sold");
+        SalesLineChart chart = new SalesLineChart(title, axis1, axis2, "Time Period", axis1, axis2);
 
         if (periodMode == PERIOD_MODE_WEEKS) {
             for (int i = 0; i < tableStats.getRowCount(); i++) {
@@ -699,7 +701,7 @@ public class SaleStatisticWindow
             tbxDateTo1.setEnabled(chkSpecifyRange.isSelected());
             this.statRefresh();
         });
-        
+
         KeyAdapter enterKeyRefresh = new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
@@ -710,7 +712,7 @@ public class SaleStatisticWindow
         };
         tbxDateFrom1.addKeyListener(enterKeyRefresh);
         tbxDateTo1.addKeyListener(enterKeyRefresh);
-        
+
         cbxCategory.addActionListener((ActionEvent) -> {
             this.statRefresh();
         });
